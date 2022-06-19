@@ -1,4 +1,5 @@
 ﻿using L4d2_Mod_Manager.Domain;
+using L4d2_Mod_Manager.Domain.Repository;
 using L4d2_Mod_Manager.Utility;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,20 @@ namespace L4d2_Mod_Manager.Service
 {
     public class ModOperation
     {
+        private static ModFileRepository modFileRepo = new ModFileRepository();
         private const string TitleKeyName = "addontitle";
         private const string VersionKeyName = "addonversion";
         private const string TaglineKeyName = "addontagline";
         private const string AuthorKeyName = "addonauthor";
+
+        /// <summary>
+        /// 取消激活模组
+        /// </summary>
+        public static void DeactiveMod(Mod mod)
+        {
+            var modFile = modFileRepo.FindModFileById(mod.FileId);
+            modFile.Map(mf => ModFileService.DeactiveModFile(mf));
+        }
 
         public static ModInfo ReadModInfo(string addoninfo)
         {
@@ -52,10 +63,16 @@ namespace L4d2_Mod_Manager.Service
             if (!File.Exists(mod.WorkshopPreviewImage))
                 return mod;
 
-            string tpath = VPKServices.GetVPKTemporayPath(mod.Vpk);
-            string workshopPreviewImageLoc = Path.Combine(tpath, "workshopPreviewImage" + Path.GetExtension(mod.WorkshopPreviewImage));
-            File.Move(mod.WorkshopPreviewImage, workshopPreviewImageLoc, true);
-            return mod with { WorkshopPreviewImage = workshopPreviewImageLoc };
+            var modFile = modFileRepo.FindModFileById(mod.FileId);
+            var newMod = modFile.Map(mf =>
+            {
+                string fileName = Path.GetFileName(mf.FilePath);
+                string tpath = VPKServices.GetVPKTemporayPath(fileName);
+                string workshopPreviewImageLoc = Path.Combine(tpath, "workshopPreviewImage" + Path.GetExtension(mod.WorkshopPreviewImage));
+                File.Move(mod.WorkshopPreviewImage, workshopPreviewImageLoc, true);
+                return mod with { WorkshopPreviewImage = workshopPreviewImageLoc };
+            });
+            return newMod.ValueOr(mod);
         }
 
         /// <summary>
@@ -65,18 +82,16 @@ namespace L4d2_Mod_Manager.Service
         /// <returns></returns>
         public static (Mod, bool) UpdateWorkshopInfo(Mod mod)
         {
-            var modName = ModFP.GetModName(mod);
-            var modInfo = Spider.CollectModInfo(modName);
-            return modInfo.Match(info =>
-            {
-                return (
-                mod with
+            var modFile = modFileRepo.FindModFileById(mod.FileId);
+            var newMod = modFile
+                .Bind(mf => Spider.CollectModInfo(ModFileFP.ModFileName(mf)))
+                .Map(info => mod with
                 {
                     WorkshopTitle = info.Title,
                     WorkshopDescript = info.Descript,
                     WorkshopPreviewImage = info.PreviewImage
-                }, true);
-            }, ()=>(mod, false));
+                });
+            return newMod.Match(x => (x, true), () => (mod, false));
         }
 
         static StreamWriter fs = new StreamWriter(File.OpenWrite("out.txt"));

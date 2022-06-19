@@ -1,0 +1,103 @@
+﻿using L4d2_Mod_Manager.Utility;
+using System;
+using System.Collections.Generic;
+using System.Data.SQLite;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace L4d2_Mod_Manager.Domain.Repository
+{
+    /// <summary>
+    /// 创意工坊项存储库
+    /// </summary>
+    public class ModFileRepository
+    {
+        public const int TempModFileId = -1;
+        private SQLiteConnection connection;
+
+        public ModFileRepository()
+        {
+            connection = new SQLiteConnection("data source=mod.db");
+            connection.Open();
+            CreateTableIfNotExists();
+        }
+
+        public Maybe<ModFile> FindModFileById(int id)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText =
+                $"SELECT * FROM mod_file WHERE id={id};";
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                int _id = (int)reader.GetInt64(0);
+                string _file = reader.GetString(1);
+                bool _actived = reader.GetInt32(2) > 0;
+                return new ModFile(
+                    (int)reader.GetInt64(0),
+                    reader.GetString(1),
+                    reader.GetBoolean(2)
+                );
+            }
+            else
+            {
+                return Maybe.None;
+            }
+        }
+
+        public ModFile SaveModFile(ModFile mf)
+        {
+            if(mf.Id == TempModFileId)
+            {
+                var command = connection.CreateCommand();
+                command.CommandText =
+                    $"INSERT INTO mod_file VALUES(" +
+                    $"NULL" +
+                    $",\"{mf.FilePath}\"" +
+                    $",\"{(mf.Actived ? 1 : 0)}\"" +
+                    $");select last_insert_rowid();";
+                try
+                {
+                    long id = (long)command.ExecuteScalar();
+                    return mf with { Id = (int)id };
+                }
+                catch
+                {
+                    return mf;
+                }
+            }
+            return mf;
+        }
+
+        /// <summary>
+        /// 更新模组文件信息
+        /// </summary>
+        public void UpdateModFile(ModFile mf)
+        {
+
+            var command = connection.CreateCommand();
+            command.CommandText =
+                $"UPDATE mod_file SET " +
+                $"filename = \"{mf.FilePath}\"" +
+                $",active = {(mf.Actived ? 1 : 0)} " +
+                $"WHERE id = {mf.Id};";
+            int effectRow = command.ExecuteNonQuery();
+            if (effectRow == 0) throw new Exception("更新ModFile失败");
+        }
+
+        /// <summary>
+        /// [副作用]创建表格
+        /// </summary>
+        private void CreateTableIfNotExists()
+        {
+            var command = connection.CreateCommand();
+            command.CommandText =
+                "CREATE TABLE IF NOT EXISTS mod_file(" +
+                "id INTEGER PRIMARY KEY" +
+                ",filename TEXT NOT NULL UNIQUE" +
+                ",active INT NOT NULL); ";
+            command.ExecuteNonQuery();
+        }
+    }
+}

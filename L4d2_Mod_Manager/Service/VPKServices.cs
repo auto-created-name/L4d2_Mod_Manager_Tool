@@ -13,18 +13,52 @@ namespace L4d2_Mod_Manager.Service
 {
     public class VPKServices
     {
-        private const string VpkFolder = @"E:\Steam\steamapps\common\Left 4 Dead 2\left4dead2\addons";
+        private const string VpkFolder = @"E:\addons";
+
+        /// <summary>
+        /// 扫描所有的模组文件
+        /// </summary>
+        public static IEnumerable<ModFile> ScanAllModFile()
+        {
+            return ListVpk(VpkFolder).Select(file => ModFileFP.CreateModFile(file));
+        }
+
+        /// <summary>
+        /// 将mod文件解压并生成mod信息
+        /// </summary>
+        /// <param name="mf"></param>
+        /// <returns></returns>
+        public static Mod ExtraMod(ModFile mf)
+        {
+            var snippet = SnippedVpk(mf.FilePath);
+            var mod = ModFP.CreateMod(mf);
+            // 赋值缩略图信息
+            mod = snippet.AddonImage.Match(img => mod with { Thumbnail = img }, () => mod);
+            mod = snippet.AddonInfo.Match(info =>
+            {
+                var modinfo = ModOperation.ReadModInfo(info);
+                return mod with
+                {
+                    Title = modinfo.Title.ValueOr(""),
+                    Version = modinfo.Version.ValueOr(""),
+                    Tagline = modinfo.Tagline.ValueOr(""),
+                    Author = modinfo.Author.ValueOr("")
+                };
+            }, () => mod);
+            return mod;
+        }
+
         public static VpkSnippet[] ScanVPK()
         {
             var vpks = ListVpk(VpkFolder);
-            var snippets = vpks.Select(vpk => SnippedVpk(vpk)).ToArray();
+            var snippets = vpks.Select(vpk => SnippedVpk(vpk)).ToArray().ToArray();
             return snippets;
         }
 
         /// <summary>
         /// 解压vpk并生成摘要
         /// </summary>
-        private static VpkSnippet SnippedVpk(string vpk)
+        public static VpkSnippet SnippedVpk(string vpk)
         {
             // 列出所有vpk内容，找到addonimage
             var files = VPKProcess.ListFile(vpk);

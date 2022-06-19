@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace L4d2_Mod_Manager.Domain
 {
     public record Mod(
-        int id,
-        string Vpk, 
+        int Id,
+        int FileId,
         string Thumbnail, 
         string Title, 
         string Version, 
@@ -18,11 +18,12 @@ namespace L4d2_Mod_Manager.Domain
         string WorkshopDescript,
         string WorkshopPreviewImage
         );
+
     public static class ModFP
     {
-        public static Mod CreateMod(string vpk)
+        public static Mod CreateMod(ModFile f)
         {
-            return new Mod(-1, vpk, null, null, null, null, null, null, null, null);
+            return new Mod(-1, f.Id, null, null, null, null, null, null, null, null);
         }
 
         /// <summary>
@@ -36,21 +37,6 @@ namespace L4d2_Mod_Manager.Domain
                 || !string.IsNullOrEmpty(mod.WorkshopPreviewImage);
         }
 
-        /// <summary>
-        /// 获取mod的名称
-        /// </summary>
-        public static string GetModName(Mod mod)
-        {
-            return System.IO.Path.GetFileNameWithoutExtension(mod.Vpk);
-        }
-        //public static Mod CreateMod(string vpk, 
-        //    string thumnail = null, string title = null,
-        //    string version = null, string tagline =null, 
-        //    string author = null)
-        //{
-        //    return new Mod(vpk, thumnail, title, version, tagline, author);
-        //}
-
         public static string SelectName(Mod mod)
         {
             if (!string.IsNullOrEmpty(mod.WorkshopTitle))
@@ -58,7 +44,7 @@ namespace L4d2_Mod_Manager.Domain
             else if (!string.IsNullOrEmpty(mod.Title))
                 return mod.Title;
             else
-                return mod.Vpk;
+                return "<无名称>";
         }
     }
 }

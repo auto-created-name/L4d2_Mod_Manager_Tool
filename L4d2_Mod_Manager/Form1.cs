@@ -25,48 +25,33 @@ namespace L4d2_Mod_Manager
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var snippets = VPKServices.ScanVPK();
-            foreach(var snip in snippets)
-            {
-                var mod = ModFP.CreateMod(snip.VpkName);
+            ModFileRepository rp = new ModFileRepository();
+            var mfs = VPKServices.ScanAllModFile().Select(mf => rp.SaveModFile(mf)).ToArray();
 
-                // 赋值缩略图信息
-                mod = snip.AddonImage.Match(img => mod with { Thumbnail = img }, () => mod);
-                mod = snip.AddonInfo.Match(info =>
-                {
-                    var modinfo = ModOperation.ReadModInfo(info);
-                    return mod with
-                    {
-                        Title = modinfo.Title.ValueOr(""),
-                        Version = modinfo.Version.ValueOr(""),
-                        Tagline = modinfo.Tagline.ValueOr(""),
-                        Author = modinfo.Author.ValueOr("")
-                    };
-                }, () => mod);
-                repo.SaveMod(mod);
-                //var modInfo = ModOperation.ReadModInfo(snip.AddonInfo);
-                //if (File.Exists(snip.AddonImage))
-                //    imageList1.Images.Add(snip.VpkName, Image.FromFile(snip.AddonImage));
-                //else
-                //    imageList1.Images.Add("noimage", Image.FromFile(@"C:\Users\Louis\Desktop\no-image.png"));
-
-                //modInfo.Match(mi => listView1.Items.Add(mi.Title.Match(x => x, () => snip.VpkName), index++),
-                //    () => listView1.Items.Add(snip.VpkName, index++)
-                //);
-                //
-                //var mod = modInfo.Bind(mi => Utility.Maybe.Some(new Mod(
-                //    snip.VpkName,
-                //    snip.AddonImage.ValueOr(""),
-                //    mi.Title.ValueOr(""),
-                //    mi.Version.ValueOr(""),
-                //    mi.Tagline.ValueOr(""),
-                //    mi.Author.ValueOr(""),
-                //    null, null, null))
-                //) ;
-                //
-                //mod.Match(mod => repo.SaveMod(mod), () => repo.SaveMod(ModFP.CreateMod(snip.VpkName)));
-                //if (index > 10) break;
-            }
+            var res = mfs
+                .Select(x => VPKServices.ExtraMod(x))
+                .Select(x => repo.SaveMod(x))
+                .ToArray();
+            //var snippets = VPKServices.ScanVPK();
+            //foreach(var snip in snippets)
+            //{
+            //    var mod = ModFP.CreateMod(snip.VpkName);
+            //
+            //    // 赋值缩略图信息
+            //    mod = snip.AddonImage.Match(img => mod with { Thumbnail = img }, () => mod);
+            //    mod = snip.AddonInfo.Match(info =>
+            //    {
+            //        var modinfo = ModOperation.ReadModInfo(info);
+            //        return mod with
+            //        {
+            //            Title = modinfo.Title.ValueOr(""),
+            //            Version = modinfo.Version.ValueOr(""),
+            //            Tagline = modinfo.Tagline.ValueOr(""),
+            //            Author = modinfo.Author.ValueOr("")
+            //        };
+            //    }, () => mod);
+            //    repo.SaveMod(mod);
+            //}
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -84,7 +69,7 @@ namespace L4d2_Mod_Manager
             foreach (var mod in mods)
             {
                 var img = SelectImage(mod);
-                imageList1.Images.Add(mod.Vpk, img);
+                imageList1.Images.Add(img);
                 //if (File.Exists(mod.Thumbnail))
                 //    imageList1.Images.Add(mod.Vpk, Image.FromFile(mod.Thumbnail));
                 //else
@@ -93,19 +78,13 @@ namespace L4d2_Mod_Manager
                 ListViewItem item = new ListViewItem();
                 item.Text = ModFP.SelectName(mod);
                 item.ImageIndex = index++;
+                item.Tag = mod.Id;
                 listView1.Items.Add(item);
             }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            //HttpWebRequest req = 
-            //    (HttpWebRequest)WebRequest.Create(
-            //        "https://steamcommunity.com/sharedfiles/filedetails/?id=2658557986");
-            //var res = req.GetResponse();
-            //using var reader = new StreamReader(res.GetResponseStream(), Encoding.UTF8);
-            //string html = reader.ReadToEnd();
-
             var a = repo.GetMods()
                 .Where(x => !ModFP.HaveWorkshopInfo(x))
                 .Select(x => ModOperation.UpdateWorkshopInfo(x))
@@ -146,6 +125,20 @@ namespace L4d2_Mod_Manager
             catch
             {
                 return Utility.Maybe.None;
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            foreach(ListViewItem i in listView1.SelectedItems)
+            {
+                // 取出自定义数据
+                int modId = (int)i.Tag;
+                var mod = repo.FindModById(modId);
+                mod.Map(x => {
+                    ModOperation.DeactiveMod(x);
+                    return 0;
+                });
             }
         }
     }
