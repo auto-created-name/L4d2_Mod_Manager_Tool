@@ -31,9 +31,12 @@ namespace L4d2_Mod_Manager.Domain.Repository
             command.CommandText = 
                 "CREATE TABLE IF NOT EXISTS workshop_infomation(" +
                 "id INTEGER PRIMARY KEY" +
+                ",mod_id INTEGER NOT NULL" +
                 ",title TEXT" +
                 ",descript TEXT" +
-                ",preview TEXT); ";
+                ",preview TEXT" +
+                ",FOREIGN KEY(mod_id) REFERENCES mod(id)" +
+                "); ";
         }
     }
 }

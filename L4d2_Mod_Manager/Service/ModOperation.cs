@@ -19,6 +19,18 @@ namespace L4d2_Mod_Manager.Service
         private const string TaglineKeyName = "addontagline";
         private const string AuthorKeyName = "addonauthor";
 
+        public static IEnumerable<(int id, string img, string name, string vpkid, string path)> ModInfos()
+        {
+            return ModRepository.Instance.GetMods()
+                .Select(m => 
+                (m.Id,
+                ModFP.SelectPreview(m),
+                ModFP.SelectName(m)
+                , m.vpkId
+                ,ModFileService.FindFileById(m.FileId).Map(x => x.FilePath).ValueOr(""))
+            );
+        }
+
         /// <summary>
         /// 取消激活模组
         /// </summary>
@@ -43,7 +55,7 @@ namespace L4d2_Mod_Manager.Service
             //    .ToArray();
             var kvs = PairQue(words).ToArray();
 
-            var lookup = kvs.ToLookup(x => x.Item1, x => x.Item2);
+            var lookup = kvs.ToLookup(x => x.Item1.ToLower(), x => x.Item2);
 
             return new ModInfo(
                 lookup.FindElementSafe(TitleKeyName),
@@ -98,7 +110,7 @@ namespace L4d2_Mod_Manager.Service
         private static string[] ParseLine(string line)
         {
             line = line.Trim();
-            var matches = Regex.Matches(line, "\"(?<a>[\\S ]+)\"|(?<a>[a-zA-Z0-9_]+)|//.*$");
+            var matches = Regex.Matches(line, "\"(?<a>[^\"]+)\"|(?<a>[a-zA-Z0-9_]+)|//.*$");
             var words = matches.Select(m => m.Groups["a"].Value).ToArray();
 
             if (words.Length == 2)

@@ -11,7 +11,9 @@ namespace L4d2_Mod_Manager.Domain.Repository
     public class ModRepository : IDisposable
     {
         private SQLiteConnection connection;
-        public ModRepository()
+        public static ModRepository Instance { get; } = new ModRepository();
+
+        private ModRepository()
         {
             connection = new SQLiteConnection("data source=mod.db");
             connection.Open();
@@ -43,6 +45,7 @@ namespace L4d2_Mod_Manager.Domain.Repository
             command.CommandText = $"INSERT INTO mod VALUES(" +
                 $"NULL," +
                 $"\"{mod.FileId}\", " +
+                $"\"{mod.vpkId}\"," +
                 $"\"{mod.Thumbnail}\", " +
                 $"\"{mod.Title}\"," +
                 $" \"{mod.Version}\", " +
@@ -98,6 +101,7 @@ namespace L4d2_Mod_Manager.Domain.Repository
                 "CREATE TABLE IF NOT EXISTS mod(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT" +
                 ",file_id INTEGER NOT NULL" +
+                ",vpk_id TEXT" +
                 ",thumbnail TEXT" +
                 ",title TEXT" +
                 ",version TEXT" +
@@ -133,7 +137,8 @@ namespace L4d2_Mod_Manager.Domain.Repository
                     reader.GetString(6),
                     reader.GetString(7),
                     reader.GetString(8),
-                    reader.GetString(9)
+                    reader.GetString(9),
+                    reader.GetString(10)
                 );
         }
     }

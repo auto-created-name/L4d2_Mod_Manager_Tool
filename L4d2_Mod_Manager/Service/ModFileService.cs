@@ -1,5 +1,6 @@
 ﻿using L4d2_Mod_Manager.Domain;
 using L4d2_Mod_Manager.Domain.Repository;
+using L4d2_Mod_Manager.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,13 @@ namespace L4d2_Mod_Manager.Service
 {
     public static class ModFileService
     {
-        private static ModFileRepository modFileRepo = new ModFileRepository();
+        private static ModFileRepository modFileRepo = new();
+
+        public static Maybe<ModFile> FindFileById(int fid)
+        {
+            return modFileRepo.FindModFileById(fid);
+        }
+
         /// <summary>
         /// [副作用]修改数据库和文件，将模组文件关闭
         /// </summary>

@@ -119,13 +119,13 @@ namespace L4d2_Mod_Manager.Utility
             return defaultValue;
         }
 
-        public T ValueOr(Func<T> defaultValueFactory)
-        {
-            if (hasValue)
-                return value;
-
-            return defaultValueFactory();
-        }
+        //public T ValueOr(Func<T> defaultValueFactory)
+        //{
+        //    if (hasValue)
+        //        return value;
+        //
+        //    return defaultValueFactory();
+        //}
 
         public Maybe<T> ValueOrMaybe(Maybe<T> alternativeValue)
         {

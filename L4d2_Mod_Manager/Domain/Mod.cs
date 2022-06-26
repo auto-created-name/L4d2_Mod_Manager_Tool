@@ -1,4 +1,5 @@
-﻿using System;
+﻿using L4d2_Mod_Manager.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace L4d2_Mod_Manager.Domain
     public record Mod(
         int Id,
         int FileId,
+        string vpkId,
         string Thumbnail, 
         string Title, 
         string Version, 
@@ -23,7 +25,18 @@ namespace L4d2_Mod_Manager.Domain
     {
         public static Mod CreateMod(ModFile f)
         {
-            return new Mod(-1, f.Id, null, null, null, null, null, null, null, null);
+            var vpkNum = GetVpkNumberFromFileName(f.FilePath);
+            return new Mod(-1, f.Id, vpkNum.ValueOr(null), null, null, null, null, null, null, null, null);
+        }
+
+        /// <summary>
+        /// 从VPK名称上获取VPK号
+        /// </summary>
+        public static Maybe<string> GetVpkNumberFromFileName(string file)
+        {
+            var name = System.IO.Path.GetFileNameWithoutExtension(file);
+            return Service.Spider.IsVpkNumber(name) ?
+                Maybe.Some(name) : Maybe.None;
         }
 
         /// <summary>
@@ -45,6 +58,14 @@ namespace L4d2_Mod_Manager.Domain
                 return mod.Title;
             else
                 return "<无名称>";
+        }
+
+        public static string SelectPreview(Mod mod)
+        {
+            if (!string.IsNullOrEmpty(mod.WorkshopPreviewImage))
+                return mod.WorkshopPreviewImage;
+            else
+                return mod.Thumbnail;
         }
     }
 }

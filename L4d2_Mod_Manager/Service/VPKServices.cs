@@ -13,7 +13,7 @@ namespace L4d2_Mod_Manager.Service
 {
     public class VPKServices
     {
-        private const string VpkFolder = @"E:\addons";
+        private const string VpkFolder = @"E:\Steam\steamapps\common\Left 4 Dead 2\left4dead2\addons";
 
         /// <summary>
         /// 扫描所有的模组文件

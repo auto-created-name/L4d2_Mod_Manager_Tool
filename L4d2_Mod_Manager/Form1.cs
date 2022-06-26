@@ -17,10 +17,10 @@ namespace L4d2_Mod_Manager
 {
     public partial class Form1 : Form
     {
-        private ModRepository repo = new ModRepository();
         public Form1()
         {
             InitializeComponent();
+            UpdateModList();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -30,7 +30,7 @@ namespace L4d2_Mod_Manager
 
             var res = mfs
                 .Select(x => VPKServices.ExtraMod(x))
-                .Select(x => repo.SaveMod(x))
+                .Select(x => ModRepository.Instance.SaveMod(x))
                 .ToArray();
             //var snippets = VPKServices.ScanVPK();
             //foreach(var snip in snippets)
@@ -50,42 +50,43 @@ namespace L4d2_Mod_Manager
             //            Author = modinfo.Author.ValueOr("")
             //        };
             //    }, () => mod);
-            //    repo.SaveMod(mod);
+            //    ModRepository.Instance.SaveMod(mod);
             //}
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            UpdateModList(repo.GetMods());
+            UpdateModList();
         }
 
-        private void UpdateModList(IEnumerable<Mod> mods)
+        private void UpdateModList()
         {
             listView1.Items.Clear();
             imageList1.Images.Clear();
 
             int index = 0;
 
-            foreach (var mod in mods)
+            foreach (var mod in ModOperation.ModInfos())
             {
-                var img = SelectImage(mod);
+                var img = SelectImage(mod.img);
                 imageList1.Images.Add(img);
-                //if (File.Exists(mod.Thumbnail))
-                //    imageList1.Images.Add(mod.Vpk, Image.FromFile(mod.Thumbnail));
-                //else
-                //    imageList1.Images.Add("noimage", Image.FromFile(@"C:\Users\Louis\Desktop\no-image.png"));
-                //listView1.Items.Add(ModFP.BestName(mod), index++);
-                ListViewItem item = new ListViewItem();
-                item.Text = ModFP.SelectName(mod);
+
+                ListViewItem item = new(new string[] {
+                    mod.name,
+                    mod.vpkid,
+                    mod.path
+                });
+                //item.Text = ModFP.SelectName(mod.img);
+                //item.SubItems.Add(mod.vpkId);
                 item.ImageIndex = index++;
-                item.Tag = mod.Id;
+                item.Tag = mod.id;
                 listView1.Items.Add(item);
             }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var a = repo.GetMods()
+            var a = ModRepository.Instance.GetMods()
                 .Where(x => !ModFP.HaveWorkshopInfo(x))
                 .Select(x => ModOperation.UpdateWorkshopInfo(x))
                 .Where(x => x.Item2)
@@ -94,15 +95,14 @@ namespace L4d2_Mod_Manager
                 .ToArray();
             foreach(var b in a)
             {
-                repo.UpdateMod(b);
+                ModRepository.Instance.UpdateMod(b);
             }
         }
 
-        private static Image SelectImage(Mod mod)
+        private static Image SelectImage(string img)
         {
-            return LoadImageSafe(mod.WorkshopPreviewImage).ValueOr(() =>
-                LoadImageSafe(mod.Thumbnail).ValueOr(
-                    Image.FromFile(@"C:\Users\Louis\Desktop\no-image.png")));
+            return LoadImageSafe(img).ValueOr(
+                    Image.FromFile(@"C:\Users\Louis\Desktop\no-image.png"));
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace L4d2_Mod_Manager
             {
                 // 取出自定义数据
                 int modId = (int)i.Tag;
-                var mod = repo.FindModById(modId);
+                var mod = ModRepository.Instance.FindModById(modId);
                 mod.Map(x => {
                     ModOperation.DeactiveMod(x);
                     return 0;
