@@ -23,6 +23,48 @@ namespace L4d2_Mod_Manager
             UpdateModList();
         }
 
+        /// <summary>
+        /// 更新模组列表
+        /// </summary>
+        private void UpdateModList()
+        {
+            listView1.Items.Clear();
+            imageList1.Images.Clear();
+
+            int index = 0;
+
+            foreach (var mod in ModOperation.ModInfos())
+            {
+                var img = SelectImage(mod.img);
+                imageList1.Images.Add(img);
+
+                ListViewItem item = new(new string[] {
+                    mod.name,
+                    mod.vpkid,
+                    mod.path
+                });
+                //item.Text = ModFP.SelectName(mod.img);
+                //item.SubItems.Add(mod.vpkId);
+                item.ImageIndex = index++;
+                item.Tag = mod.id;
+                listView1.Items.Add(item);
+            }
+        }
+
+        #region 定义
+        //private class TestMessageTask : TaskFramework.IMessageTask
+        //{
+        //    public string TaskName { get; private set; }
+        //    public TestMessageTask(int i)
+        //    {
+        //        TaskName = $"正在进行任务{i}...";
+        //    }
+        //
+        //    public void DoTask()
+        //    {
+        //        System.Threading.Thread.Sleep(10);
+        //    }
+        //}
         private class ExtraModTask : TaskFramework.IMessageTask
         {
             private ModFile mf;
@@ -39,6 +81,8 @@ namespace L4d2_Mod_Manager
                 ModRepository.Instance.SaveMod(mod);
             }
         }
+        #endregion
+        #region UI事件
         private void button1_Click(object sender, EventArgs e)
         {
             // 获取模组文件列表
@@ -65,31 +109,6 @@ namespace L4d2_Mod_Manager
             UpdateModList();
         }
 
-        private void UpdateModList()
-        {
-            listView1.Items.Clear();
-            imageList1.Images.Clear();
-
-            int index = 0;
-
-            foreach (var mod in ModOperation.ModInfos())
-            {
-                var img = SelectImage(mod.img);
-                imageList1.Images.Add(img);
-
-                ListViewItem item = new(new string[] {
-                    mod.name,
-                    mod.vpkid,
-                    mod.path
-                });
-                //item.Text = ModFP.SelectName(mod.img);
-                //item.SubItems.Add(mod.vpkId);
-                item.ImageIndex = index++;
-                item.Tag = mod.id;
-                listView1.Items.Add(item);
-            }
-        }
-
         private void button3_Click(object sender, EventArgs e)
         {
             var a = ModRepository.Instance.GetMods()
@@ -99,24 +118,34 @@ namespace L4d2_Mod_Manager
                 .Select(x => x.Item1)
                 .Select(x => ModOperation.MoveWorkshopPreviewImage(x))
                 .ToArray();
-            foreach(var b in a)
+            foreach (var b in a)
             {
                 ModRepository.Instance.UpdateMod(b);
             }
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem i in listView1.SelectedItems)
+            {
+                // 取出自定义数据
+                int modId = (int)i.Tag;
+                var mod = ModRepository.Instance.FindModById(modId);
+                mod.Map(x => {
+                    ModOperation.DeactiveMod(x);
+                    return 0;
+                });
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// 选择正确的图片，如果图片不存在或空使用空图片
+        /// </summary>
         private static Image SelectImage(string img)
         {
             return LoadImageSafe(img).ValueOr(
                     Image.FromFile(@"C:\Users\Louis\Desktop\no-image.png"));
-        }
-
-        /// <summary>
-        /// 从vpk文件生成临时文件
-        /// </summary>
-        private static string GetVPKTemporayPath(string vpk)
-        {
-            return Path.Combine(Path.GetTempPath(), "L4dModManagerTool", Path.GetFileNameWithoutExtension(vpk));
         }
 
         /// <summary>
@@ -134,40 +163,6 @@ namespace L4d2_Mod_Manager
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            foreach(ListViewItem i in listView1.SelectedItems)
-            {
-                // 取出自定义数据
-                int modId = (int)i.Tag;
-                var mod = ModRepository.Instance.FindModById(modId);
-                mod.Map(x => {
-                    ModOperation.DeactiveMod(x);
-                    return 0;
-                });
-            }
-        }
 
-
-        private class TestMessageTask : TaskFramework.IMessageTask
-        {
-            public string TaskName { get; private set; }
-            public TestMessageTask(int i)
-            {
-                TaskName = $"正在进行任务{i}...";
-            }
-
-            public void DoTask()
-            {
-                System.Threading.Thread.Sleep(10);
-            }
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var tasks = Enumerable.Range(0, 100).Select(x => new TestMessageTask(x));
-            using var dialog = new Form_RunningTask("某个工作", tasks.ToArray());
-            dialog.ShowDialog();
-        }
     }
 }
