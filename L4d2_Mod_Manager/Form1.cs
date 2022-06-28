@@ -32,26 +32,6 @@ namespace L4d2_Mod_Manager
                 .Select(x => VPKServices.ExtraMod(x))
                 .Select(x => ModRepository.Instance.SaveMod(x))
                 .ToArray();
-            //var snippets = VPKServices.ScanVPK();
-            //foreach(var snip in snippets)
-            //{
-            //    var mod = ModFP.CreateMod(snip.VpkName);
-            //
-            //    // 赋值缩略图信息
-            //    mod = snip.AddonImage.Match(img => mod with { Thumbnail = img }, () => mod);
-            //    mod = snip.AddonInfo.Match(info =>
-            //    {
-            //        var modinfo = ModOperation.ReadModInfo(info);
-            //        return mod with
-            //        {
-            //            Title = modinfo.Title.ValueOr(""),
-            //            Version = modinfo.Version.ValueOr(""),
-            //            Tagline = modinfo.Tagline.ValueOr(""),
-            //            Author = modinfo.Author.ValueOr("")
-            //        };
-            //    }, () => mod);
-            //    ModRepository.Instance.SaveMod(mod);
-            //}
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -140,6 +120,28 @@ namespace L4d2_Mod_Manager
                     return 0;
                 });
             }
+        }
+
+
+        private class TestMessageTask : TaskFramework.IMessageTask
+        {
+            public string TaskName { get; private set; }
+            public TestMessageTask(int i)
+            {
+                TaskName = $"正在进行任务{i}...";
+            }
+
+            public void DoTask()
+            {
+                System.Threading.Thread.Sleep(10);
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var tasks = Enumerable.Range(0, 100).Select(x => new TestMessageTask(x));
+            using var dialog = new Form_RunningTask("某个工作", tasks.ToArray());
+            dialog.ShowDialog();
         }
     }
 }
