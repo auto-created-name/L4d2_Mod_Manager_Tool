@@ -23,15 +23,41 @@ namespace L4d2_Mod_Manager
             UpdateModList();
         }
 
+        private class ExtraModTask : TaskFramework.IMessageTask
+        {
+            private ModFile mf;
+            public string TaskName { get; private set; }
+            public ExtraModTask(ModFile mf)
+            {
+                TaskName = $"正在解压{mf.FilePath}...";
+                this.mf = mf;
+            }
+            public void DoTask()
+            {
+                var savedMf = ModFileService.SaveModFile(mf);
+                var mod = VPKServices.ExtraMod(savedMf);
+                ModRepository.Instance.SaveMod(mod);
+            }
+        }
         private void button1_Click(object sender, EventArgs e)
         {
-            ModFileRepository rp = new ModFileRepository();
-            var mfs = VPKServices.ScanAllModFile().Select(mf => rp.SaveModFile(mf)).ToArray();
+            // 获取模组文件列表
+            // 保存数据库（同步）
+            // 将文件转换为模组文件（解压vpk），解析Maddoninfo，获取详细信息
+            // 入库
 
-            var res = mfs
-                .Select(x => VPKServices.ExtraMod(x))
-                .Select(x => ModRepository.Instance.SaveMod(x))
-                .ToArray();
+            var tasks = VPKServices.ScanAllModFile()
+                .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
+                .Select(mf => new ExtraModTask(mf));
+            new Form_RunningTask("扫描模组", tasks.ToArray()).ShowDialog();
+
+            //ModFileRepository rp = new ModFileRepository();
+            //var mfs = VPKServices.ScanAllModFile().Select(mf => rp.SaveModFile(mf)).ToArray();
+            //
+            //var res = mfs
+            //    .Select(x => VPKServices.ExtraMod(x))
+            //    .Select(x => ModRepository.Instance.SaveMod(x))
+            //    .ToArray();
         }
 
         private void button2_Click(object sender, EventArgs e)

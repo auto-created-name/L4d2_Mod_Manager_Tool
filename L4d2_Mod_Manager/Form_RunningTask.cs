@@ -64,7 +64,9 @@ namespace L4d2_Mod_Manager
                     }
 
                     // 将消息通过ReportProgress转发出去
-                    bgWorker.ReportProgress((int)(i + 1.0f / tasks.Length * 100), curTask.TaskName);
+                    int prog = Math.Clamp((int)((i + 1.0f) / tasks.Length * 100), 0, 100);
+                    string msg = $"({i + 1}/{tasks.Length}){curTask.TaskName}";
+                    bgWorker.ReportProgress(prog, msg);
                 }
             }
         }

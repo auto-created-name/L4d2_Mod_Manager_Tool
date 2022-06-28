@@ -52,7 +52,7 @@ namespace L4d2_Mod_Manager
             this.flowLayoutPanel1.Controls.Add(this.button_close);
             this.flowLayoutPanel1.Controls.Add(this.button_cancel);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(282, 407);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(290, 407);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(167, 31);
             this.flowLayoutPanel1.TabIndex = 0;
@@ -80,30 +80,34 @@ namespace L4d2_Mod_Manager
             // 
             // textBox_msg
             // 
+            this.textBox_msg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox_msg.Location = new System.Drawing.Point(13, 13);
             this.textBox_msg.Multiline = true;
             this.textBox_msg.Name = "textBox_msg";
             this.textBox_msg.ReadOnly = true;
             this.textBox_msg.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox_msg.Size = new System.Drawing.Size(433, 388);
+            this.textBox_msg.Size = new System.Drawing.Size(441, 388);
             this.textBox_msg.TabIndex = 1;
             // 
             // progressBar1
             // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.Location = new System.Drawing.Point(13, 410);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(263, 23);
+            this.progressBar1.Size = new System.Drawing.Size(271, 23);
             this.progressBar1.TabIndex = 2;
             // 
             // Form_RunningTask
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(461, 450);
+            this.ClientSize = new System.Drawing.Size(469, 450);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.textBox_msg);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form_RunningTask";

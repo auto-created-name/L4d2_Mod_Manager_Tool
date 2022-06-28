@@ -46,6 +46,18 @@ namespace L4d2_Mod_Manager.Domain.Repository
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public bool ModFileExists(string file)
+        {
+            var res = (long)command($"SELECT COUNT (*) FROM mod_file WHERE filename=\"{file}\";")
+                .ExecuteScalar();
+            return res > 0;
+        }
+
         public ModFile SaveModFile(ModFile mf)
         {
             if(mf.Id == TempModFileId)
@@ -98,6 +110,13 @@ namespace L4d2_Mod_Manager.Domain.Repository
                 ",filename TEXT NOT NULL UNIQUE" +
                 ",active INT NOT NULL); ";
             command.ExecuteNonQuery();
+        }
+
+        private SQLiteCommand command(string cmd)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = cmd;
+            return command;
         }
     }
 }

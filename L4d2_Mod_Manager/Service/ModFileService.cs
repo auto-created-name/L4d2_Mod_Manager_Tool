@@ -19,6 +19,16 @@ namespace L4d2_Mod_Manager.Service
             return modFileRepo.FindModFileById(fid);
         }
 
+        public static ModFile SaveModFile(ModFile mf)
+        {
+            return modFileRepo.SaveModFile(mf);
+        }
+
+        public static bool ModFileExists(string file)
+        {
+            return modFileRepo.ModFileExists(file);
+        }
+
         /// <summary>
         /// [副作用]修改数据库和文件，将模组文件关闭
         /// </summary>
