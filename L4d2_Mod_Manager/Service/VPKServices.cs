@@ -122,12 +122,12 @@ namespace L4d2_Mod_Manager.Service
         /// <summary>
         /// 列出指定文件夹中所有vpk文件
         /// </summary>
-        private static string[] ListVpk(string folder)
+        public static IEnumerable<string> ListVpk(string folder)
         {
             DirectoryInfo di = new DirectoryInfo(folder);
             if (di.Exists)
             {
-                return di.GetFiles("*.vpk").Select(f => f.FullName).ToArray();
+                return di.GetFiles("*.vpk").Select(f => f.FullName);
             }
             else
             {
