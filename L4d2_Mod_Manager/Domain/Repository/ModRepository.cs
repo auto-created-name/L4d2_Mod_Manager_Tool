@@ -63,7 +63,7 @@ namespace L4d2_Mod_Manager.Domain.Repository
         /// <summary>
         /// 更新模组
         /// </summary>
-        public void UpdateMod(Mod mod)
+        public bool UpdateMod(Mod mod)
         {
             string descriptBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(mod.WorkshopDescript));
 
@@ -74,7 +74,8 @@ namespace L4d2_Mod_Manager.Domain.Repository
                 $"workshop_previewImage = \"{mod.WorkshopPreviewImage}\" " +
                 $"WHERE " +
                 $"id = {mod.Id}";
-            command.ExecuteNonQuery();
+            int res = command.ExecuteNonQuery();
+            return res > 0;
         }
 
         public IEnumerable<Mod> GetMods()

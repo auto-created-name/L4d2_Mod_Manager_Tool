@@ -81,6 +81,27 @@ namespace L4d2_Mod_Manager
                 ModRepository.Instance.SaveMod(mod);
             }
         }
+
+        private class DownloadWorkshopInfoTask : TaskFramework.IMessageTask
+        {
+            private Mod mod;
+            public string TaskName { get; private set; }
+            public DownloadWorkshopInfoTask(Mod mod)
+            {
+                TaskName = "下载创意工坊信息，VPKID=" + mod.vpkId + "...";
+                this.mod = mod;
+            }
+
+            public void DoTask()
+            {
+                var (newMod, succ) = ModOperation.UpdateWorkshopInfo(mod);
+                if (succ)
+                {
+                    newMod = ModOperation.MoveWorkshopPreviewImage(newMod);
+                    ModOperation.UpdateMod(newMod);
+                }
+            }
+        }
         #endregion
         #region UI事件
         private void button1_Click(object sender, EventArgs e)
@@ -111,17 +132,11 @@ namespace L4d2_Mod_Manager
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var a = ModRepository.Instance.GetMods()
-                .Where(x => !ModFP.HaveWorkshopInfo(x))
-                .Select(x => ModOperation.UpdateWorkshopInfo(x))
-                .Where(x => x.Item2)
-                .Select(x => x.Item1)
-                .Select(x => ModOperation.MoveWorkshopPreviewImage(x))
-                .ToArray();
-            foreach (var b in a)
-            {
-                ModRepository.Instance.UpdateMod(b);
-            }
+            var tasks = ModRepository.Instance.GetMods()
+                .Where(ModFP.HaveVpkNumber)
+                .Where(Utility.FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo))
+                .Select(x => new DownloadWorkshopInfoTask(x));
+            new Form_RunningTask("下载创意工坊信息", tasks.ToArray()).ShowDialog();
         }
 
         private void button4_Click(object sender, EventArgs e)

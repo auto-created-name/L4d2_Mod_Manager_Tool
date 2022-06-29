@@ -40,6 +40,11 @@ namespace L4d2_Mod_Manager.Service
             modFile.Map(mf => ModFileService.DeactiveModFile(mf));
         }
 
+        public static bool UpdateMod(Mod mod)
+        {
+            return ModRepository.Instance.UpdateMod(mod);
+        }
+
         public static ModInfo ReadModInfo(string addoninfo)
         {
             //string content = File.ReadAllText(addoninfo);

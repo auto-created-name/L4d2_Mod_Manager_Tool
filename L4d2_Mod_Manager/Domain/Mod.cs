@@ -29,6 +29,8 @@ namespace L4d2_Mod_Manager.Domain
             return new Mod(-1, f.Id, vpkNum.ValueOr(null), null, null, null, null, null, null, null, null);
         }
 
+        public static bool HaveVpkNumber(Mod mod) => !string.IsNullOrEmpty(mod.vpkId);
+
         /// <summary>
         /// 从VPK名称上获取VPK号
         /// </summary>

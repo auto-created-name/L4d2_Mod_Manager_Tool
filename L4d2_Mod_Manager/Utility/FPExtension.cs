@@ -8,6 +8,8 @@ namespace L4d2_Mod_Manager.Utility
 {
     public static class FPExtension
     {
+        public static Func<T, bool> Not<T>(Func<T, bool> f) => x => !f(x);
+
         /// <summary>
         /// 在序列间插入制定元素
         /// </summary>

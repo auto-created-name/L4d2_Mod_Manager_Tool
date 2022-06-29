@@ -45,7 +45,7 @@ namespace L4d2_Mod_Manager
             // 
             this.button1.Location = new System.Drawing.Point(12, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(122, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "扫描模组";
             this.button1.UseVisualStyleBackColor = true;
@@ -63,9 +63,9 @@ namespace L4d2_Mod_Manager
             this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
             this.listView1.LargeImageList = this.imageList1;
-            this.listView1.Location = new System.Drawing.Point(93, 0);
+            this.listView1.Location = new System.Drawing.Point(140, 0);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(707, 450);
+            this.listView1.Size = new System.Drawing.Size(660, 450);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -96,9 +96,9 @@ namespace L4d2_Mod_Manager
             // 
             this.button3.Location = new System.Drawing.Point(12, 70);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(122, 23);
             this.button3.TabIndex = 3;
-            this.button3.Text = "button3";
+            this.button3.Text = "下载创意工坊数据";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -106,7 +106,7 @@ namespace L4d2_Mod_Manager
             // 
             this.button4.Location = new System.Drawing.Point(12, 99);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(122, 23);
             this.button4.TabIndex = 4;
             this.button4.Text = "取消激活";
             this.button4.UseVisualStyleBackColor = true;
@@ -116,7 +116,7 @@ namespace L4d2_Mod_Manager
             // 
             this.button2.Location = new System.Drawing.Point(12, 41);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(122, 23);
             this.button2.TabIndex = 2;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;

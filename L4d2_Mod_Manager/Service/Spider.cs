@@ -27,6 +27,7 @@ namespace L4d2_Mod_Manager.Service
                 X509Certificate2 certificate = new X509Certificate2(certFile);
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                req.Timeout = 5000;
                 req.ClientCertificates.Add(certificate);
                 req.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
 
