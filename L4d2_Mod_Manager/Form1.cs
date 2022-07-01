@@ -17,9 +17,17 @@ namespace L4d2_Mod_Manager
 {
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// 过滤字符串
+        /// </summary>
+        private string FilterString => textBox_search.Text;
+
         public Form1()
         {
             InitializeComponent();
+
+            button_clearFilter.Visible = false;
+
             UpdateModList();
         }
 
@@ -33,20 +41,20 @@ namespace L4d2_Mod_Manager
 
             int index = 0;
 
-            foreach (var mod in ModOperation.ModInfos())
+            foreach (var mod in ModOperation.FilterMod(FilterString).Select(ModOperation.GetModDetail))
             {
-                var img = SelectImage(mod.img);
+                var img = SelectImage(mod.Img);
                 imageList1.Images.Add(img);
 
                 ListViewItem item = new(new string[] {
-                    mod.name,
-                    mod.vpkid,
-                    mod.path
+                    mod.Name,
+                    mod.Vpkid,
+                    mod.Path
                 });
                 //item.Text = ModFP.SelectName(mod.img);
                 //item.SubItems.Add(mod.vpkId);
                 item.ImageIndex = index++;
-                item.Tag = mod.id;
+                item.Tag = mod.Id;
                 listView1.Items.Add(item);
             }
         }
@@ -152,6 +160,34 @@ namespace L4d2_Mod_Manager
                 });
             }
         }
+
+        private void textBox_search_TextChanged(object sender, EventArgs e)
+        {
+            button_clearFilter.Visible = !string.IsNullOrEmpty(textBox_search.Text);
+            UpdateModList();
+        }
+        private void button_clearFilter_Click(object sender, EventArgs e)
+        {
+            textBox_search.Text = "";
+        }
+
+        // 模组列表右键菜单
+        private void listView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right)
+            {
+                contextMenuStrip1.Show(listView1, e.Location);
+            }
+        }
+
+        private void toolStripMenuItem_showInExplorer_Click(object sender, EventArgs e)
+        {
+            //Module.FileExplorer.FileExplorerUtils.OpenFileExplorerAndSelectItem()
+            if (listView1.SelectedItems.Count == 0)
+                return;
+            int modId = (int)listView1.SelectedItems[0].Tag;
+            ModOperation.ShowModInFileExplorer(modId);
+        }
         #endregion
 
         /// <summary>
@@ -177,7 +213,5 @@ namespace L4d2_Mod_Manager
                 return Utility.Maybe.None;
             }
         }
-
-
     }
 }

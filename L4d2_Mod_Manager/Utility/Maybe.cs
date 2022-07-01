@@ -69,6 +69,12 @@ namespace L4d2_Mod_Manager.Utility
             return convert(value);
         }
 
+        public void Map(Action<T> a)
+        {
+            if (hasValue)
+                a(value);
+        }
+
         public Maybe<TResult> Select<TResult>(Func<T, TResult> convert)
         {
             if (!hasValue)

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace L4d2_Mod_Manager.Service
 {
+    public record ModDetail(int Id, string Img, string Name, string Vpkid, string Path);
     public class ModOperation
     {
         private static ModFileRepository modFileRepo = new ModFileRepository();
@@ -19,16 +20,35 @@ namespace L4d2_Mod_Manager.Service
         private const string TaglineKeyName = "addontagline";
         private const string AuthorKeyName = "addonauthor";
 
-        public static IEnumerable<(int id, string img, string name, string vpkid, string path)> ModInfos()
+        public static IEnumerable<ModDetail> ModInfos()
         {
             return ModRepository.Instance.GetMods()
-                .Select(m => 
-                (m.Id,
+                .Select(GetModDetail);
+        }
+
+        /// <summary>
+        /// 打开资源管理器，选中模组文件
+        /// </summary>
+        public static void ShowModInFileExplorer(int modId)
+        {
+            ModRepository.Instance.FindModById(modId)
+                .Map(m => m.FileId)
+                .Bind(ModFileService.FindFileById)
+                .Map(f => Module.FileExplorer.FileExplorerUtils.OpenFileExplorerAndSelectItem(f.FilePath));
+        }
+
+        public static ModDetail GetModDetail(Mod m)
+        {
+            return new(m.Id,
                 ModFP.SelectPreview(m),
                 ModFP.SelectName(m)
                 , m.vpkId
-                ,ModFileService.FindFileById(m.FileId).Map(x => x.FilePath).ValueOr(""))
-            );
+                , ModFileService.FindFileById(m.FileId).Map(x => x.FilePath).ValueOr(""));
+        }
+
+        public static IEnumerable<Mod> FilterMod(string filter)
+        {
+            return ModRepository.Instance.GetMods().Where(m => FilterMod(filter, m));
         }
 
         /// <summary>
@@ -109,6 +129,18 @@ namespace L4d2_Mod_Manager.Service
                     WorkshopPreviewImage = info.PreviewImage
                 });
             return newMod.Match(x => (x, true), () => (mod, false));
+        }
+
+        private static bool FilterMod(string filter, Mod mod)
+        {
+            if (string.IsNullOrEmpty(filter))
+                return true;
+            else
+                return
+                    mod.WorkshopTitle.Contains(filter, StringComparison.CurrentCultureIgnoreCase)
+                    || mod.Title.Contains(filter, StringComparison.CurrentCultureIgnoreCase)
+                    || mod.Author.Contains(filter, StringComparison.CurrentCultureIgnoreCase)
+                    || mod.vpkId.Contains(filter);
         }
 
         static StreamWriter fs = new StreamWriter(File.OpenWrite("out.txt"));
