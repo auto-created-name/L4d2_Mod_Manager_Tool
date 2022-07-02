@@ -163,36 +163,36 @@ namespace L4d2_Mod_Manager
             this.toolStripMenuItem_downloadWorkshopInfo,
             this.tolStripMenuItem_settings});
             this.工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
-            this.工具ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.工具ToolStripMenuItem.Text = "工具";
+            this.工具ToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
+            this.工具ToolStripMenuItem.Text = "工具(&T)";
             // 
             // toolStripMenuItem_refresh
             // 
             this.toolStripMenuItem_refresh.Name = "toolStripMenuItem_refresh";
             this.toolStripMenuItem_refresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.toolStripMenuItem_refresh.Size = new System.Drawing.Size(169, 22);
-            this.toolStripMenuItem_refresh.Text = "刷新模组列表";
+            this.toolStripMenuItem_refresh.Size = new System.Drawing.Size(185, 22);
+            this.toolStripMenuItem_refresh.Text = "刷新模组列表(&R)";
             this.toolStripMenuItem_refresh.Click += new System.EventHandler(this.toolStripMenuItem_refresh_Click);
             // 
             // toolStripMenuItem_scanModFile
             // 
             this.toolStripMenuItem_scanModFile.Name = "toolStripMenuItem_scanModFile";
-            this.toolStripMenuItem_scanModFile.Size = new System.Drawing.Size(169, 22);
-            this.toolStripMenuItem_scanModFile.Text = "扫描模组文件";
+            this.toolStripMenuItem_scanModFile.Size = new System.Drawing.Size(185, 22);
+            this.toolStripMenuItem_scanModFile.Text = "扫描模组文件(&S)";
             this.toolStripMenuItem_scanModFile.Click += new System.EventHandler(this.toolStripMenuItem_scanModFile_Click);
             // 
             // toolStripMenuItem_downloadWorkshopInfo
             // 
             this.toolStripMenuItem_downloadWorkshopInfo.Name = "toolStripMenuItem_downloadWorkshopInfo";
-            this.toolStripMenuItem_downloadWorkshopInfo.Size = new System.Drawing.Size(169, 22);
-            this.toolStripMenuItem_downloadWorkshopInfo.Text = "下载工坊信息";
+            this.toolStripMenuItem_downloadWorkshopInfo.Size = new System.Drawing.Size(185, 22);
+            this.toolStripMenuItem_downloadWorkshopInfo.Text = "下载工坊信息(&D)";
             this.toolStripMenuItem_downloadWorkshopInfo.Click += new System.EventHandler(this.toolStripMenuItem_downloadWorkshopInfo_Click);
             // 
             // tolStripMenuItem_settings
             // 
             this.tolStripMenuItem_settings.Name = "tolStripMenuItem_settings";
-            this.tolStripMenuItem_settings.Size = new System.Drawing.Size(169, 22);
-            this.tolStripMenuItem_settings.Text = "设置";
+            this.tolStripMenuItem_settings.Size = new System.Drawing.Size(185, 22);
+            this.tolStripMenuItem_settings.Text = "选项(&O)";
             this.tolStripMenuItem_settings.Click += new System.EventHandler(this.tolStripMenuItem_settings_Click);
             // 
             // 帮助ToolStripMenuItem
@@ -200,14 +200,14 @@ namespace L4d2_Mod_Manager
             this.帮助ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_about});
             this.帮助ToolStripMenuItem.Name = "帮助ToolStripMenuItem";
-            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.帮助ToolStripMenuItem.Text = "帮助";
+            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(61, 21);
+            this.帮助ToolStripMenuItem.Text = "帮助(&H)";
             // 
             // toolStripMenuItem_about
             // 
             this.toolStripMenuItem_about.Name = "toolStripMenuItem_about";
-            this.toolStripMenuItem_about.Size = new System.Drawing.Size(124, 22);
-            this.toolStripMenuItem_about.Text = "关于软件";
+            this.toolStripMenuItem_about.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_about.Text = "关于软件(&A)";
             this.toolStripMenuItem_about.Click += new System.EventHandler(this.toolStripMenuItem_about_Click);
             // 
             // panel1

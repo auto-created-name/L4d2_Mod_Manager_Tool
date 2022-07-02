@@ -166,7 +166,7 @@ namespace L4d2_Mod_Manager
             this.MinimumSize = new System.Drawing.Size(600, 241);
             this.Name = "Form_Settings";
             this.ShowIcon = false;
-            this.Text = "设置";
+            this.Text = "选项";
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
