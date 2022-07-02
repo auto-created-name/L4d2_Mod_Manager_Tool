@@ -79,6 +79,18 @@ namespace L4d2_Mod_Manager
             }
         }
 
+        /// <summary>
+        /// 为没有创意工坊信息的模组下载创意工坊数据
+        /// </summary>
+        private void DownloadWorkshopInfoIfDontHave()
+        {
+            var tasks = ModRepository.Instance.GetMods()
+                .Where(ModFP.HaveVpkNumber)
+                .Where(Utility.FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo))
+                .Select(x => new DownloadWorkshopInfoTask(x));
+            new Form_RunningTask("下载创意工坊信息", tasks.ToArray()).ShowDialog();
+            UpdateModList();
+        }
         #region 定义
         //private class TestMessageTask : TaskFramework.IMessageTask
         //{
@@ -132,20 +144,6 @@ namespace L4d2_Mod_Manager
         }
         #endregion
         #region UI事件
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            UpdateModList();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            var tasks = ModRepository.Instance.GetMods()
-                .Where(ModFP.HaveVpkNumber)
-                .Where(Utility.FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo))
-                .Select(x => new DownloadWorkshopInfoTask(x));
-            new Form_RunningTask("下载创意工坊信息", tasks.ToArray()).ShowDialog();
-        }
 
         private void button4_Click(object sender, EventArgs e)
         {
@@ -205,6 +203,18 @@ namespace L4d2_Mod_Manager
         {
             new Dialog_AboutSoftware().ShowDialog();
         }
+
+        private void tolStripMenuItem_settings_Click(object sender, EventArgs e)
+        {
+            var form = new Form_Settings();
+            form.StartPosition = FormStartPosition.CenterParent;
+            form.ShowDialog(this);
+        }
+
+        private void toolStripMenuItem_downloadWorkshopInfo_Click(object sender, EventArgs e)
+        {
+            DownloadWorkshopInfoIfDontHave();
+        }
         #endregion
 
         /// <summary>
@@ -229,13 +239,6 @@ namespace L4d2_Mod_Manager
             {
                 return Utility.Maybe.None;
             }
-        }
-
-        private void tolStripMenuItem_settings_Click(object sender, EventArgs e)
-        {
-            var form = new Form_Settings();
-            form.StartPosition = FormStartPosition.CenterParent;
-            form.ShowDialog(this);
         }
     }
 }

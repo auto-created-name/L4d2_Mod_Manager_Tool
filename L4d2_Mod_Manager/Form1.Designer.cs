@@ -44,6 +44,7 @@ namespace L4d2_Mod_Manager
             this.工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_refresh = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_scanModFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_downloadWorkshopInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.tolStripMenuItem_settings = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_about = new System.Windows.Forms.ToolStripMenuItem();
@@ -157,6 +158,7 @@ namespace L4d2_Mod_Manager
             this.工具ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_refresh,
             this.toolStripMenuItem_scanModFile,
+            this.toolStripMenuItem_downloadWorkshopInfo,
             this.tolStripMenuItem_settings});
             this.工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
             this.工具ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
@@ -176,6 +178,13 @@ namespace L4d2_Mod_Manager
             this.toolStripMenuItem_scanModFile.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_scanModFile.Text = "扫描模组文件";
             this.toolStripMenuItem_scanModFile.Click += new System.EventHandler(this.toolStripMenuItem_scanModFile_Click);
+            // 
+            // toolStripMenuItem_downloadWorkshopInfo
+            // 
+            this.toolStripMenuItem_downloadWorkshopInfo.Name = "toolStripMenuItem_downloadWorkshopInfo";
+            this.toolStripMenuItem_downloadWorkshopInfo.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_downloadWorkshopInfo.Text = "下载工坊信息";
+            this.toolStripMenuItem_downloadWorkshopInfo.Click += new System.EventHandler(this.toolStripMenuItem_downloadWorkshopInfo_Click);
             // 
             // tolStripMenuItem_settings
             // 
@@ -249,6 +258,7 @@ namespace L4d2_Mod_Manager
         private System.Windows.Forms.ToolStripMenuItem 帮助ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_about;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_downloadWorkshopInfo;
     }
 }
 
