@@ -24,6 +24,12 @@ namespace L4d2_Mod_Manager.Utility
             }
         }
 
+        public static void Iter<T>(this IEnumerable<T> xs, Action<T> a)
+        {
+            foreach (var x in xs)
+                a(x);
+        }
+
 
         public static Maybe<TOut> FindElementSafe<T, TOut>(this ILookup<T,TOut> lk, T key)
         {

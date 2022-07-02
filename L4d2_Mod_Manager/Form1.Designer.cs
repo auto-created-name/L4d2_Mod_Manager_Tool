@@ -166,22 +166,23 @@ namespace L4d2_Mod_Manager
             // 
             this.toolStripMenuItem_refresh.Name = "toolStripMenuItem_refresh";
             this.toolStripMenuItem_refresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.toolStripMenuItem_refresh.Size = new System.Drawing.Size(169, 22);
+            this.toolStripMenuItem_refresh.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_refresh.Text = "刷新模组列表";
             this.toolStripMenuItem_refresh.Click += new System.EventHandler(this.toolStripMenuItem_refresh_Click);
             // 
             // toolStripMenuItem_scanModFile
             // 
             this.toolStripMenuItem_scanModFile.Name = "toolStripMenuItem_scanModFile";
-            this.toolStripMenuItem_scanModFile.Size = new System.Drawing.Size(169, 22);
+            this.toolStripMenuItem_scanModFile.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_scanModFile.Text = "扫描模组文件";
             this.toolStripMenuItem_scanModFile.Click += new System.EventHandler(this.toolStripMenuItem_scanModFile_Click);
             // 
             // tolStripMenuItem_settings
             // 
             this.tolStripMenuItem_settings.Name = "tolStripMenuItem_settings";
-            this.tolStripMenuItem_settings.Size = new System.Drawing.Size(169, 22);
+            this.tolStripMenuItem_settings.Size = new System.Drawing.Size(180, 22);
             this.tolStripMenuItem_settings.Text = "设置";
+            this.tolStripMenuItem_settings.Click += new System.EventHandler(this.tolStripMenuItem_settings_Click);
             // 
             // 帮助ToolStripMenuItem
             // 
@@ -194,7 +195,7 @@ namespace L4d2_Mod_Manager
             // toolStripMenuItem_about
             // 
             this.toolStripMenuItem_about.Name = "toolStripMenuItem_about";
-            this.toolStripMenuItem_about.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_about.Size = new System.Drawing.Size(124, 22);
             this.toolStripMenuItem_about.Text = "关于软件";
             this.toolStripMenuItem_about.Click += new System.EventHandler(this.toolStripMenuItem_about_Click);
             // 

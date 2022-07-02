@@ -10,5 +10,8 @@
     <Compile Update="Form_RunningTask.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Form_Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 </Project>
