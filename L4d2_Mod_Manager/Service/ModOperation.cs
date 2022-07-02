@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace L4d2_Mod_Manager.Service
 {
-    public record ModDetail(int Id, string Img, string Name, string Vpkid, string Path);
+    public record ModDetail(int Id, string Img, string Name, string Vpkid, string Author, string Tagline);
     public class ModOperation
     {
         private static ModFileRepository modFileRepo = new ModFileRepository();
@@ -43,7 +43,8 @@ namespace L4d2_Mod_Manager.Service
                 ModFP.SelectPreview(m),
                 ModFP.SelectName(m)
                 , m.vpkId
-                , ModFileService.FindFileById(m.FileId).Map(x => x.FilePath).ValueOr(""));
+                , m.Author
+                , m.Tagline);
         }
 
         public static IEnumerable<Mod> FilterMod(string filter)

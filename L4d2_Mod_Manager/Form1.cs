@@ -32,6 +32,25 @@ namespace L4d2_Mod_Manager
         }
 
         /// <summary>
+        /// 更新模组文件
+        /// </summary>
+        private void RefreshModFile()
+        {
+            // 获取模组文件列表
+            // 保存数据库（同步）
+            // 将文件转换为模组文件（解压vpk），解析Maddoninfo，获取详细信息
+            // 入库
+            var tasks = VPKServices.ScanAllModFile()
+                .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
+                .Select(mf => new ExtraModTask(mf)).ToArray();
+            // 如果有新增模型，开启任务界面，开始扫描
+            if(tasks.Length > 0)
+                new Form_RunningTask("扫描模组", tasks).ShowDialog();
+            // 最后更新模组列表
+            UpdateModList();
+        }
+
+        /// <summary>
         /// 更新模组列表
         /// </summary>
         private void UpdateModList()
@@ -49,7 +68,8 @@ namespace L4d2_Mod_Manager
                 ListViewItem item = new(new string[] {
                     mod.Name,
                     mod.Vpkid,
-                    mod.Path
+                    mod.Author,
+                    mod.Tagline
                 });
                 //item.Text = ModFP.SelectName(mod.img);
                 //item.SubItems.Add(mod.vpkId);
@@ -112,26 +132,6 @@ namespace L4d2_Mod_Manager
         }
         #endregion
         #region UI事件
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // 获取模组文件列表
-            // 保存数据库（同步）
-            // 将文件转换为模组文件（解压vpk），解析Maddoninfo，获取详细信息
-            // 入库
-
-            var tasks = VPKServices.ScanAllModFile()
-                .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
-                .Select(mf => new ExtraModTask(mf));
-            new Form_RunningTask("扫描模组", tasks.ToArray()).ShowDialog();
-
-            //ModFileRepository rp = new ModFileRepository();
-            //var mfs = VPKServices.ScanAllModFile().Select(mf => rp.SaveModFile(mf)).ToArray();
-            //
-            //var res = mfs
-            //    .Select(x => VPKServices.ExtraMod(x))
-            //    .Select(x => ModRepository.Instance.SaveMod(x))
-            //    .ToArray();
-        }
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -187,6 +187,22 @@ namespace L4d2_Mod_Manager
                 return;
             int modId = (int)listView1.SelectedItems[0].Tag;
             ModOperation.ShowModInFileExplorer(modId);
+        }
+
+        // 刷新只更新列表
+        private void toolStripMenuItem_refresh_Click(object sender, EventArgs e)
+        {
+            UpdateModList();
+        }
+
+        private void toolStripMenuItem_scanModFile_Click(object sender, EventArgs e)
+        {
+            RefreshModFile();
+        }
+
+        private void toolStripMenuItem_about_Click(object sender, EventArgs e)
+        {
+            new Dialog_AboutSoftware().ShowDialog();
         }
         #endregion
 
