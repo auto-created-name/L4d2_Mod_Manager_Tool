@@ -1,4 +1,5 @@
-﻿using System;
+﻿using L4d2_Mod_Manager.Module.Settings;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,7 +14,7 @@ namespace L4d2_Mod_Manager.Arthitecture
     /// </summary>
     public class NoVtfConverter
     {
-        private const string NoVtfExecutablePath = @"E:\Projects\no_vtf-windows_x64\no_vtf\no_vtf.exe";
+        private static string NoVtfExecutablePath => SettingFP.GetSetting().NoVtfExecutablePath;
 
         /// <summary>
         /// 将Vtf文件转换为普通图片文件

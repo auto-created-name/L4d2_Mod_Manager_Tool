@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using L4d2_Mod_Manager.Domain;
 using L4d2_Mod_Manager.Domain.Repository;
 using L4d2_Mod_Manager.Service;
+using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager
 {
@@ -40,6 +41,18 @@ namespace L4d2_Mod_Manager
         /// </summary>
         private void RefreshModFile()
         {
+            // 开始前检查
+            var setting = Module.Settings.SettingFP.GetSetting();
+            if (!File.Exists(setting.VPKExecutablePath))
+            {
+                WinformUtility.ErrorMessageBox("请先设置vpk可执行程序", "环境错误");
+                return;
+            }
+            if (!File.Exists(setting.NoVtfExecutablePath))
+            {
+                WinformUtility.ErrorMessageBox("请先设置no_vtf可执行程序", "环境错误");
+                return;
+            }
             // 获取模组文件列表
             // 保存数据库（同步）
             // 将文件转换为模组文件（解压vpk），解析Maddoninfo，获取详细信息

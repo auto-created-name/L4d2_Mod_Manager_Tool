@@ -11,5 +11,15 @@ namespace L4d2_Mod_Manager.Module.Settings
         /// 模组文件夹
         /// </summary>
         public List<string> modFileFolder;
+
+        /// <summary>
+        /// no_vtf可执行程序
+        /// </summary>
+        public string NoVtfExecutablePath;
+
+        /// <summary>
+        /// vpk可执行程序
+        /// </summary>
+        public string VPKExecutablePath;
     }
 }

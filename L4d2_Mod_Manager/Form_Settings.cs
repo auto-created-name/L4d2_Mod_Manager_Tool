@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using L4d2_Mod_Manager.Module.Settings;
 using L4d2_Mod_Manager.Utility;
+using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager
 {
@@ -24,8 +25,9 @@ namespace L4d2_Mod_Manager
             locationList = new();
             setting.modFileFolder.Iter(x => locationList.Add(x));
 
-            listBox_modFileLocation.DataSource = locationList;
-
+            listBox_modFileLocation.DataSource  = locationList;
+            textBox_novtfExecutable.Text        = setting.NoVtfExecutablePath;
+            textBox_vpkExecutable.Text          = setting.VPKExecutablePath;
         }
 
         /// <summary>
@@ -43,14 +45,14 @@ namespace L4d2_Mod_Manager
 
             if (locationList.Contains(folder))
             {
-                ErrorMessageBox("路径已存在", "添加路径错误");
+                WinformUtility.ErrorMessageBox("路径已存在", "添加路径错误");
                 return;
             }
 
             if (!Directory.Exists(folder))
             {
 
-                ErrorMessageBox($"路径\"{folder}\"不存在", "添加路径错误");
+                WinformUtility.ErrorMessageBox($"路径\"{folder}\"不存在", "添加路径错误");
                 return;
             }
 
@@ -93,11 +95,6 @@ namespace L4d2_Mod_Manager
             }
         }
 
-        private static void ErrorMessageBox(string content, string caption)
-        {
-            MessageBox.Show(content, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
         private void button_cancel_Click(object sender, EventArgs e)
         {
             Close();
@@ -106,8 +103,30 @@ namespace L4d2_Mod_Manager
         private void button_confirm_Click(object sender, EventArgs e)
         {
             setting.modFileFolder = locationList.ToList();
+            setting.NoVtfExecutablePath = textBox_novtfExecutable.Text;
+            setting.VPKExecutablePath = textBox_vpkExecutable.Text;
             SettingFP.SaveSetting(setting);
             Close();
+        }
+
+        private void button_novtfSelectExecutable_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new();
+            dialog.Filter = "no_vtf(*.exe) | *.exe";
+            if(dialog.ShowDialog() == DialogResult.OK)
+            {
+                textBox_novtfExecutable.Text = dialog.FileName;
+            }
+        }
+
+        private void button_vpkSelectExecutable_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new();
+            dialog.Filter = "vpk(*.exe) | *.exe";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                textBox_vpkExecutable.Text = dialog.FileName;
+            }
         }
     }
 }

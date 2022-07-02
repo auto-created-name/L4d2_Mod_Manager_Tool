@@ -5,12 +5,13 @@ using System.Diagnostics;
 using System.Text;
 using L4d2_Mod_Manager.Utility;
 using L4d2_Mod_Manager.Arthitecture;
+using L4d2_Mod_Manager.Module.Settings;
 
 namespace L4d2_Mod_Manager.Arthitecture
 {
     class VPKProcess
     {
-        private const string VPKPath = @"E:\Steam\steamapps\common\Left 4 Dead 2\bin\vpk.exe";
+        private static string VPKPath => SettingFP.GetSetting().VPKExecutablePath;
 
         public static void ExtractFile(string vpk, string targetDir, params string[] file)
         {
