@@ -37,6 +37,17 @@ namespace L4d2_Mod_Manager.Service
                 .Map(f => Module.FileExplorer.FileExplorerUtils.OpenFileExplorerAndSelectItem(f.FilePath));
         }
 
+        /// <summary>
+        /// 使用资源管理器打开模组文件
+        /// </summary>
+        public static void OpenModFileInExplorer(int modId)
+        {
+            ModRepository.Instance.FindModById(modId)
+                .Map(m => m.FileId)
+                .Bind(ModFileService.FindFileById)
+                .Map(f => Module.FileExplorer.FileExplorerUtils.OpenFileInExplorer(f.FilePath));
+        }
+
         public static ModDetail GetModDetail(Mod m)
         {
             return new(m.Id,
@@ -145,21 +156,21 @@ namespace L4d2_Mod_Manager.Service
         }
 
         static StreamWriter fs = new StreamWriter(File.OpenWrite("out.txt"));
-        private static string[] ParseLine(string line)
+        private static IEnumerable<string> ParseLine(string line)
         {
             line = line.Trim();
             var matches = Regex.Matches(line, "\"(?<a>[^\"]+)\"|(?<a>[a-zA-Z0-9_]+)|//.*$");
             var words = matches.Select(m => m.Groups["a"].Value).ToArray();
 
-            if (words.Length == 2)
+            if (words.Length >= 2)
             {
                 fs.WriteLine($"{words[0]} -- {words[1]}");
                 fs.Flush();
-                return words;
+                return words.Take(2);
             }
             else
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
         }
 

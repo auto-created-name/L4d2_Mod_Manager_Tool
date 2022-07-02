@@ -25,9 +25,13 @@ namespace L4d2_Mod_Manager
         public Form1()
         {
             InitializeComponent();
-
+            Text = "求生之路2模组管理工具 V" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             button_clearFilter.Visible = false;
-
+            listView1.ListViewItemSorter = new Widget.ListViewColumnSorter()
+            {
+                SortColumn = 0,
+                Order = SortOrder.Ascending
+            };
             UpdateModList();
         }
 
@@ -214,6 +218,14 @@ namespace L4d2_Mod_Manager
         private void toolStripMenuItem_downloadWorkshopInfo_Click(object sender, EventArgs e)
         {
             DownloadWorkshopInfoIfDontHave();
+        }
+
+        private void listView1_DoubleClick(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count == 0)
+                return;
+            int modId = (int)listView1.SelectedItems[0].Tag;
+            ModOperation.OpenModFileInExplorer(modId);
         }
         #endregion
 

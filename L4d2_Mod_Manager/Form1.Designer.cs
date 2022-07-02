@@ -30,6 +30,7 @@ namespace L4d2_Mod_Manager
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -74,6 +75,7 @@ namespace L4d2_Mod_Manager
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
             this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
             // 
             // columnHeader2
@@ -168,28 +170,28 @@ namespace L4d2_Mod_Manager
             // 
             this.toolStripMenuItem_refresh.Name = "toolStripMenuItem_refresh";
             this.toolStripMenuItem_refresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.toolStripMenuItem_refresh.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_refresh.Size = new System.Drawing.Size(169, 22);
             this.toolStripMenuItem_refresh.Text = "刷新模组列表";
             this.toolStripMenuItem_refresh.Click += new System.EventHandler(this.toolStripMenuItem_refresh_Click);
             // 
             // toolStripMenuItem_scanModFile
             // 
             this.toolStripMenuItem_scanModFile.Name = "toolStripMenuItem_scanModFile";
-            this.toolStripMenuItem_scanModFile.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_scanModFile.Size = new System.Drawing.Size(169, 22);
             this.toolStripMenuItem_scanModFile.Text = "扫描模组文件";
             this.toolStripMenuItem_scanModFile.Click += new System.EventHandler(this.toolStripMenuItem_scanModFile_Click);
             // 
             // toolStripMenuItem_downloadWorkshopInfo
             // 
             this.toolStripMenuItem_downloadWorkshopInfo.Name = "toolStripMenuItem_downloadWorkshopInfo";
-            this.toolStripMenuItem_downloadWorkshopInfo.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_downloadWorkshopInfo.Size = new System.Drawing.Size(169, 22);
             this.toolStripMenuItem_downloadWorkshopInfo.Text = "下载工坊信息";
             this.toolStripMenuItem_downloadWorkshopInfo.Click += new System.EventHandler(this.toolStripMenuItem_downloadWorkshopInfo_Click);
             // 
             // tolStripMenuItem_settings
             // 
             this.tolStripMenuItem_settings.Name = "tolStripMenuItem_settings";
-            this.tolStripMenuItem_settings.Size = new System.Drawing.Size(180, 22);
+            this.tolStripMenuItem_settings.Size = new System.Drawing.Size(169, 22);
             this.tolStripMenuItem_settings.Text = "设置";
             this.tolStripMenuItem_settings.Click += new System.EventHandler(this.tolStripMenuItem_settings_Click);
             // 
@@ -226,6 +228,7 @@ namespace L4d2_Mod_Manager
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.button_clearFilter);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "求生之路2模组管理工具";

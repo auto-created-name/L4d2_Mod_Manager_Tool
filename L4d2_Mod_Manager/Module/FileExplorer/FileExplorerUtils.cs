@@ -19,5 +19,15 @@ namespace L4d2_Mod_Manager.Module.FileExplorer
             psi.Arguments = $"/select,{file}";
             Process.Start(psi);
         }
+
+        /// <summary>
+        /// 使用资源管理器打开文件
+        /// </summary>
+        public static void OpenFileInExplorer(string file)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo("Explorer.exe");
+            psi.Arguments = file;
+            Process.Start(psi);
+        }
     }
 }
