@@ -1,5 +1,6 @@
 ﻿using L4d2_Mod_Manager.Arthitecture;
 using L4d2_Mod_Manager.Domain;
+using L4d2_Mod_Manager.Module.Settings;
 using L4d2_Mod_Manager.Utility;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,14 @@ namespace L4d2_Mod_Manager.Service
 {
     public class VPKServices
     {
-        private const string VpkFolder = @"E:\Steam\steamapps\common\Left 4 Dead 2\left4dead2\addons";
-
         /// <summary>
         /// 扫描所有的模组文件
         /// </summary>
         public static IEnumerable<ModFile> ScanAllModFile()
         {
-            return ListVpk(VpkFolder).Select(file => ModFileFP.CreateModFile(file));
+            return ModFolders
+                .SelectMany(ListVpk)
+                .Select(file => ModFileFP.CreateModFile(file));
         }
 
         /// <summary>
@@ -48,12 +49,12 @@ namespace L4d2_Mod_Manager.Service
             return mod;
         }
 
-        public static VpkSnippet[] ScanVPK()
-        {
-            var vpks = ListVpk(VpkFolder);
-            var snippets = vpks.Select(vpk => SnippedVpk(vpk)).ToArray().ToArray();
-            return snippets;
-        }
+        //public static VpkSnippet[] ScanVPK()
+        //{
+        //    var vpks = ListVpk(VpkFolder);
+        //    var snippets = vpks.Select(vpk => SnippedVpk(vpk)).ToArray().ToArray();
+        //    return snippets;
+        //}
 
         /// <summary>
         /// 解压vpk并生成摘要
@@ -160,6 +161,11 @@ namespace L4d2_Mod_Manager.Service
             }
 
         }
+
+        /// <summary>
+        /// 模组文件夹
+        /// </summary>
+        private static IEnumerable<string> ModFolders => SettingFP.GetSetting().modFileFolder;
         #region 查找文件
         /// <summary>
         /// 找到addonimage文件

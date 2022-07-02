@@ -44,7 +44,7 @@ namespace L4d2_Mod_Manager
                 .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
                 .Select(mf => new ExtraModTask(mf)).ToArray();
             // 如果有新增模型，开启任务界面，开始扫描
-            if(tasks.Length > 0)
+            if (tasks.Length > 0)
                 new Form_RunningTask("扫描模组", tasks).ShowDialog();
             // 最后更新模组列表
             UpdateModList();
@@ -154,7 +154,8 @@ namespace L4d2_Mod_Manager
                 // 取出自定义数据
                 int modId = (int)i.Tag;
                 var mod = ModRepository.Instance.FindModById(modId);
-                mod.Map(x => {
+                mod.Map(x =>
+                {
                     ModOperation.DeactiveMod(x);
                     return 0;
                 });
@@ -174,7 +175,7 @@ namespace L4d2_Mod_Manager
         // 模组列表右键菜单
         private void listView1_MouseClick(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 contextMenuStrip1.Show(listView1, e.Location);
             }
@@ -228,6 +229,13 @@ namespace L4d2_Mod_Manager
             {
                 return Utility.Maybe.None;
             }
+        }
+
+        private void tolStripMenuItem_settings_Click(object sender, EventArgs e)
+        {
+            var form = new Form_Settings();
+            form.StartPosition = FormStartPosition.CenterParent;
+            form.ShowDialog(this);
         }
     }
 }
