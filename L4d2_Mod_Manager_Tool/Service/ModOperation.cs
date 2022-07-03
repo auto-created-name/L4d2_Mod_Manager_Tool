@@ -3,6 +3,7 @@ using L4d2_Mod_Manager_Tool.Domain.Repository;
 using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -90,15 +91,24 @@ namespace L4d2_Mod_Manager_Tool.Service
             //    .Where(x => !x.Value.StartsWith("//"))
             //    .Select(x => x.Groups["val"].Value)
             //    .ToArray();
-            var kvs = PairQue(words).ToArray();
+            var kvs = PairQue(words).Select(x => (x.Item1.ToLower(), x.Item2)).ToArray();
 
-            var lookup = kvs.ToLookup(x => x.Item1.ToLower(), x => x.Item2);
+            var lookup = kvs.ToLookup(x => x.Item1, x => x.Item2);
+
+            // addoninfo 中的分类信息
+            var categories = kvs
+                .Where(x => KeyIsCategoryType(x.Item1))
+                .Select(PairToCategory)
+                .Select(x => x.ValueOr(null))
+                .Where(x => x != null)
+                .ToArray();
 
             return new ModInfo(
                 lookup.FindElementSafe(TitleKeyName),
                 lookup.FindElementSafe(VersionKeyName),
                 lookup.FindElementSafe(TaglineKeyName),
-                lookup.FindElementSafe(AuthorKeyName)
+                lookup.FindElementSafe(AuthorKeyName),
+                categories.ToImmutableArray()
             );
         }
 
@@ -202,6 +212,33 @@ namespace L4d2_Mod_Manager_Tool.Service
 
             for(int i = 1; i < xs.Length; i += 2)
                 yield return (xs[i - 1], xs[i]);
+        }
+
+        /// <summary>
+        /// 解析键值对，找到分类
+        /// </summary>
+        private static Maybe<string> PairToCategory((string, string) pair)
+        {
+            return pair.Item1 switch
+            {
+                "addoncontent_campaign" => pair.Item2.Equals("1") ? "Campaign" : Maybe.None,
+                "addoncontent_map"      => pair.Item2.Equals("1") ? "Map"      : Maybe.None,
+                "addoncontent_skin"     => pair.Item2.Equals("1") ? "Skin"     : Maybe.None,
+                "addoncontent_weapon"   => pair.Item2.Equals("1") ? "Weapon"   : Maybe.None,
+                "addoncontent_survivor" => pair.Item2.Equals("1") ? "Survivor" : Maybe.None,
+                "addoncontent_sound"    => pair.Item2.Equals("1") ? "Sound"    : Maybe.None,
+                "addoncontent_script"   => pair.Item2.Equals("1") ? "Script"   : Maybe.None,
+                "addoncontent_prop"     => pair.Item2.Equals("1") ? "Prop"     : Maybe.None,
+                _ => Maybe.None
+            };
+        }
+
+        /// <summary>
+        /// 模组信息键为分类类型
+        /// </summary>
+        private static bool KeyIsCategoryType(string key)
+        {
+            return key.StartsWith("addoncontent_");
         }
     }
 }

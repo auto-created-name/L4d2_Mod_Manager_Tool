@@ -46,7 +46,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                     Version = modinfo.Version.ValueOr(""),
                     Tagline = modinfo.Tagline.ValueOr(""),
                     Author = modinfo.Author.ValueOr(""),
-                    Categories = snippet.Categories
+                    Categories = snippet.Categories.Union(modinfo.Categories).ToImmutableArray()
                 };
             }, () => mod);
             return mod;
@@ -69,7 +69,7 @@ namespace L4d2_Mod_Manager_Tool.Service
             
             // 列出所有vpk内容，找到addonimage
             var files = archive.Directories.SelectMany(dir => dir.Entries).ToArray();
-            var tags = files.Select(FindTagFromVPKEntry)
+            var tags = files.Select(FindCategoryFromVPKEntry)
                 .Where(tag => tag != null).Distinct().ToArray();
 
             var imgEntry = files.Where(IsAddonImage).FirstElementSafe();
@@ -180,7 +180,10 @@ namespace L4d2_Mod_Manager_Tool.Service
                 ("Weapons", @"models/weapons/(?:.+)\.mdl"),
             };
 
-        private static string FindTagFromVPKEntry(VpkEntry entry){
+        /// <summary>
+        /// 从VPK项中通过文件名判断分类
+        /// </summary>
+        private static string FindCategoryFromVPKEntry(VpkEntry entry){
             string file = $"{entry.Path}/{entry.Filename}.{entry.Extension}";
             return CategoryRegexes
                 .Where(x => Regex.IsMatch(file, x.Item2))
