@@ -1,11 +1,11 @@
-﻿using L4d2_Mod_Manager.Utility;
+﻿using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager.Domain
+namespace L4d2_Mod_Manager_Tool.Domain
 {
     public record Mod(
         int Id,

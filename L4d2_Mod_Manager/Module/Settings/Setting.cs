@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace L4d2_Mod_Manager.Module.Settings
+namespace L4d2_Mod_Manager_Tool.Module.Settings
 {
     /// <summary>
     /// 软件设置信息

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
-using L4d2_Mod_Manager.Utility;
+using L4d2_Mod_Manager_Tool.Utility;
 
-namespace L4d2_Mod_Manager.Domain.Repository
+namespace L4d2_Mod_Manager_Tool.Domain.Repository
 {
     public class ModRepository : IDisposable
     {

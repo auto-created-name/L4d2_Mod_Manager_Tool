@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using L4d2_Mod_Manager.TaskFramework;
+using L4d2_Mod_Manager_Tool.TaskFramework;
 
-namespace L4d2_Mod_Manager
+namespace L4d2_Mod_Manager_Tool
 {
     public partial class Form_RunningTask : Form
     {

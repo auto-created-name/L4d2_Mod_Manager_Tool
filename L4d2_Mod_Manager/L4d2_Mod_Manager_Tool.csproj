@@ -11,6 +11,7 @@
     <Description>求生之路2模组管理工具</Description>
     <Copyright></Copyright>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

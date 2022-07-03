@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace L4d2_Mod_Manager
+namespace L4d2_Mod_Manager_Tool
 {
     static class Program
     {

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace L4d2_Mod_Manager.Domain
+namespace L4d2_Mod_Manager_Tool.Domain
 {
     public record ModFile(int Id, string FilePath, bool Actived);
 

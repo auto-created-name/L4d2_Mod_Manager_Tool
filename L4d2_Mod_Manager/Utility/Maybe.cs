@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace L4d2_Mod_Manager.Utility
+namespace L4d2_Mod_Manager_Tool.Utility
 {
     public struct Maybe<T>
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager.Domain
+namespace L4d2_Mod_Manager_Tool.Domain
 {
     /// <summary>
     /// 创意工坊项，在steam创意工坊中下载的在线信息

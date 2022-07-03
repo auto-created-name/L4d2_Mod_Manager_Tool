@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace L4d2_Mod_Manager
+namespace L4d2_Mod_Manager_Tool
 {
     public partial class Dialog_AboutSoftware : Form
     {
@@ -25,7 +25,7 @@ namespace L4d2_Mod_Manager
         }
 
         private string Version =>
-            $"V{CurrentAssembly.GetName().Version} - build {File.GetLastWriteTime(ExecuteFile):yyMMddHHmm}";
+            $"V{Utility.WinformUtility.SoftwareVersion} - build {File.GetLastWriteTime(ExecuteFile):yyMMddHHmm}";
 
         private string ComputerName
         {

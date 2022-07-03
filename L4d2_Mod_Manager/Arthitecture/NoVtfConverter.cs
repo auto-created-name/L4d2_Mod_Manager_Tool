@@ -1,4 +1,4 @@
-﻿using L4d2_Mod_Manager.Module.Settings;
+﻿using L4d2_Mod_Manager_Tool.Module.Settings;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager.Arthitecture
+namespace L4d2_Mod_Manager_Tool.Arthitecture
 {
     /// <summary>
     /// 基础设施 - Vtf转换器，将Vtf转为jpg

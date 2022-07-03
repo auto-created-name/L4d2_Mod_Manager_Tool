@@ -3,11 +3,11 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using L4d2_Mod_Manager.Utility;
-using L4d2_Mod_Manager.Arthitecture;
-using L4d2_Mod_Manager.Module.Settings;
+using L4d2_Mod_Manager_Tool.Utility;
+using L4d2_Mod_Manager_Tool.Arthitecture;
+using L4d2_Mod_Manager_Tool.Module.Settings;
 
-namespace L4d2_Mod_Manager.Arthitecture
+namespace L4d2_Mod_Manager_Tool.Arthitecture
 {
     class VPKProcess
     {

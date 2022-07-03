@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 
-namespace L4d2_Mod_Manager.Module.Settings
+namespace L4d2_Mod_Manager_Tool.Module.Settings
 {
     public static class SettingFP
     {

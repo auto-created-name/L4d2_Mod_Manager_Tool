@@ -9,12 +9,12 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using L4d2_Mod_Manager.Domain;
-using L4d2_Mod_Manager.Domain.Repository;
-using L4d2_Mod_Manager.Service;
+using L4d2_Mod_Manager_Tool.Domain;
+using L4d2_Mod_Manager_Tool.Domain.Repository;
+using L4d2_Mod_Manager_Tool.Service;
 using L4d2_Mod_Manager_Tool.Utility;
 
-namespace L4d2_Mod_Manager
+namespace L4d2_Mod_Manager_Tool
 {
     public partial class Form1 : Form
     {
@@ -26,7 +26,7 @@ namespace L4d2_Mod_Manager
         public Form1()
         {
             InitializeComponent();
-            Text = "求生之路2模组管理工具 V" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Text = "求生之路2模组管理工具 " + WinformUtility.SoftwareVersion;
             button_clearFilter.Visible = false;
             listView1.ListViewItemSorter = new Widget.ListViewColumnSorter()
             {

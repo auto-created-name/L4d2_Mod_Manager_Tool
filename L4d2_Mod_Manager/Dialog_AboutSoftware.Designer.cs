@@ -1,5 +1,5 @@
 ﻿
-namespace L4d2_Mod_Manager
+namespace L4d2_Mod_Manager_Tool
 {
     partial class Dialog_AboutSoftware
     {

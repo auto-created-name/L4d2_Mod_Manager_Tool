@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager.Arthitecture
+namespace L4d2_Mod_Manager_Tool.Arthitecture
 {
     public static class RunProcess
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace L4d2_Mod_Manager.Widget
+namespace L4d2_Mod_Manager_Tool.Widget
 {
     /// <summary>
     /// 对ListView的列进行比较排序

@@ -1,7 +1,7 @@
-﻿using L4d2_Mod_Manager.Arthitecture;
-using L4d2_Mod_Manager.Domain;
-using L4d2_Mod_Manager.Module.Settings;
-using L4d2_Mod_Manager.Utility;
+﻿using L4d2_Mod_Manager_Tool.Arthitecture;
+using L4d2_Mod_Manager_Tool.Domain;
+using L4d2_Mod_Manager_Tool.Module.Settings;
+using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager.Service
+namespace L4d2_Mod_Manager_Tool.Service
 {
     public class VPKServices
     {

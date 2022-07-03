@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace L4d2_Mod_Manager.Module.FileExplorer
+namespace L4d2_Mod_Manager_Tool.Module.FileExplorer
 {
     public static class FileExplorerUtils
     {

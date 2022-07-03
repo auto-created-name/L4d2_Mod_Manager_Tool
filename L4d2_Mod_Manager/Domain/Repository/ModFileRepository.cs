@@ -1,4 +1,4 @@
-﻿using L4d2_Mod_Manager.Utility;
+﻿using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager.Domain.Repository
+namespace L4d2_Mod_Manager_Tool.Domain.Repository
 {
     /// <summary>
     /// 创意工坊项存储库
