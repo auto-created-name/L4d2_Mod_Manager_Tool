@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using L4d2_Mod_Manager_Tool.Module.Settings;
 using L4d2_Mod_Manager_Tool.Utility;
-using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool
 {
@@ -27,7 +26,6 @@ namespace L4d2_Mod_Manager_Tool
 
             listBox_modFileLocation.DataSource  = locationList;
             textBox_novtfExecutable.Text        = setting.NoVtfExecutablePath;
-            textBox_vpkExecutable.Text          = setting.VPKExecutablePath;
         }
 
         /// <summary>
@@ -104,7 +102,6 @@ namespace L4d2_Mod_Manager_Tool
         {
             setting.modFileFolder = locationList.ToList();
             setting.NoVtfExecutablePath = textBox_novtfExecutable.Text;
-            setting.VPKExecutablePath = textBox_vpkExecutable.Text;
             SettingFP.SaveSetting(setting);
             Close();
         }
@@ -116,16 +113,6 @@ namespace L4d2_Mod_Manager_Tool
             if(dialog.ShowDialog() == DialogResult.OK)
             {
                 textBox_novtfExecutable.Text = dialog.FileName;
-            }
-        }
-
-        private void button_vpkSelectExecutable_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog dialog = new();
-            dialog.Filter = "vpk(*.exe) | *.exe";
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                textBox_vpkExecutable.Text = dialog.FileName;
             }
         }
     }

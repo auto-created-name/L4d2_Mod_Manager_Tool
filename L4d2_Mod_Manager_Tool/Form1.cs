@@ -43,11 +43,6 @@ namespace L4d2_Mod_Manager_Tool
         {
             // 开始前检查
             var setting = Module.Settings.SettingFP.GetSetting();
-            if (!File.Exists(setting.VPKExecutablePath))
-            {
-                WinformUtility.ErrorMessageBox("请先设置vpk可执行程序", "环境错误");
-                return;
-            }
             if (!File.Exists(setting.NoVtfExecutablePath))
             {
                 WinformUtility.ErrorMessageBox("请先设置no_vtf可执行程序", "环境错误");
