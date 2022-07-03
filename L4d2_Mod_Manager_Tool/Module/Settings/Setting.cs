@@ -16,10 +16,5 @@ namespace L4d2_Mod_Manager_Tool.Module.Settings
         /// no_vtf可执行程序
         /// </summary>
         public string NoVtfExecutablePath;
-
-        /// <summary>
-        /// vpk可执行程序
-        /// </summary>
-        public string VPKExecutablePath;
     }
 }

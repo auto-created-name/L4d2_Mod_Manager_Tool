@@ -42,5 +42,13 @@ namespace L4d2_Mod_Manager_Tool.Utility
                 return Maybe.None;
             }
         }
+
+        /// <summary>
+        /// 安全地获取序列中的第一个元素
+        /// </summary>
+        public static Maybe<T> FirstElementSafe<T>(this IEnumerable<T> xs)
+        {
+            return xs.Any() ? xs.First() : Maybe.None;
+        }
     }
 }

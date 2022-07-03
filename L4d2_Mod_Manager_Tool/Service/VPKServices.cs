@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SharpVPK;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
@@ -61,55 +62,39 @@ namespace L4d2_Mod_Manager_Tool.Service
         /// </summary>
         public static VpkSnippet SnippedVpk(string vpk)
         {
+            VpkArchive archive = new();
+            archive.Load(vpk);
+            
             // 列出所有vpk内容，找到addonimage
-            var files = VPKProcess.ListFile(vpk);
-            Maybe<string> addonImageFile = FindAddonImage(files);
+            var files = archive.Directories.SelectMany(dir => dir.Entries).ToArray();
+
+            var imgEntry = files.Where(IsAddonImage).FirstElementSafe();
+            var infoEntry = files.Where(IsAddonInfo).FirstElementSafe();
 
             string folder = GetVPKTemporayPath(vpk);
-            //IEnumerable<string> extra = new string[] { "addoninfo.txt" };
-            //extra = addonImageFile.Match(x => extra.Append(x), () => extra);
-
             return WithFolder(folder, dir => {
-                var addoninfo = FindAddonInfo(files);
-                var addoninfoFile = addoninfo.Bind(x =>
-                {
-                    try
-                    {
-                        VPKProcess.ExtractFile(vpk, dir, x);
-                        return Maybe.Some(Path.Combine(dir, x));
-                    }
-                    catch
-                    {
-                        return Maybe.None;
-                    }
+                var addoninfoFile = infoEntry.Map(entry => {
+                    string file = Path.Combine(folder, entry.Filename) + "." + entry.Extension;
+                    ExtraVpkEntry(file, entry);
+                    return file;
                 });
 
-                var addonimage = FindAddonImage(files);
-                var addonimageFile = addonimage.Bind(x =>
-                {
-                    try
-                    {
-                        VPKProcess.ExtractFile(vpk, dir, x);
-                        if (x.EndsWith(".vtf"))
-                        {
-                            NoVtfConverter.ConverVtf(x);
-                            x = Path.ChangeExtension(x, ".jpg");
-                        }
-                        return Maybe.Some(Path.Combine(dir, x));
-                    }
-                    catch
-                    {
-                        return Maybe.None;
-                    }
 
+                var addonimageFile = imgEntry.Map(entry => {
+                    string file = Path.Combine(folder, entry.Filename) + "." + entry.Extension;
+                    ExtraVpkEntry(file, entry);
+                    if (file.EndsWith(".vtf"))
+                    {
+                        NoVtfConverter.ConverVtf(file);
+                        file = Path.ChangeExtension(file, ".jpg");
+                    }
+                    return file;
                 });
-                //string[] extraArr = extra.ToArray();
-                //VPKProcess.ExtractFile(vpk, folder, extraArr);
 
-                // 如果有缩略图且图片是以vtf格式的，需要转码为jpg
-                //if(extraArr.Length == 2 && extraArr[1].EndsWith(".vtf"))
+                //if (x.EndsWith(".vtf"))
                 //{
-                //    NoVtfConverter.ConverVtf(extraArr[1]);
+                //    NoVtfConverter.ConverVtf(x);
+                //    x = Path.ChangeExtension(x, ".jpg");
                 //}
 
                 return new VpkSnippet(
@@ -166,7 +151,34 @@ namespace L4d2_Mod_Manager_Tool.Service
         /// 模组文件夹
         /// </summary>
         private static IEnumerable<string> ModFolders => SettingFP.GetSetting().modFileFolder;
+
+        private static void ExtraVpkEntry(string file, VpkEntry entry)
+        {
+            // 卫语句
+            if (string.IsNullOrEmpty(file))
+                return;
+
+            if (entry == null)
+                return;
+            var data = entry.Data;
+            File.WriteAllBytes(file, data);
+        }
         #region 查找文件
+        /// <summary>
+        /// 该文件是addonimage
+        /// </summary>
+        private static bool IsAddonImage(VpkEntry entry)
+        {
+            return entry.Path.Equals(" ") && entry.Filename.ToLower().Equals("addonimage"); 
+        }
+
+        /// <summary>
+        /// 该文件是addoninfo
+        /// </summary>
+        private static bool IsAddonInfo(VpkEntry entry)
+        {
+            return entry.Path.Equals(" ") && entry.Filename.ToLower().Equals("addoninfo");
+        }
         /// <summary>
         /// 找到addonimage文件
         /// </summary>

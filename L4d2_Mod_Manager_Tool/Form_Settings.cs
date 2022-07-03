@@ -27,7 +27,6 @@ namespace L4d2_Mod_Manager_Tool
 
             listBox_modFileLocation.DataSource  = locationList;
             textBox_novtfExecutable.Text        = setting.NoVtfExecutablePath;
-            textBox_vpkExecutable.Text          = setting.VPKExecutablePath;
         }
 
         /// <summary>
@@ -104,7 +103,6 @@ namespace L4d2_Mod_Manager_Tool
         {
             setting.modFileFolder = locationList.ToList();
             setting.NoVtfExecutablePath = textBox_novtfExecutable.Text;
-            setting.VPKExecutablePath = textBox_vpkExecutable.Text;
             SettingFP.SaveSetting(setting);
             Close();
         }
