@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SharpVPK;
+using System.Collections.Immutable;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
@@ -44,7 +45,8 @@ namespace L4d2_Mod_Manager_Tool.Service
                     Title = modinfo.Title.ValueOr(""),
                     Version = modinfo.Version.ValueOr(""),
                     Tagline = modinfo.Tagline.ValueOr(""),
-                    Author = modinfo.Author.ValueOr("")
+                    Author = modinfo.Author.ValueOr(""),
+                    Categories = snippet.Categories
                 };
             }, () => mod);
             return mod;
@@ -67,6 +69,8 @@ namespace L4d2_Mod_Manager_Tool.Service
             
             // 列出所有vpk内容，找到addonimage
             var files = archive.Directories.SelectMany(dir => dir.Entries).ToArray();
+            var tags = files.Select(FindTagFromVPKEntry)
+                .Where(tag => tag != null).Distinct().ToArray();
 
             var imgEntry = files.Where(IsAddonImage).FirstElementSafe();
             var infoEntry = files.Where(IsAddonInfo).FirstElementSafe();
@@ -100,7 +104,8 @@ namespace L4d2_Mod_Manager_Tool.Service
                 return new VpkSnippet(
                     Path.GetFileName(vpk),
                     addonimageFile,
-                    addoninfoFile
+                    addoninfoFile,
+                    tags.ToImmutableArray()
                 );
             });
         }
@@ -162,6 +167,25 @@ namespace L4d2_Mod_Manager_Tool.Service
                 return;
             var data = entry.Data;
             File.WriteAllBytes(file, data);
+        }
+
+        private static List<(string, string)> CategoryRegexes =
+            new()
+            {
+                ("Maps", @"maps/(?:.+)"),
+                ("Scripts", @"cfg/autoexec\.cfg"),
+                ("Survivor", @"models/survivors/survivor_(.+)\.mdl"),
+                ("Infected", @"models/infected/(.+)\.mdl"),
+                ("CommonInfected", @"models/infected/common(?:.*)\.mdl"),
+                ("Weapons", @"models/weapons/(?:.+)\.mdl"),
+            };
+
+        private static string FindTagFromVPKEntry(VpkEntry entry){
+            string file = $"{entry.Path}/{entry.Filename}.{entry.Extension}";
+            return CategoryRegexes
+                .Where(x => Regex.IsMatch(file, x.Item2))
+                .Select(x => x.Item1)
+                .FirstOrDefault();
         }
         #region 查找文件
         /// <summary>

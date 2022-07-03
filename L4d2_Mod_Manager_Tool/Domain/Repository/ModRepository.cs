@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,17 +44,18 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
         {
             var command = connection.CreateCommand();
             command.CommandText = $"INSERT INTO mod VALUES(" +
-                $"NULL," +
-                $"\"{mod.FileId}\", " +
-                $"\"{mod.vpkId}\"," +
-                $"\"{mod.Thumbnail}\", " +
-                $"\"{mod.Title}\"," +
-                $" \"{mod.Version}\", " +
-                $"\"{mod.Tagline}\", " +
-                $"\"{mod.Author}\"," +
-                $"\"{mod.WorkshopTitle}\"," +
-                $"\"{mod.WorkshopDescript}\"," +
-                $"\"{mod.WorkshopPreviewImage}\");" +
+                $"NULL" +
+                $",\"{mod.FileId}\"" +
+                $",\"{mod.vpkId}\"" +
+                $",\"{mod.Thumbnail}\"" +
+                $",\"{mod.Title}\"" +
+                $",\"{mod.Version}\"" +
+                $",\"{mod.Tagline}\"" +
+                $",\"{mod.Author}\"" +
+                $",\"{string.Join(',', mod.Categories)}\"" +
+                $",\"{mod.WorkshopTitle}\"" +
+                $",\"{mod.WorkshopDescript}\"" +
+                $",\"{mod.WorkshopPreviewImage}\");" +
                 $"select last_insert_rowid();";
             long id = (long) command.ExecuteScalar();
 
@@ -108,6 +110,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 ",version TEXT" +
                 ",tagline TEXT" +
                 ",author TEXT" +
+                ",categories TEXT" +
                 ",workshop_title TEXT" +
                 ",workshop_descript TEXT" +
                 ",workshop_previewImage TEXT" +
@@ -137,9 +140,10 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                     reader.GetString(5),
                     reader.GetString(6),
                     reader.GetString(7),
-                    reader.GetString(8),
+                    reader.GetString(8).Split(",").ToImmutableArray(),
                     reader.GetString(9),
-                    reader.GetString(10)
+                    reader.GetString(10),
+                    reader.GetString(11)
                 );
         }
     }
