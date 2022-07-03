@@ -148,7 +148,8 @@ namespace L4d2_Mod_Manager_Tool.Service
                 {
                     WorkshopTitle = info.Title,
                     WorkshopDescript = info.Descript,
-                    WorkshopPreviewImage = info.PreviewImage
+                    WorkshopPreviewImage = info.PreviewImage,
+                    Categories = info.Tags
                 });
             return newMod.Match(x => (x, true), () => (mod, false));
         }

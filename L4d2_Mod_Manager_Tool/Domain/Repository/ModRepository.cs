@@ -52,7 +52,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 $",\"{mod.Version}\"" +
                 $",\"{mod.Tagline}\"" +
                 $",\"{mod.Author}\"" +
-                $",\"{string.Join(',', mod.Categories)}\"" +
+                $",\"{mod.CategoriesSingleLine()}\"" +
                 $",\"{mod.WorkshopTitle}\"" +
                 $",\"{mod.WorkshopDescript}\"" +
                 $",\"{mod.WorkshopPreviewImage}\");" +
@@ -71,10 +71,11 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
 
             var command = connection.CreateCommand();
             command.CommandText = $"UPDATE mod SET " +
-                $"workshop_title = \"{mod.WorkshopTitle}\"," +
-                $"workshop_descript = \"{descriptBase64}\"," +
-                $"workshop_previewImage = \"{mod.WorkshopPreviewImage}\" " +
-                $"WHERE " +
+                $"workshop_title = \"{mod.WorkshopTitle}\"" +
+                $",workshop_descript = \"{descriptBase64}\"" +
+                $",workshop_previewImage = \"{mod.WorkshopPreviewImage}\"" +
+                $",categories = \"{mod.CategoriesSingleLine()}\"" +
+                $" WHERE " +
                 $"id = {mod.Id}";
             int res = command.ExecuteNonQuery();
             return res > 0;

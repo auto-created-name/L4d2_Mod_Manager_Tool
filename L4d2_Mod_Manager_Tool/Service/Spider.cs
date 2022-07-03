@@ -1,7 +1,9 @@
-﻿using L4d2_Mod_Manager_Tool.Domain;
+﻿using HtmlAgilityPack;
+using L4d2_Mod_Manager_Tool.Domain;
 using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,27 +23,33 @@ namespace L4d2_Mod_Manager_Tool.Service
             string url = $"https://steamcommunity.com/sharedfiles/filedetails/?id={vpkNumber}";
             try
             {
-                //ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
-                //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
-                string certFile = @"Resources\steamworkshop.cer";
-                X509Certificate2 certificate = new X509Certificate2(certFile);
+                HtmlWeb webClient = new();
+                var doc = webClient.Load(url);
 
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-                req.Timeout = 5000;
-                req.ClientCertificates.Add(certificate);
-                req.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
+                var tags = GetWorkshopItemTags(doc);
+                var title = GetWorkshopItemTitle(doc);
+                var desc = GetWorkshopItemDescription(doc);
+                ////ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
+                ////ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+                //string certFile = @"Resources\steamworkshop.cer";
+                //X509Certificate2 certificate = new X509Certificate2(certFile);
 
-                var res = req.GetResponse();
-                using var reader = new StreamReader(res.GetResponseStream(), Encoding.UTF8);
-                string html = reader.ReadToEnd();
-                //string html = File.ReadAllText("web.txt");
+                //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                //req.Timeout = 5000;
+                //req.ClientCertificates.Add(certificate);
+                //req.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
 
-                string title = GetWorkshopItemTitle(html);
-                string descrip = GetWorkshopItemDescription(html);
-                string previewImageUrl = GetWorkshopPreviewImageUrl(html);
+                //var res = req.GetResponse();
+                //using var reader = new StreamReader(res.GetResponseStream(), Encoding.UTF8);
+                //string html = reader.ReadToEnd();
+                ////string html = File.ReadAllText("web.txt");
+
+                //string title = GetWorkshopItemTitle(html);
+                //string descrip = GetWorkshopItemDescription(html);
+                string previewImageUrl = GetWorkshopPreviewImageUrl(doc);
 
                 var imgFile = DownloadImageFromURL(previewImageUrl);
-                return Maybe.Some(new ModWorkshopInfo(title, descrip, imgFile));
+                return Maybe.Some(new ModWorkshopInfo(title, desc, imgFile, tags.ToImmutableArray()));
             }
             catch
             {
@@ -71,31 +79,64 @@ namespace L4d2_Mod_Manager_Tool.Service
         //    }
         //}
 
-        /// <summary>
-        /// 从html中获取创意工坊物品标题
-        /// </summary>
-        private static string GetWorkshopItemTitle(string html)
+        ///// <summary>
+        ///// 从html中获取创意工坊物品标题
+        ///// </summary>
+        //private static string GetWorkshopItemTitle(string html)
+        //{
+        //    var match = Regex.Match(html, @"<div class=""workshopItemTitle"">\s*([\S ]+)\s*</div>");
+        //    return match.Groups[1].Value;
+        //}
+        private static string GetWorkshopItemTitle(HtmlDocument doc)
         {
-            var match = Regex.Match(html, @"<div class=""workshopItemTitle"">\s*([\S ]+)\s*</div>");
-            return match.Groups[1].Value;
+            var node = doc.DocumentNode.SelectSingleNode("//div[@class='workshopItemTitle']");
+            if (node == null)
+                return "";
+            else
+                return node.InnerText;
         }
 
-        /// <summary>
-        /// 从html中获取创意工坊物品描述
-        /// </summary>
-        private static string GetWorkshopItemDescription(string html)
+        ///// <summary>
+        ///// 从html中获取创意工坊物品描述
+        ///// </summary>
+        //private static string GetWorkshopItemDescription(string html)
+        //{
+        //    var match = Regex.Match(html, @"<div class=""workshopItemDescription"" id=""highlightContent"">([\S ]+)</div>");
+        //    return match.Groups[1].Value;
+        //}
+        private static string GetWorkshopItemDescription(HtmlDocument doc)
         {
-            var match = Regex.Match(html, @"<div class=""workshopItemDescription"" id=""highlightContent"">([\S ]+)</div>");
-            return match.Groups[1].Value;
+            var node = doc.DocumentNode.SelectSingleNode("//div[@class='workshopItemDescription']");
+            if (node == null)
+                return "";
+            else
+                return node.InnerText;
         }
 
-        /// <summary>
-        /// 从html中获取创意工坊物品预览图片的URL
-        /// </summary>
-        private static string GetWorkshopPreviewImageUrl(string html)
+        ///// <summary>
+        ///// 从html中获取创意工坊物品预览图片的URL
+        ///// </summary>
+        //private static string GetWorkshopPreviewImageUrl(string html)
+        //{
+        //    var match = Regex.Match(html, @"<img id=""previewImageMain"" class=""workshopItemPreviewImageMain"" src=""([\S ]+)""/>");
+        //    return match.Groups[1].Value;
+        //}
+        private static string GetWorkshopPreviewImageUrl(HtmlDocument doc)
         {
-            var match = Regex.Match(html, @"<img id=""previewImageMain"" class=""workshopItemPreviewImageMain"" src=""([\S ]+)""/>");
-            return match.Groups[1].Value;
+            var node = doc.DocumentNode.SelectSingleNode("//img[@class='workshopItemPreviewImageMain']");
+            if (node == null)
+                return "";
+            else
+                return node.GetAttributeValue("src", "");
+        }
+
+        private static IEnumerable<string> GetWorkshopItemTags(HtmlDocument doc)
+        {
+            var tagNode = doc.DocumentNode.SelectNodes("//div[@class='workshopTags']/a");
+            if (tagNode == null)
+                return Enumerable.Empty<string>();
+            else
+                return tagNode.Select(node => node.InnerText);
         }
 
         /// <summary>

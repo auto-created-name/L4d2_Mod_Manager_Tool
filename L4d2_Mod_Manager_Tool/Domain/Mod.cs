@@ -33,6 +33,9 @@ namespace L4d2_Mod_Manager_Tool.Domain
 
         public static bool HaveVpkNumber(Mod mod) => !string.IsNullOrEmpty(mod.vpkId);
 
+        public static string CategoriesSingleLine(this Mod mod) =>
+            string.Join(',', mod.Categories);
+
         /// <summary>
         /// 从VPK名称上获取VPK号
         /// </summary>
