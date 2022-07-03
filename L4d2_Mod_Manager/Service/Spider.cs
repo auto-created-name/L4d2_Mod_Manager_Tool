@@ -23,7 +23,7 @@ namespace L4d2_Mod_Manager.Service
             {
                 //ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);
                 //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
-                string certFile = @"C:\Users\Louis\Desktop\steamworkshop.cer";
+                string certFile = @"Resources\steamworkshop.cer";
                 X509Certificate2 certificate = new X509Certificate2(certFile);
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);

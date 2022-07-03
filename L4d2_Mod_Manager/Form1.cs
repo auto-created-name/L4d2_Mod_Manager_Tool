@@ -248,7 +248,7 @@ namespace L4d2_Mod_Manager
         private static Image SelectImage(string img)
         {
             return LoadImageSafe(img).ValueOr(
-                    Image.FromFile(@"C:\Users\Louis\Desktop\no-image.png"));
+                    Image.FromFile(@"Resources/no-image.png"));
         }
 
         /// <summary>
