@@ -68,6 +68,9 @@
 * [vpk](https://developer.valvesoftware.com/wiki/VPK)
 * [no_vtf](https://sr.ht/~b5327157/no_vtf/)
 
+### 设置no_vtf
+首先从 https://sr.ht/~b5327157/no_vtf/ 上下载no_vtf，将文件夹解压至编译好的可执行程序目录，更名为"no_vtf-windows_x64"即可。
+
 ## Further Feature - 计划特性
 ### 模组详细信息
 查看模组的本地信息和创意工坊信息  
