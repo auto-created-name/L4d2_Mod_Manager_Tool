@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using L4d2_Mod_Manager_Tool.Module.Settings;
 using L4d2_Mod_Manager_Tool.Utility;
-using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool
 {
@@ -114,16 +113,6 @@ namespace L4d2_Mod_Manager_Tool
             if(dialog.ShowDialog() == DialogResult.OK)
             {
                 textBox_novtfExecutable.Text = dialog.FileName;
-            }
-        }
-
-        private void button_vpkSelectExecutable_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog dialog = new();
-            dialog.Filter = "vpk(*.exe) | *.exe";
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                textBox_vpkExecutable.Text = dialog.FileName;
             }
         }
     }
