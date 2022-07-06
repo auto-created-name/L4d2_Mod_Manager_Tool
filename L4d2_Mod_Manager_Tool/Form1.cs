@@ -113,7 +113,10 @@ namespace L4d2_Mod_Manager_Tool
                 widget_ModOverview1.ModCategories = detail.Categories;
                 widget_ModOverview1.ModDescript = detail.Descript;
                 widget_ModOverview1.ModTags = detail.Tags;
-            }, () => { });
+                widget_ModOverview1.ShowModOverview = true;
+            }, () => {
+                widget_ModOverview1.ShowModOverview = false;
+            });
         }
         #region 定义
         //private class TestMessageTask : TaskFramework.IMessageTask
@@ -255,6 +258,10 @@ namespace L4d2_Mod_Manager_Tool
             if(selected.Count > 0)
             {
                 UpdateModPreview((int)selected[0].Tag);
+            }
+            else
+            {
+                UpdateModPreview(-1);
             }
         }
         #endregion

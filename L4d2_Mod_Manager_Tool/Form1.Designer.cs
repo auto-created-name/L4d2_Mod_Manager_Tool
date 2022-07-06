@@ -51,6 +51,7 @@ namespace L4d2_Mod_Manager_Tool
             this.toolStripMenuItem_about = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.widget_ModOverview1 = new L4d2_Mod_Manager_Tool.Widget.Widget_ModOverview();
+            this.splitter1 = new System.Windows.Forms.Splitter();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -71,7 +72,7 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.LargeImageList = this.imageList1;
             this.listView1.Location = new System.Drawing.Point(12, 36);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(731, 538);
+            this.listView1.Size = new System.Drawing.Size(722, 538);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -232,11 +233,20 @@ namespace L4d2_Mod_Manager_Tool
             this.widget_ModOverview1.Size = new System.Drawing.Size(367, 586);
             this.widget_ModOverview1.TabIndex = 9;
             // 
+            // splitter1
+            // 
+            this.splitter1.Location = new System.Drawing.Point(367, 25);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(5, 586);
+            this.splitter1.TabIndex = 10;
+            this.splitter1.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1113, 611);
+            this.Controls.Add(this.splitter1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.widget_ModOverview1);
             this.Controls.Add(this.menuStrip1);
@@ -275,6 +285,7 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_downloadWorkshopInfo;
         private Widget.Widget_ModOverview widget_ModOverview1;
+        private System.Windows.Forms.Splitter splitter1;
     }
 }
 

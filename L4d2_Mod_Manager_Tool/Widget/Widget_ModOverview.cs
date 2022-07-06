@@ -15,8 +15,23 @@ namespace L4d2_Mod_Manager_Tool.Widget
         public Widget_ModOverview()
         {
             InitializeComponent();
+            SetupControl();
+        }
+
+        private void SetupControl()
+        {
             flowLayoutPanel1.HorizontalScroll.Maximum = 0;
             flowLayoutPanel1.AutoScroll = true;
+            ShowModOverview = false;
+        }
+
+        public bool ShowModOverview
+        {
+            set
+            {
+                pictureBox1.Visible      = value;
+                flowLayoutPanel1.Visible = value;
+            }
         }
 
         public string ModPreview
