@@ -46,7 +46,15 @@ namespace L4d2_Mod_Manager_Tool.Widget
         {
             set
             {
-                label_category.Text = "分类: " + StringOr(value, "<无>");
+                label_categories.Text = "分类: " + StringOr(value, "<无>");
+            }
+        }
+
+        public string ModTags
+        {
+            set
+            {
+                label_tags.Text = "标签: " + StringOr(value, "<无>");
             }
         }
 

@@ -113,7 +113,7 @@ namespace L4d2_Mod_Manager_Tool
             this.textBox_search.Location = new System.Drawing.Point(12, 7);
             this.textBox_search.Name = "textBox_search";
             this.textBox_search.PlaceholderText = "搜索模组名称、VPKID、作者...";
-            this.textBox_search.Size = new System.Drawing.Size(731, 23);
+            this.textBox_search.Size = new System.Drawing.Size(722, 23);
             this.textBox_search.TabIndex = 5;
             this.textBox_search.TextChanged += new System.EventHandler(this.textBox_search_TextChanged);
             // 
@@ -124,7 +124,7 @@ namespace L4d2_Mod_Manager_Tool
             this.button_clearFilter.FlatAppearance.BorderSize = 0;
             this.button_clearFilter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_clearFilter.Font = new System.Drawing.Font("Microsoft YaHei UI", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_clearFilter.Location = new System.Drawing.Point(1077, 5);
+            this.button_clearFilter.Location = new System.Drawing.Point(710, 8);
             this.button_clearFilter.Name = "button_clearFilter";
             this.button_clearFilter.Size = new System.Drawing.Size(23, 21);
             this.button_clearFilter.TabIndex = 6;
@@ -214,6 +214,7 @@ namespace L4d2_Mod_Manager_Tool
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button_clearFilter);
             this.panel1.Controls.Add(this.listView1);
             this.panel1.Controls.Add(this.textBox_search);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -237,7 +238,6 @@ namespace L4d2_Mod_Manager_Tool
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1113, 611);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.button_clearFilter);
             this.Controls.Add(this.widget_ModOverview1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

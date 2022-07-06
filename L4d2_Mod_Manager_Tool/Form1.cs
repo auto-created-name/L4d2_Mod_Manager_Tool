@@ -112,6 +112,7 @@ namespace L4d2_Mod_Manager_Tool
                 widget_ModOverview1.ModAuthor = detail.Author;
                 widget_ModOverview1.ModCategories = detail.Categories;
                 widget_ModOverview1.ModDescript = detail.Descript;
+                widget_ModOverview1.ModTags = detail.Tags;
             }, () => { });
         }
         #region 定义

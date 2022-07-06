@@ -12,7 +12,11 @@ using System.Threading.Tasks;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
-    public record ModDetail(int Id, string Img, string Name, string Vpkid, string Author, string Tagline, string Categories, string Descript);
+    public record ModDetail(
+        int Id, string Img, string Name, 
+        string Vpkid, string Author, 
+        string Tagline, string Categories, 
+        string Tags, string Descript);
     public class ModOperation
     {
         private static ModFileRepository modFileRepo = new ModFileRepository();
@@ -53,12 +57,13 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static ModDetail GetModDetail(Mod m)
         {
             return new(m.Id,
-                ModFP.SelectPreview(m),
-                ModFP.SelectName(m)
+                ModFP.SelectPreview(m)
+                , ModFP.SelectName(m)
                 , m.vpkId
                 , m.Author
                 , m.Tagline
                 , ModFP.CategoriesSingleLine(m)
+                , ModFP.TagsSingleLine(m)
                 , m.WorkshopDescript);
         }
 
