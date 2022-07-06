@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
   </ItemGroup>
