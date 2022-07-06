@@ -12,10 +12,11 @@ using System.Threading.Tasks;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
-    public record ModDetail(int Id, string Img, string Name, string Vpkid, string Author, string Tagline);
+    public record ModDetail(int Id, string Img, string Name, string Vpkid, string Author, string Tagline, string Categories, string Descript);
     public class ModOperation
     {
         private static ModFileRepository modFileRepo = new ModFileRepository();
+        private static ModRepository Repo { get => ModRepository.Instance; }
         private const string TitleKeyName = "addontitle";
         private const string VersionKeyName = "addonversion";
         private const string TaglineKeyName = "addontagline";
@@ -56,7 +57,14 @@ namespace L4d2_Mod_Manager_Tool.Service
                 ModFP.SelectName(m)
                 , m.vpkId
                 , m.Author
-                , m.Tagline);
+                , m.Tagline
+                , ModFP.CategoriesSingleLine(m)
+                , m.WorkshopDescript);
+        }
+
+        public static Maybe<ModDetail> GetModDetail(int modId)
+        {
+            return Repo.FindModById(modId).Map(GetModDetail);
         }
 
         public static IEnumerable<Mod> FilterMod(string filter)

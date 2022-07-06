@@ -89,10 +89,10 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                var mod = CreateFromReader(reader);
-                var base64Data = Convert.FromBase64String(mod.WorkshopDescript);
-                var descript = Encoding.UTF8.GetString(base64Data);
-                yield return mod with { WorkshopDescript = descript };
+                yield return CreateFromReader(reader);
+                //var base64Data = Convert.FromBase64String(mod.WorkshopDescript);
+                //var descript = Encoding.UTF8.GetString(base64Data);
+                //yield return mod with { WorkshopDescript = descript };
             }
         }
 
@@ -145,10 +145,16 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                     reader.GetString(7),
                     SplitString(reader.GetString(8), ','),
                     reader.GetString(9),
-                    reader.GetString(10),
+                    DecodeBase64(reader.GetString(10)),
                     reader.GetString(11),
                     SplitString(reader.GetString(12), ',')
                 );
+        }
+
+        private static string DecodeBase64(string str)
+        {
+            var data = Convert.FromBase64String(str);
+            return Encoding.UTF8.GetString(data);
         }
 
         private static ImmutableArray<string> SplitString(string str, char separator)
