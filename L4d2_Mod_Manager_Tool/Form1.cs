@@ -103,6 +103,21 @@ namespace L4d2_Mod_Manager_Tool
             new Form_RunningTask("下载创意工坊信息", tasks.ToArray()).ShowDialog();
             UpdateModList();
         }
+
+        private void UpdateModPreview(int modId)
+        {
+            ModOperation.GetModDetail(modId).Match(detail => {
+                widget_ModOverview1.ModPreview = detail.Img;
+                widget_ModOverview1.ModName = detail.Name;
+                widget_ModOverview1.ModAuthor = detail.Author;
+                widget_ModOverview1.ModCategories = detail.Categories;
+                widget_ModOverview1.ModDescript = detail.Descript;
+                widget_ModOverview1.ModTags = detail.Tags;
+                widget_ModOverview1.ShowModOverview = true;
+            }, () => {
+                widget_ModOverview1.ShowModOverview = false;
+            });
+        }
         #region 定义
         //private class TestMessageTask : TaskFramework.IMessageTask
         //{
@@ -234,6 +249,20 @@ namespace L4d2_Mod_Manager_Tool
                 return;
             int modId = (int)listView1.SelectedItems[0].Tag;
             ModOperation.OpenModFileInExplorer(modId);
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selected = (sender as ListView).SelectedItems;
+            // 只显示第一个选择项
+            if(selected.Count > 0)
+            {
+                UpdateModPreview((int)selected[0].Tag);
+            }
+            else
+            {
+                UpdateModPreview(-1);
+            }
         }
         #endregion
 

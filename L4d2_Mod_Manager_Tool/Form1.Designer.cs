@@ -50,6 +50,8 @@ namespace L4d2_Mod_Manager_Tool
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_about = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.widget_ModOverview1 = new L4d2_Mod_Manager_Tool.Widget.Widget_ModOverview();
+            this.splitter1 = new System.Windows.Forms.Splitter();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -70,11 +72,12 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.LargeImageList = this.imageList1;
             this.listView1.Location = new System.Drawing.Point(12, 36);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(776, 377);
+            this.listView1.Size = new System.Drawing.Size(722, 538);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
             this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
             // 
@@ -111,7 +114,7 @@ namespace L4d2_Mod_Manager_Tool
             this.textBox_search.Location = new System.Drawing.Point(12, 7);
             this.textBox_search.Name = "textBox_search";
             this.textBox_search.PlaceholderText = "搜索模组名称、VPKID、作者...";
-            this.textBox_search.Size = new System.Drawing.Size(776, 23);
+            this.textBox_search.Size = new System.Drawing.Size(722, 23);
             this.textBox_search.TabIndex = 5;
             this.textBox_search.TextChanged += new System.EventHandler(this.textBox_search_TextChanged);
             // 
@@ -122,7 +125,7 @@ namespace L4d2_Mod_Manager_Tool
             this.button_clearFilter.FlatAppearance.BorderSize = 0;
             this.button_clearFilter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_clearFilter.Font = new System.Drawing.Font("Microsoft YaHei UI", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_clearFilter.Location = new System.Drawing.Point(764, 5);
+            this.button_clearFilter.Location = new System.Drawing.Point(710, 8);
             this.button_clearFilter.Name = "button_clearFilter";
             this.button_clearFilter.Size = new System.Drawing.Size(23, 21);
             this.button_clearFilter.TabIndex = 6;
@@ -151,7 +154,7 @@ namespace L4d2_Mod_Manager_Tool
             this.帮助ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(1113, 25);
             this.menuStrip1.TabIndex = 7;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -206,28 +209,47 @@ namespace L4d2_Mod_Manager_Tool
             // toolStripMenuItem_about
             // 
             this.toolStripMenuItem_about.Name = "toolStripMenuItem_about";
-            this.toolStripMenuItem_about.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_about.Size = new System.Drawing.Size(140, 22);
             this.toolStripMenuItem_about.Text = "关于软件(&A)";
             this.toolStripMenuItem_about.Click += new System.EventHandler(this.toolStripMenuItem_about_Click);
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button_clearFilter);
             this.panel1.Controls.Add(this.listView1);
             this.panel1.Controls.Add(this.textBox_search);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 25);
+            this.panel1.Location = new System.Drawing.Point(367, 25);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(800, 425);
+            this.panel1.Size = new System.Drawing.Size(746, 586);
             this.panel1.TabIndex = 8;
+            // 
+            // widget_ModOverview1
+            // 
+            this.widget_ModOverview1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.widget_ModOverview1.Location = new System.Drawing.Point(0, 25);
+            this.widget_ModOverview1.Name = "widget_ModOverview1";
+            this.widget_ModOverview1.Padding = new System.Windows.Forms.Padding(5);
+            this.widget_ModOverview1.Size = new System.Drawing.Size(367, 586);
+            this.widget_ModOverview1.TabIndex = 9;
+            // 
+            // splitter1
+            // 
+            this.splitter1.Location = new System.Drawing.Point(367, 25);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(5, 586);
+            this.splitter1.TabIndex = 10;
+            this.splitter1.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1113, 611);
+            this.Controls.Add(this.splitter1);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.widget_ModOverview1);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.button_clearFilter);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
@@ -262,6 +284,8 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_about;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_downloadWorkshopInfo;
+        private Widget.Widget_ModOverview widget_ModOverview1;
+        private System.Windows.Forms.Splitter splitter1;
     }
 }
 
