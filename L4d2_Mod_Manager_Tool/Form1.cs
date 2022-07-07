@@ -264,7 +264,32 @@ namespace L4d2_Mod_Manager_Tool
                 UpdateModPreview(-1);
             }
         }
+
+        private void button_filter_Click(object sender, EventArgs e)
+        {
+
+            Button btn = sender as Button;
+            ContextMenuStrip cms = new();
+            cms.Items.Add(CreateTagMenuItem("Survivors", ModTag.SurvivorsTags));
+            cms.Items.Add(CreateTagMenuItem("Infected", ModTag.InfectedTags));
+            cms.Items.Add(CreateTagMenuItem("Game Content", ModTag.GameContentTags));
+            cms.Items.Add(CreateTagMenuItem("Game Modes", ModTag.GameModesTags));
+            cms.Items.Add(CreateTagMenuItem("Weapons", ModTag.WeaponsTags));
+            cms.Items.Add(CreateTagMenuItem("Items", ModTag.ItemsTags));
+            cms.Show(btn, new Point(20, 20));
+        }
         #endregion
+
+        private static ToolStripMenuItem CreateTagMenuItem(string name, IEnumerable<string> tags)
+        {
+            var tmi = new ToolStripMenuItem(name); 
+            tmi.DropDownItems.AddRange(tags.Select(x => {
+                var item = new ToolStripMenuItem(x);
+                item.Click += (object sender, EventArgs e) => MessageBox.Show((sender as ToolStripMenuItem).Text);
+                return item;
+                }).ToArray());
+            return tmi;
+        }
 
         /// <summary>
         /// 选择正确的图片，如果图片不存在或空使用空图片

@@ -16,5 +16,8 @@
     <Compile Update="Widget\Widget_ModOverview.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Widget\Widget_TagSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -50,8 +50,10 @@ namespace L4d2_Mod_Manager_Tool
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_about = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button_filter = new System.Windows.Forms.Button();
             this.widget_ModOverview1 = new L4d2_Mod_Manager_Tool.Widget.Widget_ModOverview();
             this.splitter1 = new System.Windows.Forms.Splitter();
+            this.widget_TagSelector1 = new L4d2_Mod_Manager_Tool.Widget.Widget_TagSelector();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -72,7 +74,7 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.LargeImageList = this.imageList1;
             this.listView1.Location = new System.Drawing.Point(12, 36);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(722, 538);
+            this.listView1.Size = new System.Drawing.Size(568, 538);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -114,7 +116,7 @@ namespace L4d2_Mod_Manager_Tool
             this.textBox_search.Location = new System.Drawing.Point(12, 7);
             this.textBox_search.Name = "textBox_search";
             this.textBox_search.PlaceholderText = "搜索模组名称、VPKID、作者...";
-            this.textBox_search.Size = new System.Drawing.Size(722, 23);
+            this.textBox_search.Size = new System.Drawing.Size(514, 23);
             this.textBox_search.TabIndex = 5;
             this.textBox_search.TextChanged += new System.EventHandler(this.textBox_search_TextChanged);
             // 
@@ -125,7 +127,7 @@ namespace L4d2_Mod_Manager_Tool
             this.button_clearFilter.FlatAppearance.BorderSize = 0;
             this.button_clearFilter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_clearFilter.Font = new System.Drawing.Font("Microsoft YaHei UI", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_clearFilter.Location = new System.Drawing.Point(710, 8);
+            this.button_clearFilter.Location = new System.Drawing.Point(502, 8);
             this.button_clearFilter.Name = "button_clearFilter";
             this.button_clearFilter.Size = new System.Drawing.Size(23, 21);
             this.button_clearFilter.TabIndex = 6;
@@ -138,7 +140,7 @@ namespace L4d2_Mod_Manager_Tool
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_showInExplorer});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 48);
             // 
             // toolStripMenuItem_showInExplorer
             // 
@@ -215,14 +217,25 @@ namespace L4d2_Mod_Manager_Tool
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button_filter);
             this.panel1.Controls.Add(this.button_clearFilter);
             this.panel1.Controls.Add(this.listView1);
             this.panel1.Controls.Add(this.textBox_search);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(367, 25);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(746, 586);
+            this.panel1.Size = new System.Drawing.Size(592, 586);
             this.panel1.TabIndex = 8;
+            // 
+            // button_filter
+            // 
+            this.button_filter.Location = new System.Drawing.Point(533, 7);
+            this.button_filter.Name = "button_filter";
+            this.button_filter.Size = new System.Drawing.Size(47, 23);
+            this.button_filter.TabIndex = 7;
+            this.button_filter.Text = "过滤";
+            this.button_filter.UseVisualStyleBackColor = true;
+            this.button_filter.Click += new System.EventHandler(this.button_filter_Click);
             // 
             // widget_ModOverview1
             // 
@@ -241,6 +254,14 @@ namespace L4d2_Mod_Manager_Tool
             this.splitter1.TabIndex = 10;
             this.splitter1.TabStop = false;
             // 
+            // widget_TagSelector1
+            // 
+            this.widget_TagSelector1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.widget_TagSelector1.Location = new System.Drawing.Point(959, 25);
+            this.widget_TagSelector1.Name = "widget_TagSelector1";
+            this.widget_TagSelector1.Size = new System.Drawing.Size(154, 586);
+            this.widget_TagSelector1.TabIndex = 11;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -249,6 +270,7 @@ namespace L4d2_Mod_Manager_Tool
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.widget_ModOverview1);
+            this.Controls.Add(this.widget_TagSelector1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
@@ -286,6 +308,8 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_downloadWorkshopInfo;
         private Widget.Widget_ModOverview widget_ModOverview1;
         private System.Windows.Forms.Splitter splitter1;
+        private Widget.Widget_TagSelector widget_TagSelector1;
+        private System.Windows.Forms.Button button_filter;
     }
 }
 
