@@ -185,7 +185,7 @@ namespace L4d2_Mod_Manager_Tool
         private void toolStripMenuItem_showInExplorer_Click(object sender, EventArgs e)
         {
             WhenModSelected(sender as ListView, indices => {
-                int modId = indices[0];
+                int modId = modDetails[indices[0]].Id;
                 ModOperation.ShowModInFileExplorer(modId);
             });
         }
@@ -221,7 +221,7 @@ namespace L4d2_Mod_Manager_Tool
         private void listView1_DoubleClick(object sender, EventArgs e)
         {
             WhenModSelected(sender as ListView, indices => {
-                int modId = indices[0];
+                int modId = modDetails[indices[0]].Id;
                 ModOperation.OpenModFileInExplorer(modId);
             });
         }
