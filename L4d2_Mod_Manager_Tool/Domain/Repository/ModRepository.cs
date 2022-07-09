@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,17 +44,20 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
         {
             var command = connection.CreateCommand();
             command.CommandText = $"INSERT INTO mod VALUES(" +
-                $"NULL," +
-                $"\"{mod.FileId}\", " +
-                $"\"{mod.vpkId}\"," +
-                $"\"{mod.Thumbnail}\", " +
-                $"\"{mod.Title}\"," +
-                $" \"{mod.Version}\", " +
-                $"\"{mod.Tagline}\", " +
-                $"\"{mod.Author}\"," +
-                $"\"{mod.WorkshopTitle}\"," +
-                $"\"{mod.WorkshopDescript}\"," +
-                $"\"{mod.WorkshopPreviewImage}\");" +
+                $"NULL" +
+                $",\"{mod.FileId}\"" +
+                $",\"{mod.vpkId}\"" +
+                $",\"{mod.Thumbnail}\"" +
+                $",\"{mod.Title}\"" +
+                $",\"{mod.Version}\"" +
+                $",\"{mod.Tagline}\"" +
+                $",\"{mod.Author}\"" +
+                $",\"{mod.Description}\"" +
+                $",\"{mod.CategoriesSingleLine()}\"" +
+                $",\"{mod.WorkshopTitle}\"" +
+                $",\"{mod.WorkshopDescript}\"" +
+                $",\"{mod.WorkshopPreviewImage}\"" +
+                $",\"{mod.TagsSingleLine()}\");" +
                 $"select last_insert_rowid();";
             long id = (long) command.ExecuteScalar();
 
@@ -69,10 +73,11 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
 
             var command = connection.CreateCommand();
             command.CommandText = $"UPDATE mod SET " +
-                $"workshop_title = \"{mod.WorkshopTitle}\"," +
-                $"workshop_descript = \"{descriptBase64}\"," +
-                $"workshop_previewImage = \"{mod.WorkshopPreviewImage}\" " +
-                $"WHERE " +
+                $"workshop_title = \"{mod.WorkshopTitle}\"" +
+                $",workshop_descript = \"{descriptBase64}\"" +
+                $",workshop_previewImage = \"{mod.WorkshopPreviewImage}\"" +
+                $",workshop_tags = \"{mod.TagsSingleLine()}\"" +
+                $" WHERE " +
                 $"id = {mod.Id}";
             int res = command.ExecuteNonQuery();
             return res > 0;
@@ -85,10 +90,10 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                var mod = CreateFromReader(reader);
-                var base64Data = Convert.FromBase64String(mod.WorkshopDescript);
-                var descript = Encoding.UTF8.GetString(base64Data);
-                yield return mod with { WorkshopDescript = descript };
+                yield return CreateFromReader(reader);
+                //var base64Data = Convert.FromBase64String(mod.WorkshopDescript);
+                //var descript = Encoding.UTF8.GetString(base64Data);
+                //yield return mod with { WorkshopDescript = descript };
             }
         }
 
@@ -108,9 +113,12 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 ",version TEXT" +
                 ",tagline TEXT" +
                 ",author TEXT" +
+                ",description TEXT" +
+                ",categories TEXT" +
                 ",workshop_title TEXT" +
                 ",workshop_descript TEXT" +
                 ",workshop_previewImage TEXT" +
+                ",workshop_tags TEXT" +
                 ",FOREIGN KEY(file_id) REFERENCES mod_file(id)" +
                 ");";
             command.ExecuteNonQuery();
@@ -138,9 +146,26 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                     reader.GetString(6),
                     reader.GetString(7),
                     reader.GetString(8),
-                    reader.GetString(9),
-                    reader.GetString(10)
+                    SplitString(reader.GetString(9), ','),
+                    reader.GetString(10),
+                    DecodeBase64(reader.GetString(11)),
+                    reader.GetString(12),
+                    SplitString(reader.GetString(13), ',')
                 );
+        }
+
+        private static string DecodeBase64(string str)
+        {
+            var data = Convert.FromBase64String(str);
+            return Encoding.UTF8.GetString(data);
+        }
+
+        private static ImmutableArray<string> SplitString(string str, char separator)
+        {
+            if (string.IsNullOrEmpty(str))
+                return ImmutableArray<string>.Empty;
+            else
+                return str.Split(separator).ToImmutableArray();
         }
     }
 }

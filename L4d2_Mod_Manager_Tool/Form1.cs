@@ -18,22 +18,21 @@ namespace L4d2_Mod_Manager_Tool
 {
     public partial class Form1 : Form
     {
-        /// <summary>
-        /// 过滤字符串
-        /// </summary>
-        private string FilterString => textBox_search.Text;
+        private List<ModDetail> modDetails = new();
 
         public Form1()
         {
             InitializeComponent();
-            Text = "求生之路2模组管理工具 " + WinformUtility.SoftwareVersion;
-            button_clearFilter.Visible = false;
-            listView1.ListViewItemSorter = new Widget.ListViewColumnSorter()
-            {
-                SortColumn = 0,
-                Order = SortOrder.Ascending
-            };
+            SetupControl();
             UpdateModList();
+
+            widget_FilterMod1.OnFilterUpdated += widget_FilterMod1_OnFilterUpdated;
+        }
+
+        private void SetupControl()
+        {
+            Text = "求生之路2模组管理工具 " + WinformUtility.SoftwareVersion;
+            listView1.VirtualMode = true;
         }
 
         /// <summary>
@@ -43,11 +42,6 @@ namespace L4d2_Mod_Manager_Tool
         {
             // 开始前检查
             var setting = Module.Settings.SettingFP.GetSetting();
-            if (!File.Exists(setting.VPKExecutablePath))
-            {
-                WinformUtility.ErrorMessageBox("请先设置vpk可执行程序", "环境错误");
-                return;
-            }
             if (!File.Exists(setting.NoVtfExecutablePath))
             {
                 WinformUtility.ErrorMessageBox("请先设置no_vtf可执行程序", "环境错误");
@@ -74,26 +68,17 @@ namespace L4d2_Mod_Manager_Tool
         {
             listView1.Items.Clear();
             imageList1.Images.Clear();
+            modDetails.Clear();
 
-            int index = 0;
+            modDetails = ModOperation.FilteredModInfo().ToList();
+            modDetails.Sort(new ModDetailNameComparer());
+            listView1.VirtualListSize = modDetails.Count;
+            listView1.Invalidate();
 
-            foreach (var mod in ModOperation.FilterMod(FilterString).Select(ModOperation.GetModDetail))
-            {
-                var img = SelectImage(mod.Img);
-                imageList1.Images.Add(img);
-
-                ListViewItem item = new(new string[] {
-                    mod.Name,
-                    mod.Vpkid,
-                    mod.Author,
-                    mod.Tagline
-                });
-                //item.Text = ModFP.SelectName(mod.img);
-                //item.SubItems.Add(mod.vpkId);
-                item.ImageIndex = index++;
-                item.Tag = mod.Id;
-                listView1.Items.Add(item);
-            }
+            //for(int i = 0; i < modDetails.Count; ++i)
+            //{
+            //    imageList1.Images.Add(SelectImage(modDetails[i].Img));
+            //}
         }
 
         /// <summary>
@@ -107,6 +92,32 @@ namespace L4d2_Mod_Manager_Tool
                 .Select(x => new DownloadWorkshopInfoTask(x));
             new Form_RunningTask("下载创意工坊信息", tasks.ToArray()).ShowDialog();
             UpdateModList();
+        }
+
+        private void UpdateModPreview(int modId)
+        {
+            ModOperation.GetModDetail(modId).Match(detail =>
+            {
+                widget_ModOverview1.ModPreview = detail.Img;
+                widget_ModOverview1.ModName = detail.Name;
+                widget_ModOverview1.ModAuthor = detail.Author;
+                widget_ModOverview1.ModCategories = detail.Categories;
+                widget_ModOverview1.ModDescript = detail.Descript;
+                widget_ModOverview1.ModTags = detail.Tags;
+                widget_ModOverview1.ShowModOverview = true;
+            }, () =>
+            {
+                widget_ModOverview1.ShowModOverview = false;
+            });
+        }
+
+        private void WhenModSelected(ListView view, Action<int[]> a)
+        {
+            var selected = view .SelectedIndices;
+            if (selected.Count > 0)
+            {
+                a(view.SelectedIndices.Cast<int>().ToArray());
+            }
         }
         #region 定义
         //private class TestMessageTask : TaskFramework.IMessageTask
@@ -162,31 +173,6 @@ namespace L4d2_Mod_Manager_Tool
         #endregion
         #region UI事件
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem i in listView1.SelectedItems)
-            {
-                // 取出自定义数据
-                int modId = (int)i.Tag;
-                var mod = ModRepository.Instance.FindModById(modId);
-                mod.Map(x =>
-                {
-                    ModOperation.DeactiveMod(x);
-                    return 0;
-                });
-            }
-        }
-
-        private void textBox_search_TextChanged(object sender, EventArgs e)
-        {
-            button_clearFilter.Visible = !string.IsNullOrEmpty(textBox_search.Text);
-            UpdateModList();
-        }
-        private void button_clearFilter_Click(object sender, EventArgs e)
-        {
-            textBox_search.Text = "";
-        }
-
         // 模组列表右键菜单
         private void listView1_MouseClick(object sender, MouseEventArgs e)
         {
@@ -198,11 +184,10 @@ namespace L4d2_Mod_Manager_Tool
 
         private void toolStripMenuItem_showInExplorer_Click(object sender, EventArgs e)
         {
-            //Module.FileExplorer.FileExplorerUtils.OpenFileExplorerAndSelectItem()
-            if (listView1.SelectedItems.Count == 0)
-                return;
-            int modId = (int)listView1.SelectedItems[0].Tag;
-            ModOperation.ShowModInFileExplorer(modId);
+            WhenModSelected(sender as ListView, indices => {
+                int modId = modDetails[indices[0]].Id;
+                ModOperation.ShowModInFileExplorer(modId);
+            });
         }
 
         // 刷新只更新列表
@@ -235,10 +220,42 @@ namespace L4d2_Mod_Manager_Tool
 
         private void listView1_DoubleClick(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count == 0)
-                return;
-            int modId = (int)listView1.SelectedItems[0].Tag;
-            ModOperation.OpenModFileInExplorer(modId);
+            WhenModSelected(sender as ListView, indices => {
+                int modId = modDetails[indices[0]].Id;
+                ModOperation.OpenModFileInExplorer(modId);
+            });
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selected = (sender as ListView).SelectedIndices;
+            // 只显示第一个选择项
+            if (selected.Count > 0)
+            {
+                UpdateModPreview(modDetails[selected[0]].Id) ;
+            }
+            else
+            {
+                UpdateModPreview(-1);
+            }
+        }
+
+        private void widget_FilterMod1_OnFilterUpdated(object sender, EventArgs e)
+        {
+            UpdateModList();
+        }
+
+        private void listView1_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            var detail = modDetails[e.ItemIndex];
+            ListViewItem item = new(new string[] {
+                detail.Name,
+                detail.Vpkid,
+                detail.Author,
+                detail.Tagline
+            });
+            //item.ImageIndex = e.ItemIndex;
+            e.Item = item;
         }
         #endregion
 
@@ -254,7 +271,7 @@ namespace L4d2_Mod_Manager_Tool
         /// <summary>
         /// 安全地载入图片，如果图片不存在或有错返回maybe.none
         /// </summary>
-        private static Utility.Maybe<Image> LoadImageSafe(string file)
+        private static Maybe<Image> LoadImageSafe(string file)
         {
             try
             {

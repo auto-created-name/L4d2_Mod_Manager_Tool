@@ -1,8 +1,10 @@
 ﻿using L4d2_Mod_Manager_Tool.Domain;
+using L4d2_Mod_Manager_Tool.Domain.ModFilter;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
 using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,14 +13,37 @@ using System.Threading.Tasks;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
-    public record ModDetail(int Id, string Img, string Name, string Vpkid, string Author, string Tagline);
+
     public class ModOperation
     {
         private static ModFileRepository modFileRepo = new ModFileRepository();
+        private static ModRepository Repo { get => ModRepository.Instance; }
         private const string TitleKeyName = "addontitle";
         private const string VersionKeyName = "addonversion";
         private const string TaglineKeyName = "addontagline";
         private const string AuthorKeyName = "addonauthor";
+        private const string DescriptKeyName = "addondescription";
+
+        private static ModFilterBuilder filterBuilder = new();
+
+        /// <summary>
+        /// 增加一个模组过滤标签
+        /// </summary>
+        public static void AddModFilterTag(string tagName)
+            => filterBuilder.AddTag(tagName);
+
+        public static void RemoveModFilterTag(string tagName)
+            => filterBuilder.RemoveTag(tagName);
+
+        public static void SetModFilterName(string name)
+            => filterBuilder.SetName(name);
+
+        public static IEnumerable<ModDetail> FilteredModInfo()
+        {
+            return filterBuilder.FinalFilter
+                .FilterMod(ModRepository.Instance.GetMods())
+                .Select(GetModDetail);
+        }
 
         public static IEnumerable<ModDetail> ModInfos()
         {
@@ -51,11 +76,19 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static ModDetail GetModDetail(Mod m)
         {
             return new(m.Id,
-                ModFP.SelectPreview(m),
-                ModFP.SelectName(m)
+                ModFP.SelectPreview(m)
+                , ModFP.SelectName(m)
                 , m.vpkId
                 , m.Author
-                , m.Tagline);
+                , m.Tagline
+                , ModFP.CategoriesSingleLine(m)
+                , ModFP.TagsSingleLine(m)
+                , ModFP.SelectDescription(m));
+        }
+
+        public static Maybe<ModDetail> GetModDetail(int modId)
+        {
+            return Repo.FindModById(modId).Map(GetModDetail);
         }
 
         public static IEnumerable<Mod> FilterMod(string filter)
@@ -90,15 +123,25 @@ namespace L4d2_Mod_Manager_Tool.Service
             //    .Where(x => !x.Value.StartsWith("//"))
             //    .Select(x => x.Groups["val"].Value)
             //    .ToArray();
-            var kvs = PairQue(words).ToArray();
+            var kvs = PairQue(words).Select(x => (x.Item1.ToLower(), x.Item2)).ToArray();
 
-            var lookup = kvs.ToLookup(x => x.Item1.ToLower(), x => x.Item2);
+            var lookup = kvs.ToLookup(x => x.Item1, x => x.Item2);
+
+            // addoninfo 中的分类信息
+            var categories = kvs
+                .Where(x => KeyIsCategoryType(x.Item1))
+                .Select(PairToCategory)
+                .Select(x => x.ValueOr(null))
+                .Where(x => x != null)
+                .ToArray();
 
             return new ModInfo(
                 lookup.FindElementSafe(TitleKeyName),
                 lookup.FindElementSafe(VersionKeyName),
                 lookup.FindElementSafe(TaglineKeyName),
-                lookup.FindElementSafe(AuthorKeyName)
+                lookup.FindElementSafe(AuthorKeyName),
+                lookup.FindElementSafe(DescriptKeyName),
+                categories.ToImmutableArray()
             );
         }
 
@@ -138,7 +181,8 @@ namespace L4d2_Mod_Manager_Tool.Service
                 {
                     WorkshopTitle = info.Title,
                     WorkshopDescript = info.Descript,
-                    WorkshopPreviewImage = info.PreviewImage
+                    WorkshopPreviewImage = info.PreviewImage,
+                    Tags = info.Tags
                 });
             return newMod.Match(x => (x, true), () => (mod, false));
         }
@@ -202,6 +246,33 @@ namespace L4d2_Mod_Manager_Tool.Service
 
             for(int i = 1; i < xs.Length; i += 2)
                 yield return (xs[i - 1], xs[i]);
+        }
+
+        /// <summary>
+        /// 解析键值对，找到分类
+        /// </summary>
+        private static Maybe<string> PairToCategory((string, string) pair)
+        {
+            return pair.Item1 switch
+            {
+                "addoncontent_campaign" => pair.Item2.Equals("1") ? "Campaign" : Maybe.None,
+                "addoncontent_map"      => pair.Item2.Equals("1") ? "Map"      : Maybe.None,
+                "addoncontent_skin"     => pair.Item2.Equals("1") ? "Skin"     : Maybe.None,
+                "addoncontent_weapon"   => pair.Item2.Equals("1") ? "Weapon"   : Maybe.None,
+                "addoncontent_survivor" => pair.Item2.Equals("1") ? "Survivor" : Maybe.None,
+                "addoncontent_sound"    => pair.Item2.Equals("1") ? "Sound"    : Maybe.None,
+                "addoncontent_script"   => pair.Item2.Equals("1") ? "Script"   : Maybe.None,
+                "addoncontent_prop"     => pair.Item2.Equals("1") ? "Prop"     : Maybe.None,
+                _ => Maybe.None
+            };
+        }
+
+        /// <summary>
+        /// 模组信息键为分类类型
+        /// </summary>
+        private static bool KeyIsCategoryType(string key)
+        {
+            return key.StartsWith("addoncontent_");
         }
     }
 }

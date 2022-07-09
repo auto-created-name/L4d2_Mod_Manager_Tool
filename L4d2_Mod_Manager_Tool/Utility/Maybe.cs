@@ -8,6 +8,8 @@ namespace L4d2_Mod_Manager_Tool.Utility
     {
         private readonly T value;
 
+        public bool HasValue => hasValue;
+
         private readonly bool hasValue;
 
         private Maybe(T value)
