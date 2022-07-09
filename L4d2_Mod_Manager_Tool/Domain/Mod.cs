@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -79,6 +80,44 @@ namespace L4d2_Mod_Manager_Tool.Domain
                 return mod.WorkshopPreviewImage;
             else
                 return mod.Thumbnail;
+        }
+
+        /// <summary>
+        /// 谓词构造 - 包含制定标签
+        /// </summary>
+        public static Func<Mod, bool> HaveTag(string tagName)
+        {
+            return m => m.Tags.Contains(tagName);
+        }
+
+        public static Func<Mod, bool> NameContains(string name)
+        {
+            return m =>
+                m.Title.Contains(name, StringComparison.CurrentCultureIgnoreCase)
+                || m.WorkshopTitle.Contains(name, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        public static Func<Mod, bool> AuthorContains(string name)
+        {
+            return m => m.Author.Contains(name, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        public static Func<Mod, bool> VPKIdContains(string name)
+        {
+            return m => m.vpkId.Contains(name, StringComparison.CurrentCultureIgnoreCase);
+        }
+    }
+
+    public class ModEqualityComparer : IEqualityComparer<Mod>
+    {
+        public bool Equals(Mod x, Mod y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode([DisallowNull] Mod obj)
+        {
+            return obj.Id;
         }
     }
 }

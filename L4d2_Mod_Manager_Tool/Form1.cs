@@ -18,22 +18,30 @@ namespace L4d2_Mod_Manager_Tool
 {
     public partial class Form1 : Form
     {
-        /// <summary>
-        /// 过滤字符串
-        /// </summary>
-        private string FilterString => textBox_search.Text;
+        ///// <summary>
+        ///// 过滤字符串
+        ///// </summary>
+        //private string FilterString => textBox_search.Text;
+
 
         public Form1()
         {
             InitializeComponent();
+            SetupControl();
+            UpdateModList();
+
+            widget_FilterMod1.OnFilterUpdated += widget_FilterMod1_OnFilterUpdated;
+        }
+
+        private void SetupControl()
+        {
             Text = "求生之路2模组管理工具 " + WinformUtility.SoftwareVersion;
-            button_clearFilter.Visible = false;
+            //button_clearFilter.Visible = false;
             listView1.ListViewItemSorter = new Widget.ListViewColumnSorter()
             {
                 SortColumn = 0,
                 Order = SortOrder.Ascending
             };
-            UpdateModList();
         }
 
         /// <summary>
@@ -72,7 +80,7 @@ namespace L4d2_Mod_Manager_Tool
 
             int index = 0;
 
-            foreach (var mod in ModOperation.FilterMod(FilterString).Select(ModOperation.GetModDetail))
+            foreach (var mod in ModOperation.FilteredModInfo())
             {
                 var img = SelectImage(mod.Img);
                 imageList1.Images.Add(img);
@@ -187,15 +195,15 @@ namespace L4d2_Mod_Manager_Tool
             }
         }
 
-        private void textBox_search_TextChanged(object sender, EventArgs e)
-        {
-            button_clearFilter.Visible = !string.IsNullOrEmpty(textBox_search.Text);
-            UpdateModList();
-        }
-        private void button_clearFilter_Click(object sender, EventArgs e)
-        {
-            textBox_search.Text = "";
-        }
+        //private void textBox_search_TextChanged(object sender, EventArgs e)
+        //{
+        //    button_clearFilter.Visible = !string.IsNullOrEmpty(textBox_search.Text);
+        //    UpdateModList();
+        //}
+        //private void button_clearFilter_Click(object sender, EventArgs e)
+        //{
+        //    textBox_search.Text = "";
+        //}
 
         // 模组列表右键菜单
         private void listView1_MouseClick(object sender, MouseEventArgs e)
@@ -277,6 +285,11 @@ namespace L4d2_Mod_Manager_Tool
             cms.Items.Add(CreateTagMenuItem("Weapons", ModTag.WeaponsTags));
             cms.Items.Add(CreateTagMenuItem("Items", ModTag.ItemsTags));
             cms.Show(btn, new Point(20, 20));
+        }
+
+        private void widget_FilterMod1_OnFilterUpdated(object sender, EventArgs e)
+        {
+            UpdateModList();
         }
         #endregion
 

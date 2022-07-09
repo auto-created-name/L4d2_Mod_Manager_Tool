@@ -1,4 +1,5 @@
 ﻿using L4d2_Mod_Manager_Tool.Domain;
+using L4d2_Mod_Manager_Tool.Domain.ModFilter;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
 using L4d2_Mod_Manager_Tool.Utility;
 using System;
@@ -25,6 +26,27 @@ namespace L4d2_Mod_Manager_Tool.Service
         private const string VersionKeyName = "addonversion";
         private const string TaglineKeyName = "addontagline";
         private const string AuthorKeyName = "addonauthor";
+
+        private static ModFilterBuilder filterBuilder = new();
+
+        /// <summary>
+        /// 增加一个模组过滤标签
+        /// </summary>
+        public static void AddModFilterTag(string tagName)
+            => filterBuilder.AddTag(tagName);
+
+        public static void RemoveModFilterTag(string tagName)
+            => filterBuilder.RemoveTag(tagName);
+
+        public static void SetModFilterName(string name)
+            => filterBuilder.SetName(name);
+
+        public static IEnumerable<ModDetail> FilteredModInfo()
+        {
+            return filterBuilder.FinalFilter
+                .FilterMod(ModRepository.Instance.GetMods())
+                .Select(GetModDetail);
+        }
 
         public static IEnumerable<ModDetail> ModInfos()
         {
