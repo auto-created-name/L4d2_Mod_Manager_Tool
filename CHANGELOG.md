@@ -1,15 +1,22 @@
 # 更新日志
 ## [Unrelease] - XXXX/XX/XX
 ### Added - 新增
+### Changed - 变更
+### Deprecated － 丢弃
+### Removed － 移除
+### Fixed － 修复
+### Others － 其他
+
+## [0.2.0] - 2022/7/9
+### Added - 新增
 * 增加对模组类型的解析功能
 * 创意工坊下载的信息增加标签信息
 * 增加模组预览(Mod Overview)，在模组列表中选择的模组会在左侧显示模组的预览图、名称、分类、标签和描述
 * 模组标签分类过滤功能
-### Changed - 变更
-### Deprecated － 丢弃
+
 ### Removed － 移除
 * 不再依赖vpk.exe进行模组解包，现在可以独立解包vpk了(使用SharpVPK代替对vpk.exe的依赖)
-### Fixed － 修复
+
 ### Others － 其他
 * 优化了模组解析速度
 * 优化模组列表刷新速度
