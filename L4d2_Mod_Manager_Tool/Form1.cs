@@ -71,6 +71,7 @@ namespace L4d2_Mod_Manager_Tool
             modDetails.Clear();
 
             modDetails = ModOperation.FilteredModInfo().ToList();
+            modDetails.Sort(new ModDetailNameComparer());
             listView1.VirtualListSize = modDetails.Count;
             listView1.Invalidate();
 

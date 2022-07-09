@@ -29,8 +29,9 @@ namespace L4d2_Mod_Manager_Tool.Widget
         {
             // 添加移除按钮
             Button btn = new();
-            btn.Text = tagName;
+            btn.Text = $"标签:{tagName}";
             btn.Click += button_removeTag_Click;
+            btn.Size = btn.PreferredSize;
             flowLayoutPanel_filter.Controls.Add(btn);
 
             //增加谓词
@@ -43,7 +44,7 @@ namespace L4d2_Mod_Manager_Tool.Widget
         {
             var btn = (sender as Button);
             //删除谓词
-            ModOperation.RemoveModFilterTag(btn.Text);
+            ModOperation.RemoveModFilterTag(btn.Text.Substring(3));
             btn.Dispose();
 
             OnFilterUpdated?.Invoke(this, null);

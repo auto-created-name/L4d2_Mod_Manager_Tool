@@ -13,11 +13,7 @@ using System.Threading.Tasks;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
-    public record ModDetail(
-        int Id, string Img, string Name, 
-        string Vpkid, string Author, 
-        string Tagline, string Categories, 
-        string Tags, string Descript);
+
     public class ModOperation
     {
         private static ModFileRepository modFileRepo = new ModFileRepository();
