@@ -21,8 +21,8 @@ namespace L4d2_Mod_Manager_Tool.Arthitecture
         /// </summary>
         public static string ConverVtf(string file)
         {
-            string res = RunProcess.Run(NoVtfExecutablePath, $"-l jpg --compress \"{Path.GetDirectoryName(file)}\"");
-            return Path.ChangeExtension(file, ".jpg");
+            string res = RunProcess.Run(NoVtfExecutablePath, $"-l png --compress \"{Path.GetDirectoryName(file)}\"");
+            return Path.ChangeExtension(file, ".png");
         }
     }
 }

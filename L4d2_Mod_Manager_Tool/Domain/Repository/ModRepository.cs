@@ -52,6 +52,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 $",\"{mod.Version}\"" +
                 $",\"{mod.Tagline}\"" +
                 $",\"{mod.Author}\"" +
+                $",\"{mod.Description}\"" +
                 $",\"{mod.CategoriesSingleLine()}\"" +
                 $",\"{mod.WorkshopTitle}\"" +
                 $",\"{mod.WorkshopDescript}\"" +
@@ -112,6 +113,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 ",version TEXT" +
                 ",tagline TEXT" +
                 ",author TEXT" +
+                ",description TEXT" +
                 ",categories TEXT" +
                 ",workshop_title TEXT" +
                 ",workshop_descript TEXT" +
@@ -143,11 +145,12 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                     reader.GetString(5),
                     reader.GetString(6),
                     reader.GetString(7),
-                    SplitString(reader.GetString(8), ','),
-                    reader.GetString(9),
-                    DecodeBase64(reader.GetString(10)),
-                    reader.GetString(11),
-                    SplitString(reader.GetString(12), ',')
+                    reader.GetString(8),
+                    SplitString(reader.GetString(9), ','),
+                    reader.GetString(10),
+                    DecodeBase64(reader.GetString(11)),
+                    reader.GetString(12),
+                    SplitString(reader.GetString(13), ',')
                 );
         }
 

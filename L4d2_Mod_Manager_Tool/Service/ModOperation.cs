@@ -22,6 +22,7 @@ namespace L4d2_Mod_Manager_Tool.Service
         private const string VersionKeyName = "addonversion";
         private const string TaglineKeyName = "addontagline";
         private const string AuthorKeyName = "addonauthor";
+        private const string DescriptKeyName = "addondescription";
 
         private static ModFilterBuilder filterBuilder = new();
 
@@ -82,7 +83,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                 , m.Tagline
                 , ModFP.CategoriesSingleLine(m)
                 , ModFP.TagsSingleLine(m)
-                , m.WorkshopDescript);
+                , ModFP.SelectDescription(m));
         }
 
         public static Maybe<ModDetail> GetModDetail(int modId)
@@ -139,6 +140,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                 lookup.FindElementSafe(VersionKeyName),
                 lookup.FindElementSafe(TaglineKeyName),
                 lookup.FindElementSafe(AuthorKeyName),
+                lookup.FindElementSafe(DescriptKeyName),
                 categories.ToImmutableArray()
             );
         }

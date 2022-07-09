@@ -46,6 +46,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                     Version = modinfo.Version.ValueOr(""),
                     Tagline = modinfo.Tagline.ValueOr(""),
                     Author = modinfo.Author.ValueOr(""),
+                    Description = modinfo.Description.ValueOr(""),
                     Categories = snippet.Categories.Union(modinfo.Categories).ToImmutableArray()
                 };
             }, () => mod);
@@ -90,7 +91,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                     if (file.EndsWith(".vtf"))
                     {
                         NoVtfConverter.ConverVtf(file);
-                        file = Path.ChangeExtension(file, ".jpg");
+                        file = Path.ChangeExtension(file, ".png");
                     }
                     return file;
                 });

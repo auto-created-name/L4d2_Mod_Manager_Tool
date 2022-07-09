@@ -18,6 +18,7 @@ namespace L4d2_Mod_Manager_Tool.Domain
         string Version, 
         string Tagline, 
         string Author,
+        string Description,
         ImmutableArray<string> Categories,
         string WorkshopTitle,
         string WorkshopDescript,
@@ -31,7 +32,7 @@ namespace L4d2_Mod_Manager_Tool.Domain
         {
             var vpkNum = GetVpkNumberFromFileName(f.FilePath);
             return new Mod(-1, f.Id, vpkNum.ValueOr(null), 
-                null, null, null, null, null, ImmutableArray<string>.Empty, 
+                null, null, null, null, null, null, ImmutableArray<string>.Empty, 
                 null, null, null, ImmutableArray<string>.Empty);
         }
 
@@ -72,6 +73,14 @@ namespace L4d2_Mod_Manager_Tool.Domain
                 return mod.Title;
             else
                 return "<无名称>";
+        }
+
+        public static string SelectDescription(Mod mod)
+        {
+            if (!string.IsNullOrEmpty(mod.WorkshopDescript))
+                return mod.WorkshopDescript;
+            else
+                return mod.Description;
         }
 
         public static string SelectPreview(Mod mod)
