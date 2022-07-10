@@ -46,6 +46,9 @@
     <None Update="icon_large.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\categories.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\no-image.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

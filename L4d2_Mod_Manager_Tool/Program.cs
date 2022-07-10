@@ -14,6 +14,8 @@ namespace L4d2_Mod_Manager_Tool
         [STAThread]
         static void Main()
         {
+            // ∑˛ŒÒ‘ÿ»Î
+            Service.ModCategoryService.Load();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

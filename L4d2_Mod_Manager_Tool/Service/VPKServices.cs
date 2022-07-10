@@ -14,7 +14,7 @@ using System.Collections.Immutable;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
-    public class VPKServices
+    public static class VPKServices
     {
         /// <summary>
         /// 扫描所有的模组文件
@@ -70,8 +70,11 @@ namespace L4d2_Mod_Manager_Tool.Service
             
             // 列出所有vpk内容，找到addonimage
             var files = archive.Directories.SelectMany(dir => dir.Entries).ToArray();
-            var tags = files.Select(FindCategoryFromVPKEntry)
-                .Where(tag => tag != null).Distinct().ToArray();
+            //var categories = files.Select(FindCategoryFromVPKEntry)
+            //    .Where(tag => tag != null).Distinct().ToArray();
+            var categories = files
+                .SelectMany(entry => ModCategoryService.MatchCategories(entry.FullName()))
+                .Distinct();
 
             var imgEntry = files.Where(IsAddonImage).FirstElementSafe();
             var infoEntry = files.Where(IsAddonInfo).FirstElementSafe();
@@ -106,7 +109,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                     Path.GetFileName(vpk),
                     addonimageFile,
                     addoninfoFile,
-                    tags.ToImmutableArray()
+                    categories.ToImmutableArray()
                 );
             });
         }
@@ -190,6 +193,11 @@ namespace L4d2_Mod_Manager_Tool.Service
                 .Where(x => Regex.IsMatch(file, x.Item2))
                 .Select(x => x.Item1)
                 .FirstOrDefault();
+        }
+
+        private static string FullName(this VpkEntry entry)
+        {
+            return $"{entry.Path}/{entry.Filename}.{entry.Extension}";
         }
         #region 查找文件
         /// <summary>
