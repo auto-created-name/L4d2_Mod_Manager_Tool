@@ -1,7 +1,7 @@
 [
 {"regular":"^scripts","category":"Scripts"},
 {"regular":"^maps/(?:.+)","category":"Maps"},
-{"regular":"^models/survivors","category":"Survivor"},
+{"regular":"^models/survivors","category":"Survivors"},
 {"regular":"^models/survivors/survivor_namvet\\.mdl","category":"Bill"},
 {"regular":"^models/survivors/survivor_biker\\.mdl","category":"Francis"},
 {"regular":"^models/survivors/survivor_manager\\.mdl","category":"Louis"},

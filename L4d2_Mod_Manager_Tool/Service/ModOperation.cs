@@ -27,13 +27,28 @@ namespace L4d2_Mod_Manager_Tool.Service
         private static ModFilterBuilder filterBuilder = new();
 
         /// <summary>
-        /// 增加一个模组过滤标签
+        /// 增加模组标签过滤
         /// </summary>
         public static void AddModFilterTag(string tagName)
             => filterBuilder.AddTag(tagName);
 
+        /// <summary>
+        /// 删除模组标签过滤
+        /// </summary>
         public static void RemoveModFilterTag(string tagName)
             => filterBuilder.RemoveTag(tagName);
+
+        /// <summary>
+        /// 增加模组分类过滤
+        /// </summary>
+        public static void AddModFilterCategory(string catName)
+            => filterBuilder.AddCategory(catName);
+
+        /// <summary>
+        /// 删除模组分类过滤
+        /// </summary>
+        public static void RemoveModFilterCategory(string catName)
+            => filterBuilder.RemoveCategory(catName);
 
         public static void SetModFilterName(string name)
             => filterBuilder.SetName(name);

@@ -39,12 +39,35 @@ namespace L4d2_Mod_Manager_Tool.Widget
             OnFilterUpdated?.Invoke(this, null);
         }
 
+        private void OnCategoryTrigged(string catName)
+        {
+            // 添加移除按钮
+            Button btn = new();
+            btn.Text = $"内容:{catName}";
+            btn.Click += button_removeCategory_Click;
+            btn.Size = btn.PreferredSize;
+            flowLayoutPanel_filter.Controls.Add(btn);
+
+            //增加谓词
+            ModOperation.AddModFilterCategory(catName);
+            OnFilterUpdated?.Invoke(this, null);
+        }
+
         #region 回调函数
         private void button_removeTag_Click(object sender, EventArgs e)
         {
             var btn = (sender as Button);
             //删除谓词
             ModOperation.RemoveModFilterTag(btn.Text.Substring(3));
+            btn.Dispose();
+
+            OnFilterUpdated?.Invoke(this, null);
+        }
+        private void button_removeCategory_Click(object sender, EventArgs e)
+        {
+            var btn = (sender as Button);
+            //删除谓词
+            ModOperation.RemoveModFilterCategory(btn.Text.Substring(3));
             btn.Dispose();
 
             OnFilterUpdated?.Invoke(this, null);
@@ -71,6 +94,19 @@ namespace L4d2_Mod_Manager_Tool.Widget
             cms.Items.Add(CreateTagMenuItem("Game Modes"    , ModTag.GameModesTags  , OnTagFilterTrigged));
             cms.Items.Add(CreateTagMenuItem("Weapons"       , ModTag.WeaponsTags    , OnTagFilterTrigged));
             cms.Items.Add(CreateTagMenuItem("Items"         , ModTag.ItemsTags      , OnTagFilterTrigged));
+            cms.Show(btn, new Point(20, 20));
+        }
+
+        private void button_category_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            ContextMenuStrip cms = new();
+            cms.Items.Add(CreateTagMenuItem("Survivors"     , ModTag.SurvivorsTags  , OnCategoryTrigged));
+            cms.Items.Add(CreateTagMenuItem("Infected"      , ModTag.InfectedTags   , OnCategoryTrigged));
+            cms.Items.Add(CreateTagMenuItem("Game Content"  , ModTag.GameContentTags, OnCategoryTrigged));
+            cms.Items.Add(CreateTagMenuItem("Game Modes"    , ModTag.GameModesTags  , OnCategoryTrigged));
+            cms.Items.Add(CreateTagMenuItem("Weapons"       , ModTag.WeaponsTags    , OnCategoryTrigged));
+            cms.Items.Add(CreateTagMenuItem("Items"         , ModTag.ItemsTags      , OnCategoryTrigged));
             cms.Show(btn, new Point(20, 20));
         }
         #endregion
