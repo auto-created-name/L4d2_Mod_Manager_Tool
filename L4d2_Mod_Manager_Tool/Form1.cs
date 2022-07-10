@@ -184,7 +184,7 @@ namespace L4d2_Mod_Manager_Tool
 
         private void toolStripMenuItem_showInExplorer_Click(object sender, EventArgs e)
         {
-            WhenModSelected(sender as ListView, indices => {
+            WhenModSelected(listView1, indices => {
                 int modId = modDetails[indices[0]].Id;
                 ModOperation.ShowModInFileExplorer(modId);
             });
