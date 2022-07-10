@@ -173,28 +173,6 @@ namespace L4d2_Mod_Manager_Tool.Service
             File.WriteAllBytes(file, data);
         }
 
-        private static List<(string, string)> CategoryRegexes =
-            new()
-            {
-                ("Maps", @"maps/(?:.+)"),
-                ("Scripts", @"cfg/autoexec\.cfg"),
-                ("Survivor", @"models/survivors/survivor_(.+)\.mdl"),
-                ("Infected", @"models/infected/(.+)\.mdl"),
-                ("CommonInfected", @"models/infected/common(?:.*)\.mdl"),
-                ("Weapons", @"models/weapons/(?:.+)\.mdl"),
-            };
-
-        /// <summary>
-        /// 从VPK项中通过文件名判断分类
-        /// </summary>
-        private static string FindCategoryFromVPKEntry(VpkEntry entry){
-            string file = $"{entry.Path}/{entry.Filename}.{entry.Extension}";
-            return CategoryRegexes
-                .Where(x => Regex.IsMatch(file, x.Item2))
-                .Select(x => x.Item1)
-                .FirstOrDefault();
-        }
-
         private static string FullName(this VpkEntry entry)
         {
             return $"{entry.Path}/{entry.Filename}.{entry.Extension}";

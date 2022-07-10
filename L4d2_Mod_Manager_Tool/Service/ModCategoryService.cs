@@ -33,7 +33,9 @@ namespace L4d2_Mod_Manager_Tool.Service
                 categoryRules = JsonConvert.DeserializeObject<List<CategoryRule>>(
                     File.ReadAllText(CategoriesConfigureFile));
             }
-            catch {}
+            catch (Exception e){
+                Utility.WinformUtility.ErrorMessageBox("分类规则加载失败:" + e.Message, "服务初始化错误");
+            }
         }
 
         public static IEnumerable<string> MatchCategories(string entry)
