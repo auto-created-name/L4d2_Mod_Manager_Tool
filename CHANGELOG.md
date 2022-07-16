@@ -3,6 +3,7 @@
 ### Added - 新增
 * 可配置的模组内容分类过滤功能
 ### Changed - 变更
+* 模组位置设置改为直接对游戏路径设置
 ### Deprecated － 丢弃
 ### Removed － 移除
 ### Fixed － 修复

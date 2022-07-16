@@ -12,7 +12,7 @@ namespace L4d2_Mod_Manager_Tool.Module.Settings
                 return JsonConvert.DeserializeObject<Setting>(File.ReadAllText(SettingFile));
             else
                 return new() { 
-                    modFileFolder = new()
+                    GamePath = ""
                     , NoVtfExecutablePath = "no_vtf-windows_x64\\no_vtf.exe"
                 };
         }

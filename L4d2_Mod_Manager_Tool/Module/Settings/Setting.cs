@@ -10,7 +10,7 @@ namespace L4d2_Mod_Manager_Tool.Module.Settings
         /// <summary>
         /// 模组文件夹
         /// </summary>
-        public List<string> modFileFolder;
+        public string GamePath;
 
         /// <summary>
         /// no_vtf可执行程序

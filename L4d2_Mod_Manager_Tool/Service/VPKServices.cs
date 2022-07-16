@@ -159,7 +159,18 @@ namespace L4d2_Mod_Manager_Tool.Service
         /// <summary>
         /// 模组文件夹
         /// </summary>
-        private static IEnumerable<string> ModFolders => SettingFP.GetSetting().modFileFolder;
+        private static IEnumerable<string> ModFolders
+        {
+            get
+            {
+                var gp = SettingFP.GetSetting().GamePath;
+                return new string[]
+                {
+                    Path.Combine(gp, "left4dead2", "addons"),
+                    Path.Combine(gp, "left4dead2", "addons", "workshop")
+                }.Where(Directory.Exists);
+            }
+        }
 
         private static void ExtraVpkEntry(string file, VpkEntry entry)
         {
