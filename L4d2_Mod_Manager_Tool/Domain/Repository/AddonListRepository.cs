@@ -17,6 +17,11 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             datas.Iter(t => enabledDic.Add(t.Item1, t.Item2));
         }
 
+        public void Clear()
+        {
+            enabledDic.Clear();
+        }
+
         public void SetModEnabled(int modId, bool enabled)
         {
             enabledDic[modId] = enabled;

@@ -22,6 +22,7 @@ namespace L4d2_Mod_Manager_Tool.Service
             var ds = als.Select(t => (ModOperation.FindModByFileName(t.Item1)
                 .Map(m => m.Id).ValueOr(-1), t.Item2))
                 .Where(m => m.Item1 != -1);
+            Repo.Clear();
             Repo.AddRange(ds);
         }
 

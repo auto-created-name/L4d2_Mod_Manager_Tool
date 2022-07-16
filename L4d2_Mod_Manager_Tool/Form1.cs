@@ -60,6 +60,7 @@ namespace L4d2_Mod_Manager_Tool
             // 如果有新增模型，开启任务界面，开始扫描
             if (tasks.Length > 0)
                 new Form_RunningTask("扫描模组", tasks).ShowDialog();
+            AddonListService.Load();
             // 最后更新模组列表
             UpdateModList();
         }
