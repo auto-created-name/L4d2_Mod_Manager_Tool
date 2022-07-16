@@ -31,5 +31,11 @@ namespace L4d2_Mod_Manager_Tool.Service
         /// </summary>
         public static string WorkshopAddonsFolder =>
             Path.Combine(AddonsFolder, WorkshopAddonFolderName);
+
+        /// <summary>
+        /// 获取模组文件完整路径
+        /// </summary>
+        public static string GetAddonFileFullPath(string filePath)
+            => Path.Combine(AddonsFolder, filePath);
     }
 }

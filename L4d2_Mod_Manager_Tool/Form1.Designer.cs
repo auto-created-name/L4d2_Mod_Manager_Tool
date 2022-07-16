@@ -72,6 +72,7 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.Size = new System.Drawing.Size(731, 517);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 1;
+            this.listView1.TileSize = new System.Drawing.Size(20, 20);
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listView1_RetrieveVirtualItem);
@@ -102,7 +103,7 @@ namespace L4d2_Mod_Manager_Tool
             // imageList1
             // 
             this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(20, 20);
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // contextMenuStrip1

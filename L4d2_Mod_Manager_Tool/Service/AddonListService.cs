@@ -8,17 +8,26 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
     static class AddonListService
     {
+        private static Dictionary<int, bool> _enabledDic;
 
-        public static void ConvertToDomain()
+        public static bool IsModEnabled(int modId)
         {
-            var als = ParseAddonList(ReadAddonListContent());
-            var ds = als.Select(t => (ModOperation.FindModByFileName(t.Item1)
-                                         .Map(m => m.Id).ValueOr(-1), t.Item2)).ToArray();
+            if (_enabledDic == null)
+            {
+                var als = ParseAddonList(ReadAddonListContent());
+                var ds = als.Select(t => (ModOperation.FindModByFileName(t.Item1)
+                    .Map(m => m.Id).ValueOr(-1), t.Item2))
+                    .Where(m=>m.Item1 != -1)
+                    .ToArray();
+                _enabledDic = ds.ToDictionary(t => t.Item1, t => t.Item2);
+            }
+            return _enabledDic.ContainsKey(modId) ? _enabledDic[modId] : false;
         }
 
         private static string AddonListFilePath =>

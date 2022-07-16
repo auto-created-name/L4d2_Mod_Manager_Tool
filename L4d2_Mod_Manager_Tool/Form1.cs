@@ -33,6 +33,9 @@ namespace L4d2_Mod_Manager_Tool
         {
             Text = "求生之路2模组管理工具 " + WinformUtility.SoftwareVersion;
             listView1.VirtualMode = true;
+
+            imageList1.Images.Add(Image.FromFile("Resources/off.png"));
+            imageList1.Images.Add(Image.FromFile("Resources/on.png"));
         }
 
         /// <summary>
@@ -67,7 +70,6 @@ namespace L4d2_Mod_Manager_Tool
         private void UpdateModList()
         {
             listView1.Items.Clear();
-            imageList1.Images.Clear();
             modDetails.Clear();
 
             modDetails = ModOperation.FilteredModInfo().ToList();
@@ -248,13 +250,15 @@ namespace L4d2_Mod_Manager_Tool
         private void listView1_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
             var detail = modDetails[e.ItemIndex];
+            var enabled = AddonListService.IsModEnabled(detail.Id);
             ListViewItem item = new(new string[] {
                 detail.Name,
                 detail.Vpkid,
                 detail.Author,
                 detail.Tagline
             });
-            //item.ImageIndex = e.ItemIndex;
+
+            item.ImageIndex = enabled ? 1 : 0;
             e.Item = item;
         }
         #endregion
