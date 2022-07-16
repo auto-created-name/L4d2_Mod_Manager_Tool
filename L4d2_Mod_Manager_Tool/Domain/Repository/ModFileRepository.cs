@@ -23,17 +23,29 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             CreateTableIfNotExists();
         }
 
+        /// <summary>
+        /// 通过文件名查找文件
+        /// </summary>
+        public Maybe<ModFile> FindModFileByFileName(string fn)
+        {
+            var cmd = command($"SELECT * FROM mod_file WHERE filename=\"{fn}\"");
+            using var reader = cmd.ExecuteReader();
+            return ReadModFile(reader);
+        }
+
         public Maybe<ModFile> FindModFileById(int id)
         {
             var command = connection.CreateCommand();
             command.CommandText =
                 $"SELECT * FROM mod_file WHERE id={id};";
             using var reader = command.ExecuteReader();
+            return ReadModFile(reader);
+        }
+
+        private static Maybe<ModFile> ReadModFile(SQLiteDataReader reader)
+        {
             if (reader.Read())
             {
-                int _id = (int)reader.GetInt64(0);
-                string _file = reader.GetString(1);
-                bool _actived = reader.GetInt32(2) > 0;
                 return new ModFile(
                     (int)reader.GetInt64(0),
                     reader.GetString(1),

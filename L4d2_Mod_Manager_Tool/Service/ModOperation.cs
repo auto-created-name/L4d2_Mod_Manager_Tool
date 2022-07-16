@@ -1,6 +1,7 @@
 ﻿using L4d2_Mod_Manager_Tool.Domain;
 using L4d2_Mod_Manager_Tool.Domain.ModFilter;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
+using L4d2_Mod_Manager_Tool.Module.FileExplorer;
 using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
@@ -53,6 +54,9 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static void SetModFilterName(string name)
             => filterBuilder.SetName(name);
 
+        public static Maybe<Mod> FindModById(int modId)
+            => Repo.FindModById(modId);
+
         public static IEnumerable<ModDetail> FilteredModInfo()
         {
             return filterBuilder.FinalFilter
@@ -60,32 +64,19 @@ namespace L4d2_Mod_Manager_Tool.Service
                 .Select(GetModDetail);
         }
 
+        /// <summary>
+        /// 通过文件名找到模组
+        /// </summary>
+        public static Maybe<Mod> FindModByFileName(string fn)
+        {
+            return ModFileService.FindFileByFileName(fn)
+                .Bind(x => Repo.FindModByFileId(x.Id));
+        }
+
         public static IEnumerable<ModDetail> ModInfos()
         {
             return ModRepository.Instance.GetMods()
                 .Select(GetModDetail);
-        }
-
-        /// <summary>
-        /// 打开资源管理器，选中模组文件
-        /// </summary>
-        public static void ShowModInFileExplorer(int modId)
-        {
-            ModRepository.Instance.FindModById(modId)
-                .Map(m => m.FileId)
-                .Bind(ModFileService.FindFileById)
-                .Map(f => Module.FileExplorer.FileExplorerUtils.OpenFileExplorerAndSelectItem(f.FilePath));
-        }
-
-        /// <summary>
-        /// 使用资源管理器打开模组文件
-        /// </summary>
-        public static void OpenModFileInExplorer(int modId)
-        {
-            ModRepository.Instance.FindModById(modId)
-                .Map(m => m.FileId)
-                .Bind(ModFileService.FindFileById)
-                .Map(f => Module.FileExplorer.FileExplorerUtils.OpenFileInExplorer(f.FilePath));
         }
 
         public static ModDetail GetModDetail(Mod m)
@@ -109,15 +100,6 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static IEnumerable<Mod> FilterMod(string filter)
         {
             return ModRepository.Instance.GetMods().Where(m => FilterMod(filter, m));
-        }
-
-        /// <summary>
-        /// 取消激活模组
-        /// </summary>
-        public static void DeactiveMod(Mod mod)
-        {
-            var modFile = modFileRepo.FindModFileById(mod.FileId);
-            modFile.Map(mf => ModFileService.DeactiveModFile(mf));
         }
 
         public static bool UpdateMod(Mod mod)
@@ -214,7 +196,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                     || mod.vpkId.Contains(filter);
         }
 
-        static StreamWriter fs = new StreamWriter(File.OpenWrite("out.txt"));
+        //static StreamWriter fs = new StreamWriter(File.OpenWrite("out.txt"));
         private static IEnumerable<string> ParseLine(string line)
         {
             line = line.Trim();
@@ -223,8 +205,8 @@ namespace L4d2_Mod_Manager_Tool.Service
 
             if (words.Length >= 2)
             {
-                fs.WriteLine($"{words[0]} -- {words[1]}");
-                fs.Flush();
+                //fs.WriteLine($"{words[0]} -- {words[1]}");
+                //fs.Flush();
                 return words.Take(2);
             }
             else

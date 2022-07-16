@@ -21,20 +21,21 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             CreateModDBIfNotExists();
         }
 
+        public Maybe<Mod> FindModByFileId(int fid)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = $"SELECT * FROM mod WHERE file_id={fid}";
+            using var reader = command.ExecuteReader();
+            return CreateFromReaderWithRead(reader);
+        }
+
         public Maybe<Mod> FindModById(int modId)
         {
 
             var command = connection.CreateCommand();
             command.CommandText = $"SELECT * FROM mod WHERE id={modId}";
             using var reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                return CreateFromReader(reader);
-            }
-            else
-            {
-                return Maybe.None;
-            }
+            return CreateFromReaderWithRead(reader);
         }
 
         /// <summary>
@@ -133,9 +134,16 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             }
         }
 
+        private static Maybe<Mod> CreateFromReaderWithRead(SQLiteDataReader reader) {
+            if (reader.Read())
+                return CreateFromReader(reader);
+            else
+                return Maybe.None;
+        }
+
         private static Mod CreateFromReader(SQLiteDataReader reader)
         {
-            return 
+            return
                 new Mod(
                     reader.GetInt32(0),
                     reader.GetInt32(1),

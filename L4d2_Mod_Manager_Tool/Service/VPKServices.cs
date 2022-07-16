@@ -21,8 +21,8 @@ namespace L4d2_Mod_Manager_Tool.Service
         /// </summary>
         public static IEnumerable<ModFile> ScanAllModFile()
         {
-            return ModFolders
-                .SelectMany(ListVpk)
+            return ListVpk(OfflineModFolder)
+                .Concat(ListVpk(WorkshopModFolder).Select(x => $"workshop\\{x}"))
                 .Select(file => ModFileFP.CreateModFile(file));
         }
 
@@ -66,7 +66,7 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static VpkSnippet SnippedVpk(string vpk)
         {
             VpkArchive archive = new();
-            archive.Load(vpk);
+            archive.Load(Path.Combine(L4d2Folder.AddonsFolder, vpk));
             
             // 列出所有vpk内容，找到addonimage
             var files = archive.Directories.SelectMany(dir => dir.Entries).ToArray();
@@ -119,14 +119,15 @@ namespace L4d2_Mod_Manager_Tool.Service
         /// </summary>
         public static IEnumerable<string> ListVpk(string folder)
         {
-            DirectoryInfo di = new DirectoryInfo(folder);
+            DirectoryInfo di = new(folder);
             if (di.Exists)
             {
-                return di.GetFiles("*.vpk").Select(f => f.FullName);
+                var res = di.GetFiles("*.vpk").Select(f => f.Name).ToArray();
+                return res;
             }
             else
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
         }
 
@@ -157,20 +158,13 @@ namespace L4d2_Mod_Manager_Tool.Service
         }
 
         /// <summary>
-        /// 模组文件夹
+        /// 离线模组文件夹
         /// </summary>
-        private static IEnumerable<string> ModFolders
-        {
-            get
-            {
-                var gp = SettingFP.GetSetting().GamePath;
-                return new string[]
-                {
-                    Path.Combine(gp, "left4dead2", "addons"),
-                    Path.Combine(gp, "left4dead2", "addons", "workshop")
-                }.Where(Directory.Exists);
-            }
-        }
+        private static string OfflineModFolder => Path.Combine(SettingFP.GetSetting().GamePath, "left4dead2", "addons");
+        /// <summary>
+        /// 创意工坊模组文件夹
+        /// </summary>
+        private static string WorkshopModFolder => Path.Combine(OfflineModFolder, "workshop");
 
         private static void ExtraVpkEntry(string file, VpkEntry entry)
         {

@@ -38,6 +38,8 @@ namespace L4d2_Mod_Manager_Tool
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem_enableMod = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_disableMod = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_showInExplorer = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,6 +74,7 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.Size = new System.Drawing.Size(731, 517);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 1;
+            this.listView1.TileSize = new System.Drawing.Size(20, 20);
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listView1_RetrieveVirtualItem);
@@ -102,15 +105,31 @@ namespace L4d2_Mod_Manager_Tool
             // imageList1
             // 
             this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(20, 20);
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_enableMod,
+            this.toolStripMenuItem_disableMod,
             this.toolStripMenuItem_showInExplorer});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 92);
+            // 
+            // toolStripMenuItem_enableMod
+            // 
+            this.toolStripMenuItem_enableMod.Name = "toolStripMenuItem_enableMod";
+            this.toolStripMenuItem_enableMod.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_enableMod.Text = "启用模组";
+            this.toolStripMenuItem_enableMod.Click += new System.EventHandler(this.toolStripMenuItem_enableMod_Click);
+            // 
+            // toolStripMenuItem_disableMod
+            // 
+            this.toolStripMenuItem_disableMod.Name = "toolStripMenuItem_disableMod";
+            this.toolStripMenuItem_disableMod.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_disableMod.Text = "禁用模组";
+            this.toolStripMenuItem_disableMod.Click += new System.EventHandler(this.toolStripMenuItem_disableMod_Click);
             // 
             // toolStripMenuItem_showInExplorer
             // 
@@ -264,6 +283,8 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.Splitter splitter1;
         private Widget.Widget_FilterMod widget_FilterMod1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_enableMod;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_disableMod;
     }
 }
 
