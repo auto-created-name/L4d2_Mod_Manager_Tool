@@ -60,6 +60,20 @@ namespace L4d2_Mod_Manager_Tool.Service
                 .Select(GetModDetail);
         }
 
+        private static ModFile GetModFileByMod(Mod mod)
+        {
+            return modFileRepo.FindModFileById(mod.FileId).ValueOrThrow("模组文件记录未找到");
+        }
+
+        /// <summary>
+        /// 通过文件名找到模组
+        /// </summary>
+        public static Maybe<Mod> FindModByFileName(string fn)
+        {
+            return ModFileService.FindFileByFileName(fn)
+                .Bind(x => Repo.FindModByFileId(x.Id));
+        }
+
         public static IEnumerable<ModDetail> ModInfos()
         {
             return ModRepository.Instance.GetMods()

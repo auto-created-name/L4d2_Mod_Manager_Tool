@@ -19,6 +19,11 @@ namespace L4d2_Mod_Manager_Tool.Service
             return modFileRepo.FindModFileById(fid);
         }
 
+        public static Maybe<ModFile> FindFileByFileName(string fn)
+        {
+            return modFileRepo.FindModFileByFileName(fn);
+        }
+
         public static ModFile SaveModFile(ModFile mf)
         {
             return modFileRepo.SaveModFile(mf);
