@@ -1,6 +1,7 @@
 # 更新日志
 ## [Unrelease] - XXXX/XX/XX
 ### Added - 新增
+* 可配置的模组内容分类过滤功能
 ### Changed - 变更
 ### Deprecated － 丢弃
 ### Removed － 移除

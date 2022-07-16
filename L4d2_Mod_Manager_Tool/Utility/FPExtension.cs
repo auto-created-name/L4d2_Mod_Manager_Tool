@@ -10,6 +10,8 @@ namespace L4d2_Mod_Manager_Tool.Utility
     {
         public static Func<T, bool> Not<T>(Func<T, bool> f) => x => !f(x);
 
+        public static T Identity<T>(T t) => t;
+
         /// <summary>
         /// 在序列间插入制定元素
         /// </summary>

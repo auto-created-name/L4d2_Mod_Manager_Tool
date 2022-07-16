@@ -27,13 +27,28 @@ namespace L4d2_Mod_Manager_Tool.Service
         private static ModFilterBuilder filterBuilder = new();
 
         /// <summary>
-        /// 增加一个模组过滤标签
+        /// 增加模组标签过滤
         /// </summary>
         public static void AddModFilterTag(string tagName)
             => filterBuilder.AddTag(tagName);
 
+        /// <summary>
+        /// 删除模组标签过滤
+        /// </summary>
         public static void RemoveModFilterTag(string tagName)
             => filterBuilder.RemoveTag(tagName);
+
+        /// <summary>
+        /// 增加模组分类过滤
+        /// </summary>
+        public static void AddModFilterCategory(string catName)
+            => filterBuilder.AddCategory(catName);
+
+        /// <summary>
+        /// 删除模组分类过滤
+        /// </summary>
+        public static void RemoveModFilterCategory(string catName)
+            => filterBuilder.RemoveCategory(catName);
 
         public static void SetModFilterName(string name)
             => filterBuilder.SetName(name);
@@ -255,15 +270,25 @@ namespace L4d2_Mod_Manager_Tool.Service
         {
             return pair.Item1 switch
             {
-                "addoncontent_campaign" => pair.Item2.Equals("1") ? "Campaign" : Maybe.None,
-                "addoncontent_map"      => pair.Item2.Equals("1") ? "Map"      : Maybe.None,
-                "addoncontent_skin"     => pair.Item2.Equals("1") ? "Skin"     : Maybe.None,
-                "addoncontent_weapon"   => pair.Item2.Equals("1") ? "Weapon"   : Maybe.None,
-                "addoncontent_survivor" => pair.Item2.Equals("1") ? "Survivor" : Maybe.None,
-                "addoncontent_sound"    => pair.Item2.Equals("1") ? "Sound"    : Maybe.None,
-                "addoncontent_script"   => pair.Item2.Equals("1") ? "Script"   : Maybe.None,
-                "addoncontent_prop"     => pair.Item2.Equals("1") ? "Prop"     : Maybe.None,
-                _ => Maybe.None
+                "addoncontent_bossinfected"     => pair.Item2.Equals("1") ? "Special Infected"  : Maybe.None,
+                "addoncontent_campaign"         => pair.Item2.Equals("1") ? "Campaign"          : Maybe.None,
+                "addoncontent_commoninfected"   => pair.Item2.Equals("1") ? "Common Infected"   : Maybe.None,
+                "addoncontent_map"              => pair.Item2.Equals("1") ? "Map"               : Maybe.None,
+                "addoncontent_music"            => pair.Item2.Equals("1") ? "Music"             : Maybe.None,
+                "addoncontent_prefab"           => pair.Item2.Equals("1") ? "Prefab"            : Maybe.None,
+                "addoncontent_prop"             => pair.Item2.Equals("1") ? "Prop"              : Maybe.None,
+                "addoncontent_realism"          => pair.Item2.Equals("1") ? "Realism"           : Maybe.None,
+                "addoncontent_scavenge"         => pair.Item2.Equals("1") ? "Scavenge"          : Maybe.None,
+                "addoncontent_script"           => pair.Item2.Equals("1") ? "Script"            : Maybe.None,
+                "addoncontent_skin"             => pair.Item2.Equals("1") ? "Skin"              : Maybe.None,
+                "addoncontent_sound"            => pair.Item2.Equals("1") ? "Sound"             : Maybe.None,
+                "addoncontent_spray"            => pair.Item2.Equals("1") ? "Spray"             : Maybe.None,
+                "addoncontent_survival"         => pair.Item2.Equals("1") ? "Survival"          : Maybe.None,
+                "addoncontent_survivor"         => pair.Item2.Equals("1") ? "Survivor"          : Maybe.None,
+                "addoncontent_versus"           => pair.Item2.Equals("1") ? "Versus"            : Maybe.None,
+                "addoncontent_weapon"           => pair.Item2.Equals("1") ? "Weapon"            : Maybe.None,
+                "addoncontent_weaponmodel"      => pair.Item2.Equals("1") ? "WeaponModel"       : Maybe.None,
+                _                               => Maybe.None
             };
         }
 
