@@ -9,13 +9,15 @@ using Newtonsoft.Json;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
-    struct CategoryRule
+    struct Json_CategoryRule
     {
         [JsonProperty("regular")]
         public string Regular;
         [JsonProperty("category")]
         public string Category;
     }
+
+    record CategoryRule(string Category, string Regular, string Path);
 
     static class ModCategoryService
     {
@@ -30,13 +32,23 @@ namespace L4d2_Mod_Manager_Tool.Service
         {
             try
             {
-                categoryRules = JsonConvert.DeserializeObject<List<CategoryRule>>(
+                var jsonModel = JsonConvert.DeserializeObject<List<Json_CategoryRule>>(
                     File.ReadAllText(CategoriesConfigureFile));
+                categoryRules = jsonModel.Select(m =>
+                {
+                    int lastIndex = m.Category.LastIndexOf('/') + 1;
+                    if(lastIndex > 0) 
+                        return new CategoryRule(m.Category.Substring(lastIndex), m.Regular, m.Category);
+                    else
+                        return new CategoryRule(m.Category, m.Regular, m.Category);
+                }).ToList();
             }
             catch (Exception e){
                 Utility.WinformUtility.ErrorMessageBox("分类规则加载失败:" + e.Message, "服务初始化错误");
             }
         }
+
+        public static IEnumerable<string> Pathes => categoryRules.Select(x => x.Path);
 
         public static IEnumerable<string> MatchCategories(string entry)
         {

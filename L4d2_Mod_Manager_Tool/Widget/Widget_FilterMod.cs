@@ -10,9 +10,56 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool.Widget
 {
+    class MenuItemsZipper
+    {
+        private ToolStripMenuItem item;
+        public MenuItemsZipper()
+        {
+            item = new ToolStripMenuItem();
+        }
+
+        private MenuItemsZipper(ToolStripMenuItem item)
+        {
+            this.item = item;
+        }
+
+        public ToolStripMenuItem CurrentItem => item;
+
+        public bool HaveChildItem(string text)
+        {
+            return item.DropDownItems.Cast<ToolStripMenuItem>()
+                .Where(x => x.Text.Equals(text)).Any();
+        }
+
+        public Maybe<MenuItemsZipper> GotoItem(string text)
+        {
+            var it = 
+                item.DropDownItems.Cast<ToolStripMenuItem>()
+                .Where(x => x.Text.Equals(text)).FirstElementSafe();
+
+            return it.Select(item => new MenuItemsZipper(item));
+        }
+
+        public MenuItemsZipper InsertItem(string text)
+        {
+            ToolStripMenuItem i = new(text);
+            item.DropDownItems.Add(i);
+            return this;
+        }
+
+        public MenuItemsZipper Top()
+        {
+            var i = item;
+            while (i.OwnerItem != null)
+                i = i.OwnerItem as ToolStripMenuItem;
+            return new MenuItemsZipper(i);
+        }
+    }
+
     public partial class Widget_FilterMod : UserControl
     {
         /// <summary>
@@ -51,6 +98,30 @@ namespace L4d2_Mod_Manager_Tool.Widget
             //增加谓词
             ModOperation.AddModFilterCategory(catName);
             OnFilterUpdated?.Invoke(this, null);
+        }
+
+        private ToolStripMenuItem[] CreateCategoryMenuItems()
+        {
+            // 为每一级的菜单构建项
+            var pathes = ModCategoryService.Pathes;
+            var secs = pathes.Select(path => path.Split('/'));
+
+            MenuItemsZipper zipper = new();
+            foreach(var sec in secs)
+            {
+                zipper = zipper.Top();
+                foreach(var word in sec)
+                {
+                    if (!zipper.HaveChildItem(word))
+                        zipper = zipper.InsertItem(word);
+                    zipper = zipper.GotoItem(word).ValueOrThrow("菜单项不存在");
+                }
+                zipper.CurrentItem.Click += (object sender, EventArgs e) => {
+                    OnCategoryTrigged((sender as ToolStripMenuItem).Text);
+                };
+            }
+
+            return zipper.Top().CurrentItem.DropDownItems.Cast<ToolStripMenuItem>().ToArray();
         }
 
         #region 回调函数
@@ -101,12 +172,7 @@ namespace L4d2_Mod_Manager_Tool.Widget
         {
             Button btn = sender as Button;
             ContextMenuStrip cms = new();
-            cms.Items.Add(CreateTagMenuItem("Survivors"     , ModTag.SurvivorsTags  , OnCategoryTrigged));
-            cms.Items.Add(CreateTagMenuItem("Infected"      , ModTag.InfectedTags   , OnCategoryTrigged));
-            cms.Items.Add(CreateTagMenuItem("Game Content"  , ModTag.GameContentTags, OnCategoryTrigged));
-            cms.Items.Add(CreateTagMenuItem("Game Modes"    , ModTag.GameModesTags  , OnCategoryTrigged));
-            cms.Items.Add(CreateTagMenuItem("Weapons"       , ModTag.WeaponsTags    , OnCategoryTrigged));
-            cms.Items.Add(CreateTagMenuItem("Items"         , ModTag.ItemsTags      , OnCategoryTrigged));
+            cms.Items.AddRange(CreateCategoryMenuItems());
             cms.Show(btn, new Point(20, 20));
         }
         #endregion
