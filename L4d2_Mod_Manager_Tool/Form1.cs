@@ -180,18 +180,64 @@ namespace L4d2_Mod_Manager_Tool
         {
             if (e.Button == MouseButtons.Right)
             {
-                contextMenuStrip1.Show(listView1, e.Location);
+                WhenModSelected((sender as ListView), indices =>
+                {
+                    if (indices.Length == 1)
+                    {
+                        var modDetail = modDetails[indices[0]];
+                        bool enable = AddonListService.IsModEnabled(modDetail.Id);
+                        // 启用模组、禁用模组按钮的正确设置
+                        contextMenuStrip1.Items.Find("toolStripMenuItem_enableMod", false)[0].Enabled = !enable;
+                        contextMenuStrip1.Items.Find("toolStripMenuItem_disableMod", false)[0].Enabled = enable;
+                    }
+                    else
+                    {
+                        // 多选时无视开启/关闭
+                        contextMenuStrip1.Items.Find("toolStripMenuItem_enableMod", false)[0].Enabled = true;
+                        contextMenuStrip1.Items.Find("toolStripMenuItem_disableMod", false)[0].Enabled = true;
+                    }
+                    contextMenuStrip1.Show(listView1, e.Location);
+                });
             }
         }
-
+        #region 模组列表菜单回调
         private void toolStripMenuItem_showInExplorer_Click(object sender, EventArgs e)
         {
-            WhenModSelected(listView1, indices => {
+            WhenModSelected(listView1, indices => 
+            {
                 int modId = modDetails[indices[0]].Id;
-                ModOperation.ShowModInFileExplorer(modId);
+                ModCrossServer.ShowModInFileExplorer(modId);
             });
         }
 
+        private void toolStripMenuItem_enableMod_Click(object sender, EventArgs e)
+        {
+            WhenModSelected(listView1, indices =>
+                indices.Iter(index =>
+                {
+                    var detail = modDetails[index];
+                    AddonListService.SetModEnabled(detail.Id, true);
+                    // 重绘项
+                    listView1.RedrawItems(index, index, false);
+                })
+            );
+            AddonListService.ApplyAddonList();
+        }
+
+        private void toolStripMenuItem_disableMod_Click(object sender, EventArgs e)
+        {
+            WhenModSelected(listView1, indices =>
+                indices.Iter(index =>
+                {
+                    var detail = modDetails[index];
+                    AddonListService.SetModEnabled(detail.Id, false);
+                    // 重绘项
+                    listView1.RedrawItems(index, index, false);
+                })
+            );
+            AddonListService.ApplyAddonList();
+        }
+        #endregion
         // 刷新只更新列表
         private void toolStripMenuItem_refresh_Click(object sender, EventArgs e)
         {
@@ -224,7 +270,7 @@ namespace L4d2_Mod_Manager_Tool
         {
             WhenModSelected(sender as ListView, indices => {
                 int modId = modDetails[indices[0]].Id;
-                ModOperation.OpenModFileInExplorer(modId);
+                ModCrossServer.OpenModFileInExplorer(modId);
             });
         }
 
@@ -283,7 +329,7 @@ namespace L4d2_Mod_Manager_Tool
             }
             catch
             {
-                return Utility.Maybe.None;
+                return Maybe.None;
             }
         }
     }

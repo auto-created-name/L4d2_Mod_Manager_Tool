@@ -33,27 +33,5 @@ namespace L4d2_Mod_Manager_Tool.Service
         {
             return modFileRepo.ModFileExists(file);
         }
-
-        /// <summary>
-        /// [副作用]修改数据库和文件，将模组文件关闭
-        /// </summary>
-        public static ModFile DeactiveModFile(ModFile mf)
-        {
-            if (mf.Actived)
-            {
-                // 更新数据库
-                string deactiveFilePath = mf.FilePath + ".deactive";
-                var newMf = mf with { Actived = false, FilePath = deactiveFilePath };
-                modFileRepo.UpdateModFile(newMf);
-
-                // 更新文件
-                File.Move(mf.FilePath, deactiveFilePath);
-                return newMf;
-            }
-            else
-            {
-                return mf;
-            }
-        }
     }
 }

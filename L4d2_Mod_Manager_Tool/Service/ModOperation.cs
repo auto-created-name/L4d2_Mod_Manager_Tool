@@ -54,16 +54,14 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static void SetModFilterName(string name)
             => filterBuilder.SetName(name);
 
+        public static Maybe<Mod> FindModById(int modId)
+            => Repo.FindModById(modId);
+
         public static IEnumerable<ModDetail> FilteredModInfo()
         {
             return filterBuilder.FinalFilter
                 .FilterMod(ModRepository.Instance.GetMods())
                 .Select(GetModDetail);
-        }
-
-        private static ModFile GetModFileByMod(Mod mod)
-        {
-            return modFileRepo.FindModFileById(mod.FileId).ValueOrThrow("模组文件记录未找到");
         }
 
         /// <summary>
@@ -79,28 +77,6 @@ namespace L4d2_Mod_Manager_Tool.Service
         {
             return ModRepository.Instance.GetMods()
                 .Select(GetModDetail);
-        }
-
-        /// <summary>
-        /// 打开资源管理器，选中模组文件
-        /// </summary>
-        public static void ShowModInFileExplorer(int modId)
-        {
-            ModRepository.Instance.FindModById(modId)
-                .Map(GetModFileByMod)
-                .Map(f => FileExplorerUtils.OpenFileExplorerAndSelectItem(
-                    L4d2Folder.GetAddonFileFullPath(f.FilePath)));
-        }
-
-        /// <summary>
-        /// 使用资源管理器打开模组文件
-        /// </summary>
-        public static void OpenModFileInExplorer(int modId)
-        {
-            ModRepository.Instance.FindModById(modId)
-                .Map(GetModFileByMod)
-                .Map(f => FileExplorerUtils.OpenFileInExplorer(
-                    L4d2Folder.GetAddonFileFullPath(f.FilePath)));
         }
 
         public static ModDetail GetModDetail(Mod m)
@@ -124,15 +100,6 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static IEnumerable<Mod> FilterMod(string filter)
         {
             return ModRepository.Instance.GetMods().Where(m => FilterMod(filter, m));
-        }
-
-        /// <summary>
-        /// 取消激活模组
-        /// </summary>
-        public static void DeactiveMod(Mod mod)
-        {
-            var modFile = modFileRepo.FindModFileById(mod.FileId);
-            modFile.Map(mf => ModFileService.DeactiveModFile(mf));
         }
 
         public static bool UpdateMod(Mod mod)
