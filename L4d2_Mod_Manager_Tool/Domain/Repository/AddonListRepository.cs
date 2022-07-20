@@ -9,17 +9,34 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
 {
     class AddonListRepository
     {
-        private Dictionary<int, bool> enabledDic = new Dictionary<int, bool>();
+        private Dictionary<int, bool> enabledDic = new();
+        private Dictionary<string, bool> missingEnabledDic = new();
 
-        public IEnumerable<(int, bool)> AddonList => enabledDic.Select(p => (p.Key, p.Value));
+        /// <summary>
+        /// 模组启用列表
+        /// </summary>
+        public IEnumerable<(int, bool)> AddonList 
+            => enabledDic.Select(p => (p.Key, p.Value));
+
+        /// <summary>
+        /// 未识别的模组启用列表
+        /// </summary>
+        public IEnumerable<(string, bool)> MissingAddonList 
+            => missingEnabledDic.Select(p => (p.Key, p.Value));
         public void AddRange(IEnumerable<(int, bool)> datas)
         {
             datas.Iter(t => enabledDic.Add(t.Item1, t.Item2));
         }
 
+        public void AddMissingAddonInfos(IEnumerable<(string, bool)> datas)
+        {
+            datas.Iter(t => missingEnabledDic.Add(t.Item1, t.Item2));
+        }
+
         public void Clear()
         {
             enabledDic.Clear();
+            missingEnabledDic.Clear();
         }
 
         public void SetModEnabled(int modId, bool enabled)

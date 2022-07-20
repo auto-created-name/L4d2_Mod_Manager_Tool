@@ -19,11 +19,16 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static void Load()
         {
             var als = ParseAddonList(ReadAddonListContent());
-            var ds = als.Select(t => (ModOperation.FindModByFileName(t.Item1)
-                .Map(m => m.Id).ValueOr(-1), t.Item2))
-                .Where(m => m.Item1 != -1);
+            var ds = als.Select(t => (
+                ModOperation.FindModByFileName(t.Item1).Map(m => m.Id).ValueOr(-1), 
+                t.Item1, 
+                t.Item2)
+                );
+            var findedDomainModel = ds.Where(m => m.Item1 != -1);
+            var missingDomainModel = ds.Where(m => m.Item1 == -1);
             Repo.Clear();
-            Repo.AddRange(ds);
+            Repo.AddRange(findedDomainModel.Select(t => (t.Item1, t.Item3)));
+            Repo.AddMissingAddonInfos(missingDomainModel.Select(t => (t.Item2, t.Item3)));
         }
 
         public static bool IsModEnabled(int modId)
@@ -44,6 +49,11 @@ namespace L4d2_Mod_Manager_Tool.Service
                 var modFile = ModCrossServer.GetModFileByModId(t.Item1).ValueOrThrow("指定模组信息不存在");
                 var enableStr = t.Item2 ? "1" : "0";
                 stringBuilder.AppendLine($"\t\"{modFile}\"\t\t\"{enableStr}\"");
+            });
+            Repo.MissingAddonList.Iter(t =>
+            {
+                var enableStr = t.Item2 ? "1" : "0";
+                stringBuilder.AppendLine($"\t\"{t.Item1}\"\t\t\"{enableStr}\"");
             });
             stringBuilder.AppendLine("}");
 
