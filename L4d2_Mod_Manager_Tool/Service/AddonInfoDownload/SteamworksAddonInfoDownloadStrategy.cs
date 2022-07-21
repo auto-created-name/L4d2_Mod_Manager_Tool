@@ -2,6 +2,7 @@
 using L4d2_Mod_Manager_Tool.Utility;
 using Steamworks;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -9,57 +10,50 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager_Tool.Service
+namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
 {
-    class WorkshopItemService
+    class SteamworksAddonInfoDownloadStrategy : IAddonInfoDownloadStrategy
     {
-        private static WorkshopItemService instance;
-        public static Maybe<WorkshopItemService> Instance
+
+        public static Maybe<SteamworksAddonInfoDownloadStrategy> CreateStrategy()
         {
-            get
+            try
             {
-                if(instance == null)
-                {
-                    try
-                    {
-                        instance = new WorkshopItemService();
-                    }
-                    catch(Exception e)
-                    {
-                        System.Windows.Forms.MessageBox.Show(e.Message);
-                        instance = null;
-                    }
-                }
-                return instance == null ? Maybe.None : Maybe.Some(instance);
+                return Maybe.Some(new SteamworksAddonInfoDownloadStrategy());
+            }
+            catch 
+            {
+                return Maybe.None;
             }
         }
 
         public const int AppID = 550;
 
-        public WorkshopItemService()
+        public string StrategyName => "SteamWorks模式";
+
+        private SteamworksAddonInfoDownloadStrategy()
         {
             SteamClient.Init(550);
         }
 
-        ~WorkshopItemService()
+        ~SteamworksAddonInfoDownloadStrategy()
         {
             SteamClient.Shutdown();
         }
 
-        public Maybe<ModWorkshopInfo> CollectModInfo(string vpkNumber)
+
+        public Maybe<ModWorkshopInfo> DownloadAddonInfo(ulong vpkid)
         {
-            if(!ulong.TryParse(vpkNumber, out ulong id))
-                return Maybe.None;
             try
             {
-                var task = SteamUGC.QueryFileAsync(new() { Value = id });
+                var task = SteamUGC.QueryFileAsync(new() { Value = vpkid });
                 task.Wait();
                 var res = task.Result;
 
                 var f = DownloadImageFromURL(res.Value.PreviewImageUrl);
                 return Maybe.Some(new ModWorkshopInfo(res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 System.Windows.Forms.MessageBox.Show(e.Message);
                 return Maybe.None;

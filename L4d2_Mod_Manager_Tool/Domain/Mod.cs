@@ -96,7 +96,7 @@ namespace L4d2_Mod_Manager_Tool.Domain
         /// </summary>
         public static Func<Mod, bool> HaveTag(string tagName)
         {
-            return m => m.Tags.Contains(tagName);
+            return m => m.Tags.Contains(tagName.ToLower());
         }
 
         /// <summary>

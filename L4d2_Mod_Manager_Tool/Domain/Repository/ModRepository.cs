@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using L4d2_Mod_Manager_Tool.Utility;
+using System.Web;
 
 namespace L4d2_Mod_Manager_Tool.Domain.Repository
 {
@@ -55,7 +56,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 $",\"{mod.Author}\"" +
                 $",\"{mod.Description}\"" +
                 $",\"{mod.CategoriesSingleLine()}\"" +
-                $",\"{mod.WorkshopTitle}\"" +
+                $",\"{HttpUtility.UrlEncode(mod.WorkshopTitle)}\"" +
                 $",\"{mod.WorkshopDescript}\"" +
                 $",\"{mod.WorkshopPreviewImage}\"" +
                 $",\"{mod.TagsSingleLine()}\");" +
@@ -74,7 +75,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
 
             var command = connection.CreateCommand();
             command.CommandText = $"UPDATE mod SET " +
-                $"workshop_title = \"{mod.WorkshopTitle}\"" +
+                $"workshop_title = \"{HttpUtility.UrlEncode(mod.WorkshopTitle)}\"" +
                 $",workshop_descript = \"{descriptBase64}\"" +
                 $",workshop_previewImage = \"{mod.WorkshopPreviewImage}\"" +
                 $",workshop_tags = \"{mod.TagsSingleLine()}\"" +
@@ -155,7 +156,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                     reader.GetString(7),
                     reader.GetString(8),
                     SplitString(reader.GetString(9), ','),
-                    reader.GetString(10),
+                    HttpUtility.UrlDecode(reader.GetString(10)),
                     DecodeBase64(reader.GetString(11)),
                     reader.GetString(12),
                     SplitString(reader.GetString(13), ',')

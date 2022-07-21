@@ -14,9 +14,8 @@ namespace L4d2_Mod_Manager_Tool
         [STAThread]
         static void Main()
         {
-            var i = Service.WorkshopItemService.Instance;
-            i.Map(s => s.CollectModInfo("12"));
             // ∑˛ŒÒ‘ÿ»Î
+            Service.AddonInfoDownload.AddonInfoDownloadService.Load();
             Service.ModCategoryService.Load();
             Service.AddonListService.Load();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);

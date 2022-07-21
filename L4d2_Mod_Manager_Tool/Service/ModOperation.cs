@@ -164,26 +164,6 @@ namespace L4d2_Mod_Manager_Tool.Service
             return newMod.ValueOr(mod);
         }
 
-        /// <summary>
-        /// 更新创意工坊数据
-        /// </summary>
-        /// <param name="mod"></param>
-        /// <returns></returns>
-        public static (Mod, bool) UpdateWorkshopInfo(Mod mod)
-        {
-            var modFile = modFileRepo.FindModFileById(mod.FileId);
-            var newMod = modFile
-                .Bind(mf => Spider.CollectModInfo(ModFileFP.ModFileName(mf)))
-                .Map(info => mod with
-                {
-                    WorkshopTitle = info.Title,
-                    WorkshopDescript = info.Descript,
-                    WorkshopPreviewImage = info.PreviewImage,
-                    Tags = info.Tags
-                });
-            return newMod.Match(x => (x, true), () => (mod, false));
-        }
-
         private static bool FilterMod(string filter, Mod mod)
         {
             if (string.IsNullOrEmpty(filter))
@@ -213,27 +193,6 @@ namespace L4d2_Mod_Manager_Tool.Service
             {
                 return Array.Empty<string>();
             }
-        }
-
-        /// <summary>
-        /// 对原始addonInfo数据进行剪枝，方便后续处理
-        /// </summary>
-        private static string PruningAddonInfo(string content)
-        {
-            int lbrace = content.IndexOf('{');
-            if(lbrace > 0)
-                content = content.Substring(lbrace + 1);
-            int rbrace = content.LastIndexOf('}');
-            if(rbrace > 0)
-                content = content.Substring(0, rbrace);
-
-            //这里不能将//.*作为注释消除，因为包含网址的时候,http://...会被当成注释
-            //content = Regex.Replace(content, @"//.*", "");
-            //没有区别
-            //content = Regex.Replace(content, @"\s+", " ");
-
-            content = content.Trim();
-            return content;
         }
 
         private static IEnumerable<(T,T)> PairQue<T>(T[] xs)
