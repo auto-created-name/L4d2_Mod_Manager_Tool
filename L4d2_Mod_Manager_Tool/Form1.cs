@@ -36,6 +36,10 @@ namespace L4d2_Mod_Manager_Tool
 
             imageList1.Images.Add(Image.FromFile("Resources/off.png"));
             imageList1.Images.Add(Image.FromFile("Resources/on.png"));
+
+            toolStripStatusLabel_addonInfoDownloadStrategy.Text = 
+                "模组信息下载模式：" + 
+                Service.AddonInfoDownload.AddonInfoDownloadService.CurrentDownloadStrtegyName;
         }
 
         /// <summary>
@@ -165,12 +169,7 @@ namespace L4d2_Mod_Manager_Tool
 
             public void DoTask()
             {
-                var (newMod, succ) = ModOperation.UpdateWorkshopInfo(mod);
-                if (succ)
-                {
-                    newMod = ModOperation.MoveWorkshopPreviewImage(newMod);
-                    ModOperation.UpdateMod(newMod);
-                }
+                Service.AddonInfoDownload.AddonInfoDownloadService.DownloadAddonInfo(mod);
             }
         }
         #endregion

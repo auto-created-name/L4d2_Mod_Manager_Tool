@@ -12,7 +12,7 @@ namespace L4d2_Mod_Manager_Tool.Utility
         }
 
         public static string SoftwareVersion =>
-            $"{CurrentAssembly.GetName().Version.ToString(3)}.dev1";
+            $"{CurrentAssembly.GetName().Version.ToString(3)}.dev2";
 
         private static Assembly CurrentAssembly => Assembly.GetExecutingAssembly();
     }
