@@ -306,6 +306,8 @@ namespace L4d2_Mod_Manager_Tool
 
             item.ImageIndex = enabled ? 1 : 0;
             e.Item = item;
+            item.BackColor = e.ItemIndex % 2 == 0 ? Color.White : SystemColors.Control;
+            item.ForeColor = enabled ? SystemColors.WindowText : SystemColors.GrayText;
         }
         #endregion
 

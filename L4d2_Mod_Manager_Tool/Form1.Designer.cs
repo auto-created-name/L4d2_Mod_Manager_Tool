@@ -108,7 +108,7 @@ namespace L4d2_Mod_Manager_Tool
             // imageList1
             // 
             this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList1.ImageSize = new System.Drawing.Size(20, 20);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // contextMenuStrip1
