@@ -1,7 +1,7 @@
 ﻿using L4d2_Mod_Manager_Tool.Domain;
 using L4d2_Mod_Manager_Tool.Domain.ModFilter;
+using L4d2_Mod_Manager_Tool.Domain.ModSorter;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
-using L4d2_Mod_Manager_Tool.Module.FileExplorer;
 using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
@@ -59,11 +59,22 @@ namespace L4d2_Mod_Manager_Tool.Service
 
         public static IEnumerable<ModDetail> FilteredModInfo()
         {
-            return filterBuilder.FinalFilter
+            return modSorter.Sort(
+                filterBuilder.FinalFilter
                 .FilterMod(ModRepository.Instance.GetMods())
-                .Select(GetModDetail);
+                ).Select(GetModDetail);
         }
-
+        #region 模组排序
+        private static IModSorter modSorter = new ModSorter_Default();
+        public static void SetModSortMod(string label)
+        {
+            modSorter = label switch
+            {
+                "名称" => new ModSorter_ByName(ModSortOrder.Ascending),
+                _ => new ModSorter_Default()
+            };
+        }
+        #endregion
         /// <summary>
         /// 通过文件名找到模组
         /// </summary>

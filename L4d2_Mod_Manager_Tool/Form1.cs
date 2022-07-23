@@ -78,7 +78,7 @@ namespace L4d2_Mod_Manager_Tool
             modDetails.Clear();
 
             modDetails = ModOperation.FilteredModInfo().ToList();
-            modDetails.Sort(new ModDetailNameComparer());
+            //modDetails.Sort(new ModDetailNameComparer());
             listView1.VirtualListSize = modDetails.Count;
             listView1.Invalidate();
 
@@ -299,7 +299,8 @@ namespace L4d2_Mod_Manager_Tool
             var enabled = AddonListService.IsModEnabled(detail.Id);
             ListViewItem item = new(new string[] {
                 detail.Name,
-                detail.Vpkid,
+                ModCrossServer.GetModFileByModId(detail.Id).ValueOrThrow("ModFile不存在"),
+                enabled ? "启用" : "禁用",
                 detail.Author,
                 detail.Tagline
             });
@@ -308,6 +309,13 @@ namespace L4d2_Mod_Manager_Tool
             e.Item = item;
             item.BackColor = e.ItemIndex % 2 == 0 ? Color.White : SystemColors.Control;
             item.ForeColor = enabled ? SystemColors.WindowText : SystemColors.GrayText;
+        }
+
+        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            var clickedColumn = (sender as ListView).Columns[e.Column];
+            ModOperation.SetModSortMod(clickedColumn.Text);
+            UpdateModList();
         }
         #endregion
 
