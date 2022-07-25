@@ -7,7 +7,7 @@ using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool.Domain.Repository
 {
-    class AddonListRepository
+    public class AddonListRepository
     {
         private Dictionary<int, bool> enabledDic = new();
         private Dictionary<string, bool> missingEnabledDic = new();

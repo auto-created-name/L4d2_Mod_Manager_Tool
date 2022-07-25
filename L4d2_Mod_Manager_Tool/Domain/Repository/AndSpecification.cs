@@ -16,9 +16,19 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             this.right = right;
         }
 
-        public bool IsSatisifiedBy(T o)
+        //public bool IsSatisifiedBy(T o)
+        //{
+        //    return left.IsSatisifiedBy(o) && right.IsSatisifiedBy(o);
+        //}
+
+        public string ToSqlite()
         {
-            return left.IsSatisifiedBy(o) && right.IsSatisifiedBy(o);
+            if(left is EmptySpecification<T>)
+                return right.ToSqlite();
+            else if(right is EmptySpecification<T>)
+                return left.ToSqlite();
+            else
+                return $"{left.ToSqlite()} AND {right.ToSqlite()}";
         }
     }
 }

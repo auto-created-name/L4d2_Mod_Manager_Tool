@@ -14,7 +14,7 @@ namespace L4d2_Mod_Manager_Tool.Service
 {
     static class AddonListService
     {
-        private static AddonListRepository Repo { get; } = new AddonListRepository();
+        public static AddonListRepository Repo { get; } = new AddonListRepository();
 
         public static void Load()
         {

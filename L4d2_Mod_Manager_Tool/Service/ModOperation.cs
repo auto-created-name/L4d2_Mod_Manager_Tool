@@ -59,11 +59,13 @@ namespace L4d2_Mod_Manager_Tool.Service
 
         public static IEnumerable<ModDetail> FilteredModInfo()
         {
-            return modSorter.Sort(
-                filterBuilder.FinalFilter
-                .FilterMod(ModRepository.Instance.GetMods())
-                .Select(GetModDetail)
-                );
+            var mds = new ModDetailQuery(AddonListService.Repo).FindAll(filterBuilder.FinalSpec);
+            return modSorter.Sort(mds);
+            //return modSorter.Sort(
+            //    filterBuilder.FinalFilter
+            //    .FilterMod(ModRepository.Instance.GetMods())
+            //    .Select(GetModDetail)
+            //    );
         }
         #region 模组排序
         private static IModSorter modSorter = new ModSorter_ByName(ModSortOrder.Ascending);
@@ -74,6 +76,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                 "名称" => new ModSorter_ByName(order),
                 "文件名" => new ModSorter_ByFile(order),
                 "状态" => new ModSorter_ByEnabled(order),
+                "作者" => new ModSorter_ByAuthor(order),
                 _ => new ModSorter_Default()
             };
         }
@@ -87,29 +90,24 @@ namespace L4d2_Mod_Manager_Tool.Service
                 .Bind(x => Repo.FindModByFileId(x.Id));
         }
 
-        public static IEnumerable<ModDetail> ModInfos()
-        {
-            return ModRepository.Instance.GetMods()
-                .Select(GetModDetail);
-        }
+        //public static IEnumerable<ModDetail> ModInfos()
+        //{
+        //    return ModRepository.Instance.GetMods()
+        //        .Select(GetModDetail);
+        //}
 
-        public static ModDetail GetModDetail(Mod m)
-        {
-            var enabled = AddonListService.IsModEnabled(m.Id);
-            var fileName = ModCrossServer.GetModFileByModId(m.Id).ValueOrThrow("ModFile不存在");
-            return new(m.Id
-                , ModFP.SelectName(m)
-                , fileName
-                , enabled
-                , m.Author
-                , m.Tagline
-            );
-        }
-
-        public static Maybe<ModDetail> GetModDetail(int modId)
-        {
-            return Repo.FindModById(modId).Map(GetModDetail);
-        }
+        //public static ModDetail GetModDetail(Mod m)
+        //{
+        //    var enabled = AddonListService.IsModEnabled(m.Id);
+        //    var fileName = ModCrossServer.GetModFileByModId(m.Id).ValueOrThrow("ModFile不存在");
+        //    return new(m.Id
+        //        , ModFP.SelectName(m)
+        //        , fileName
+        //        , enabled
+        //        , m.Author
+        //        , m.Tagline
+        //    );
+        //}
 
         public static Maybe<ModPreviewInfo> GetModPreviewInfo(int modId)
         {
