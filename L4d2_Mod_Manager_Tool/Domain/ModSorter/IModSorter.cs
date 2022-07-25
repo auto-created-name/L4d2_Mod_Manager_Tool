@@ -21,6 +21,6 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModSorter
     }
     interface IModSorter
     {
-        IEnumerable<Mod> Sort(IEnumerable<Mod> mods);
+        IEnumerable<ModDetail> Sort(IEnumerable<ModDetail> mods);
     }
 }

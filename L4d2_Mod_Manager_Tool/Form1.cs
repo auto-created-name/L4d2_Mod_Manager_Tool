@@ -19,6 +19,9 @@ namespace L4d2_Mod_Manager_Tool
     public partial class Form1 : Form
     {
         private List<ModDetail> modDetails = new();
+        private int orderHeader = 0;
+        private int order = 0;
+        private Dictionary<int, string> headers = new();
 
         public Form1()
         {
@@ -36,10 +39,16 @@ namespace L4d2_Mod_Manager_Tool
 
             imageList1.Images.Add(Image.FromFile("Resources/off.png"));
             imageList1.Images.Add(Image.FromFile("Resources/on.png"));
+            imageList1.Images.Add("ascending", Image.FromFile("Resources/ascending.png"));
+            imageList1.Images.Add("descending", Image.FromFile("Resources/descending.png"));
 
             toolStripStatusLabel_addonInfoDownloadStrategy.Text = 
                 "模组信息下载模式：" + 
                 Service.AddonInfoDownload.AddonInfoDownloadService.CurrentDownloadStrtegyName;
+
+            foreach (ColumnHeader column in listView1.Columns)
+                headers.Add(column.Index, column.Text);
+            UpdateModListColumnHeader(listView1);
         }
 
         /// <summary>
@@ -103,14 +112,14 @@ namespace L4d2_Mod_Manager_Tool
 
         private void UpdateModPreview(int modId)
         {
-            ModOperation.GetModDetail(modId).Match(detail =>
+            ModOperation.GetModPreviewInfo(modId).Match(previewInfo =>
             {
-                widget_ModOverview1.ModPreview = detail.Img;
-                widget_ModOverview1.ModName = detail.Name;
-                widget_ModOverview1.ModAuthor = detail.Author;
-                widget_ModOverview1.ModCategories = detail.Categories;
-                widget_ModOverview1.ModDescript = detail.Descript;
-                widget_ModOverview1.ModTags = detail.Tags;
+                widget_ModOverview1.ModPreview = previewInfo.PreviewImg;
+                widget_ModOverview1.ModName = previewInfo.Name;
+                widget_ModOverview1.ModAuthor = previewInfo.Author;
+                widget_ModOverview1.ModCategories = previewInfo.Categories;
+                widget_ModOverview1.ModDescript = previewInfo.Descript;
+                widget_ModOverview1.ModTags = previewInfo.Tags;
                 widget_ModOverview1.ShowModOverview = true;
             }, () =>
             {
@@ -296,26 +305,57 @@ namespace L4d2_Mod_Manager_Tool
         private void listView1_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
             var detail = modDetails[e.ItemIndex];
-            var enabled = AddonListService.IsModEnabled(detail.Id);
             ListViewItem item = new(new string[] {
                 detail.Name,
-                ModCrossServer.GetModFileByModId(detail.Id).ValueOrThrow("ModFile不存在"),
-                enabled ? "启用" : "禁用",
+                detail.FileName,
+                detail.Enabled ? "启用" : "禁用",
                 detail.Author,
                 detail.Tagline
             });
 
-            item.ImageIndex = enabled ? 1 : 0;
+            item.ImageIndex = detail.Enabled ? 1 : 0;
             e.Item = item;
             item.BackColor = e.ItemIndex % 2 == 0 ? Color.White : SystemColors.Control;
-            item.ForeColor = enabled ? SystemColors.WindowText : SystemColors.GrayText;
+            item.ForeColor = detail.Enabled ? SystemColors.WindowText : SystemColors.GrayText;
         }
 
         private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            var clickedColumn = (sender as ListView).Columns[e.Column];
-            ModOperation.SetModSortMod(clickedColumn.Text);
+            var listview = (sender as ListView);
+            var clickedColumn = listview.Columns[e.Column];
+            // 重复点击，切换正倒序
+            if (orderHeader == clickedColumn.Index)
+            {
+                order = order switch
+                {
+                    0 => 1,
+                    1 => 0,
+                    _ => 0
+                };
+            }
+            else
+            {
+                orderHeader = clickedColumn.Index;
+                order = 0;
+            }
+            UpdateModListColumnHeader(listview);
+            ModOperation.SetModSortMod(headers[orderHeader], order == 0 ? Domain.ModSorter.ModSortOrder.Ascending : Domain.ModSorter.ModSortOrder.Descending);
             UpdateModList();
+        }
+
+        private void UpdateModListColumnHeader(ListView listview)
+        {
+            foreach (ColumnHeader column in listview.Columns)
+            {
+                if (orderHeader == column.Index)
+                {
+                    column.Text = headers[column.Index] + (order == 0 ? " ▼" : " ▲");
+                }
+                else
+                {
+                    column.Text = headers[column.Index];
+                }
+            }
         }
         #endregion
 

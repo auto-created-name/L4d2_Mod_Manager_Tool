@@ -8,6 +8,6 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModSorter
 {
     class ModSorter_Default : IModSorter
     {
-        public IEnumerable<Mod> Sort(IEnumerable<Mod> mods) => mods;
+        public IEnumerable<ModDetail> Sort(IEnumerable<ModDetail> mods) => mods;
     }
 }

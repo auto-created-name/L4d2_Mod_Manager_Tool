@@ -62,15 +62,18 @@ namespace L4d2_Mod_Manager_Tool.Service
             return modSorter.Sort(
                 filterBuilder.FinalFilter
                 .FilterMod(ModRepository.Instance.GetMods())
-                ).Select(GetModDetail);
+                .Select(GetModDetail)
+                );
         }
         #region 模组排序
-        private static IModSorter modSorter = new ModSorter_Default();
-        public static void SetModSortMod(string label)
+        private static IModSorter modSorter = new ModSorter_ByName(ModSortOrder.Ascending);
+        public static void SetModSortMod(string label, ModSortOrder order)
         {
             modSorter = label switch
             {
-                "名称" => new ModSorter_ByName(ModSortOrder.Ascending),
+                "名称" => new ModSorter_ByName(order),
+                "文件名" => new ModSorter_ByFile(order),
+                "状态" => new ModSorter_ByEnabled(order),
                 _ => new ModSorter_Default()
             };
         }
@@ -92,20 +95,35 @@ namespace L4d2_Mod_Manager_Tool.Service
 
         public static ModDetail GetModDetail(Mod m)
         {
-            return new(m.Id,
-                ModFP.SelectPreview(m)
+            var enabled = AddonListService.IsModEnabled(m.Id);
+            var fileName = ModCrossServer.GetModFileByModId(m.Id).ValueOrThrow("ModFile不存在");
+            return new(m.Id
                 , ModFP.SelectName(m)
-                , m.vpkId
+                , fileName
+                , enabled
                 , m.Author
                 , m.Tagline
-                , ModFP.CategoriesSingleLine(m)
-                , ModFP.TagsSingleLine(m)
-                , ModFP.SelectDescription(m));
+            );
         }
 
         public static Maybe<ModDetail> GetModDetail(int modId)
         {
             return Repo.FindModById(modId).Map(GetModDetail);
+        }
+
+        public static Maybe<ModPreviewInfo> GetModPreviewInfo(int modId)
+        {
+            return Repo.FindModById(modId).Map(m =>
+                new ModPreviewInfo
+                {
+                    PreviewImg = ModFP.SelectPreview(m),
+                    Author = m.Author,
+                    Descript = ModFP.SelectDescription(m),
+                    Name = ModFP.SelectName(m),
+                    Categories = m.CategoriesSingleLine(),
+                    Tags = m.TagsSingleLine()
+                }
+            );
         }
 
         public static IEnumerable<Mod> FilterMod(string filter)
