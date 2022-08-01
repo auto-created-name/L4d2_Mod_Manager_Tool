@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using L4d2_Mod_Manager_Tool.Domain.Specifications;
 
 namespace L4d2_Mod_Manager_Tool.Domain.Repository
 {
@@ -17,7 +18,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
         }
         protected override void CreateDatabase() { }
 
-        public Maybe<ModDetail> FindOne(ISpecification<ModDetail> spec)
+        public Maybe<ModDetail> FindOne(ModDetailSpecification spec)
         {
             var sql = "SELECT * FROM mod INNER JOIN mod_file ON mod.file_id = mod_file.id where " + spec.ToSqlite();
             using var reader = ExecuteQueryReader(sql);
@@ -27,10 +28,10 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 return Maybe.None;
         }
 
-        public IEnumerable<ModDetail> FindAll(ISpecification<ModDetail> spec)
+        public IEnumerable<ModDetail> FindAll(ModDetailSpecification spec)
         {
             var sql = "SELECT * FROM mod INNER JOIN mod_file ON mod.file_id = mod_file.id";
-            if (spec is not EmptySpecification<ModDetail>)
+            if (spec is not MS_Empty)
                 sql += " where " + spec.ToSqlite();
             using var reader = ExecuteQueryReader(sql);
             while (reader.Read())

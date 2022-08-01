@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using L4d2_Mod_Manager_Tool.Domain.Repository;
+using L4d2_Mod_Manager_Tool.Domain.Specifications;
 
 namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
 {
@@ -22,7 +22,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
                 .And(CreateCategoriesFilter());
         }
 
-        public ISpecification<ModDetail> FinalSpec
+        public ModDetailSpecification FinalSpec
         {
             get => CreateBlurSpec()
                 .And(CreateTagsSpec())
@@ -51,11 +51,11 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
         public void RemoveCategory(string cat)
             => Categories.Remove(cat);
 
-        private ISpecification<ModDetail> CreateBlurSpec()
+        private ModDetailSpecification CreateBlurSpec()
         {
             return string.IsNullOrEmpty(filterName)
-                ? Specification.Empty<ModDetail>()
-                : new ModDetailSpecification_Blur(filterName);
+                ? new MS_Empty()
+                : new MS_Blur(filterName);
         }
 
         private IModFilter CreateNameFilter() 
@@ -66,16 +66,16 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
                 return new ModBlurFilter(filterName);
         }
 
-        private ISpecification<ModDetail> CreateTagsSpec()
+        private ModDetailSpecification CreateTagsSpec()
         {
             if (Tags.Count == 0)
             {
-                return Specification.Empty<ModDetail>();
+                return new MS_Empty();
             }
             else
             {
-                return Tags.Select(x => (ISpecification<ModDetail>)new ModDetailSpecification_Tag(x))
-                .Aggregate((x, y) => x.And(y));
+                return Tags.Select(x => (ModDetailSpecification)new MS_Tag(x))
+                    .Aggregate((x, y) => x.And(y));
             }
         }
 
@@ -94,16 +94,16 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
             }
         }
 
-        private ISpecification<ModDetail> CreateCategoriesSpec()
+        private ModDetailSpecification CreateCategoriesSpec()
         {
             if (Categories.Count == 0)
             {
-                return Specification.Empty<ModDetail>();
+                return new MS_Empty();
             }
             else
             {
-                return Categories.Select(x => (ISpecification<ModDetail>)new ModDetailSpecification_Category(x))
-                .Aggregate((x, y) => x.And(y));
+                return Categories.Select(x => (ModDetailSpecification)new MS_Category(x))
+                    .Aggregate((x, y) => x.And(y));
             }
         }
 

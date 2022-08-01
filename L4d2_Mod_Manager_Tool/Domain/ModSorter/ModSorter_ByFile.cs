@@ -19,7 +19,7 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModSorter
             return order switch
             {
                 ModSortOrder.Ascending => mods.OrderBy(m => m.FileName),
-                ModSortOrder.Descending => mods.OrderBy(m => m.FileName)
+                ModSortOrder.Descending => mods.OrderByDescending(m => m.FileName)
             };
         }
     }
