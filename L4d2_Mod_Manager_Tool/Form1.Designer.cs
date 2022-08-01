@@ -34,6 +34,7 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -66,6 +67,7 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2,
             this.columnHeader1,
+            this.columnHeader5,
             this.columnHeader3,
             this.columnHeader4});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -80,6 +82,7 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.TileSize = new System.Drawing.Size(20, 20);
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
             this.listView1.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listView1_RetrieveVirtualItem);
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
@@ -92,8 +95,13 @@ namespace L4d2_Mod_Manager_Tool
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "ID";
+            this.columnHeader1.Text = "文件名";
             this.columnHeader1.Width = 100;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "状态";
+            this.columnHeader5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // columnHeader3
             // 
@@ -309,6 +317,7 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_disableMod;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_addonInfoDownloadStrategy;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }
 

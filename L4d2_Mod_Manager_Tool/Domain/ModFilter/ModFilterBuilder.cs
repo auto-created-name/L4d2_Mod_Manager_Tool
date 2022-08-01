@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using L4d2_Mod_Manager_Tool.Domain.Specifications;
 
 namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
 {
@@ -19,6 +20,13 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
             get => CreateNameFilter()
                 .And(CreateTagsFilter())
                 .And(CreateCategoriesFilter());
+        }
+
+        public ModDetailSpecification FinalSpec
+        {
+            get => CreateBlurSpec()
+                .And(CreateTagsSpec())
+                .And(CreateCategoriesSpec());
         }
 
         public void SetName(string name)
@@ -43,12 +51,32 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
         public void RemoveCategory(string cat)
             => Categories.Remove(cat);
 
+        private ModDetailSpecification CreateBlurSpec()
+        {
+            return string.IsNullOrEmpty(filterName)
+                ? new MS_Empty()
+                : new MS_Blur(filterName);
+        }
+
         private IModFilter CreateNameFilter() 
         {
             if (string.IsNullOrEmpty(filterName))
                 return new EmptyFilter();
             else
                 return new ModBlurFilter(filterName);
+        }
+
+        private ModDetailSpecification CreateTagsSpec()
+        {
+            if (Tags.Count == 0)
+            {
+                return new MS_Empty();
+            }
+            else
+            {
+                return Tags.Select(x => (ModDetailSpecification)new MS_Tag(x))
+                    .Aggregate((x, y) => x.And(y));
+            }
         }
 
         private IModFilter CreateTagsFilter()
@@ -63,6 +91,19 @@ namespace L4d2_Mod_Manager_Tool.Domain.ModFilter
                     Tags.Select(ModFP.HaveTag)
                     .Select(x => (IModFilter)new PredicateModFilter(x))
                     .Aggregate((x1, x2) => new AndFilter(x1, x2));
+            }
+        }
+
+        private ModDetailSpecification CreateCategoriesSpec()
+        {
+            if (Categories.Count == 0)
+            {
+                return new MS_Empty();
+            }
+            else
+            {
+                return Categories.Select(x => (ModDetailSpecification)new MS_Category(x))
+                    .Aggregate((x, y) => x.And(y));
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿using L4d2_Mod_Manager_Tool.Domain;
 using L4d2_Mod_Manager_Tool.Domain.ModFilter;
+using L4d2_Mod_Manager_Tool.Domain.ModSorter;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
-using L4d2_Mod_Manager_Tool.Module.FileExplorer;
 using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
@@ -59,11 +59,28 @@ namespace L4d2_Mod_Manager_Tool.Service
 
         public static IEnumerable<ModDetail> FilteredModInfo()
         {
-            return filterBuilder.FinalFilter
-                .FilterMod(ModRepository.Instance.GetMods())
-                .Select(GetModDetail);
+            var mds = new ModDetailQuery(AddonListService.Repo).FindAll(filterBuilder.FinalSpec);
+            return modSorter.Sort(mds);
+            //return modSorter.Sort(
+            //    filterBuilder.FinalFilter
+            //    .FilterMod(ModRepository.Instance.GetMods())
+            //    .Select(GetModDetail)
+            //    );
         }
-
+        #region 模组排序
+        private static IModSorter modSorter = new ModSorter_ByName(ModSortOrder.Ascending);
+        public static void SetModSortMod(string label, ModSortOrder order)
+        {
+            modSorter = label switch
+            {
+                "名称" => new ModSorter_ByName(order),
+                "文件名" => new ModSorter_ByFile(order),
+                "状态" => new ModSorter_ByEnabled(order),
+                "作者" => new ModSorter_ByAuthor(order),
+                _ => new ModSorter_Default()
+            };
+        }
+        #endregion
         /// <summary>
         /// 通过文件名找到模组
         /// </summary>
@@ -73,28 +90,38 @@ namespace L4d2_Mod_Manager_Tool.Service
                 .Bind(x => Repo.FindModByFileId(x.Id));
         }
 
-        public static IEnumerable<ModDetail> ModInfos()
-        {
-            return ModRepository.Instance.GetMods()
-                .Select(GetModDetail);
-        }
+        //public static IEnumerable<ModDetail> ModInfos()
+        //{
+        //    return ModRepository.Instance.GetMods()
+        //        .Select(GetModDetail);
+        //}
 
-        public static ModDetail GetModDetail(Mod m)
-        {
-            return new(m.Id,
-                ModFP.SelectPreview(m)
-                , ModFP.SelectName(m)
-                , m.vpkId
-                , m.Author
-                , m.Tagline
-                , ModFP.CategoriesSingleLine(m)
-                , ModFP.TagsSingleLine(m)
-                , ModFP.SelectDescription(m));
-        }
+        //public static ModDetail GetModDetail(Mod m)
+        //{
+        //    var enabled = AddonListService.IsModEnabled(m.Id);
+        //    var fileName = ModCrossServer.GetModFileByModId(m.Id).ValueOrThrow("ModFile不存在");
+        //    return new(m.Id
+        //        , ModFP.SelectName(m)
+        //        , fileName
+        //        , enabled
+        //        , m.Author
+        //        , m.Tagline
+        //    );
+        //}
 
-        public static Maybe<ModDetail> GetModDetail(int modId)
+        public static Maybe<ModPreviewInfo> GetModPreviewInfo(int modId)
         {
-            return Repo.FindModById(modId).Map(GetModDetail);
+            return Repo.FindModById(modId).Map(m =>
+                new ModPreviewInfo
+                {
+                    PreviewImg = ModFP.SelectPreview(m),
+                    Author = m.Author,
+                    Descript = ModFP.SelectDescription(m),
+                    Name = ModFP.SelectName(m),
+                    Categories = m.CategoriesSingleLine(),
+                    Tags = m.TagsSingleLine()
+                }
+            );
         }
 
         public static IEnumerable<Mod> FilterMod(string filter)
