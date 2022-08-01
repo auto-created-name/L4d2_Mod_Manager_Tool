@@ -92,11 +92,19 @@ namespace L4d2_Mod_Manager_Tool.Domain
         }
 
         /// <summary>
-        /// 谓词构造 - 包含制定标签
+        /// 谓词构造 - 包含指定标签
         /// </summary>
         public static Func<Mod, bool> HaveTag(string tagName)
         {
-            return m => m.Tags.Contains(tagName);
+            return m => m.Tags.Contains(tagName.ToLower());
+        }
+
+        /// <summary>
+        /// 谓词构造 - 包含分类
+        /// </summary>
+        public static Func<Mod, bool> HaveCategory(string catName)
+        {
+            return m => m.Categories.Contains(catName);
         }
 
         public static Func<Mod, bool> NameContains(string name)

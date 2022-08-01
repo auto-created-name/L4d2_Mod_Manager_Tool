@@ -34,10 +34,13 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem_enableMod = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_disableMod = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_showInExplorer = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,9 +54,12 @@ namespace L4d2_Mod_Manager_Tool
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.widget_FilterMod1 = new L4d2_Mod_Manager_Tool.Widget.Widget_FilterMod();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel_addonInfoDownloadStrategy = new System.Windows.Forms.ToolStripStatusLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // listView1
@@ -61,6 +67,7 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2,
             this.columnHeader1,
+            this.columnHeader5,
             this.columnHeader3,
             this.columnHeader4});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -69,11 +76,13 @@ namespace L4d2_Mod_Manager_Tool
             this.listView1.LargeImageList = this.imageList1;
             this.listView1.Location = new System.Drawing.Point(5, 64);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(731, 517);
+            this.listView1.Size = new System.Drawing.Size(731, 495);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 1;
+            this.listView1.TileSize = new System.Drawing.Size(20, 20);
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
             this.listView1.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listView1_RetrieveVirtualItem);
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
@@ -86,8 +95,13 @@ namespace L4d2_Mod_Manager_Tool
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "ID";
+            this.columnHeader1.Text = "文件名";
             this.columnHeader1.Width = 100;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "状态";
+            this.columnHeader5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // columnHeader3
             // 
@@ -108,9 +122,25 @@ namespace L4d2_Mod_Manager_Tool
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_enableMod,
+            this.toolStripMenuItem_disableMod,
             this.toolStripMenuItem_showInExplorer});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 70);
+            // 
+            // toolStripMenuItem_enableMod
+            // 
+            this.toolStripMenuItem_enableMod.Name = "toolStripMenuItem_enableMod";
+            this.toolStripMenuItem_enableMod.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_enableMod.Text = "启用模组";
+            this.toolStripMenuItem_enableMod.Click += new System.EventHandler(this.toolStripMenuItem_enableMod_Click);
+            // 
+            // toolStripMenuItem_disableMod
+            // 
+            this.toolStripMenuItem_disableMod.Name = "toolStripMenuItem_disableMod";
+            this.toolStripMenuItem_disableMod.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_disableMod.Text = "禁用模组";
+            this.toolStripMenuItem_disableMod.Click += new System.EventHandler(this.toolStripMenuItem_disableMod_Click);
             // 
             // toolStripMenuItem_showInExplorer
             // 
@@ -191,14 +221,14 @@ namespace L4d2_Mod_Manager_Tool
             this.widget_ModOverview1.Location = new System.Drawing.Point(0, 25);
             this.widget_ModOverview1.Name = "widget_ModOverview1";
             this.widget_ModOverview1.Padding = new System.Windows.Forms.Padding(5);
-            this.widget_ModOverview1.Size = new System.Drawing.Size(367, 586);
+            this.widget_ModOverview1.Size = new System.Drawing.Size(367, 564);
             this.widget_ModOverview1.TabIndex = 9;
             // 
             // splitter1
             // 
             this.splitter1.Location = new System.Drawing.Point(367, 25);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(5, 586);
+            this.splitter1.Size = new System.Drawing.Size(5, 564);
             this.splitter1.TabIndex = 10;
             this.splitter1.TabStop = false;
             // 
@@ -218,8 +248,24 @@ namespace L4d2_Mod_Manager_Tool
             this.panel1.Location = new System.Drawing.Point(372, 25);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(5);
-            this.panel1.Size = new System.Drawing.Size(741, 586);
+            this.panel1.Size = new System.Drawing.Size(741, 564);
             this.panel1.TabIndex = 13;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel_addonInfoDownloadStrategy});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 589);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1113, 22);
+            this.statusStrip1.TabIndex = 14;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel_addonInfoDownloadStrategy
+            // 
+            this.toolStripStatusLabel_addonInfoDownloadStrategy.Name = "toolStripStatusLabel_addonInfoDownloadStrategy";
+            this.toolStripStatusLabel_addonInfoDownloadStrategy.Size = new System.Drawing.Size(131, 17);
+            this.toolStripStatusLabel_addonInfoDownloadStrategy.Text = "toolStripStatusLabel1";
             // 
             // Form1
             // 
@@ -230,6 +276,7 @@ namespace L4d2_Mod_Manager_Tool
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.widget_ModOverview1);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.statusStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
@@ -238,6 +285,8 @@ namespace L4d2_Mod_Manager_Tool
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -264,6 +313,11 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.Splitter splitter1;
         private Widget.Widget_FilterMod widget_FilterMod1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_enableMod;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_disableMod;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_addonInfoDownloadStrategy;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }
 

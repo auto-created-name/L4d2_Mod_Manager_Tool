@@ -14,6 +14,10 @@ namespace L4d2_Mod_Manager_Tool
         [STAThread]
         static void Main()
         {
+            // ∑˛ŒÒ‘ÿ»Î
+            Service.AddonInfoDownload.AddonInfoDownloadService.Load();
+            Service.ModCategoryService.Load();
+            Service.AddonListService.Load();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

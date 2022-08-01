@@ -19,6 +19,9 @@ namespace L4d2_Mod_Manager_Tool
     public partial class Form1 : Form
     {
         private List<ModDetail> modDetails = new();
+        private int orderHeader = 0;
+        private int order = 0;
+        private Dictionary<int, string> headers = new();
 
         public Form1()
         {
@@ -33,6 +36,19 @@ namespace L4d2_Mod_Manager_Tool
         {
             Text = "求生之路2模组管理工具 " + WinformUtility.SoftwareVersion;
             listView1.VirtualMode = true;
+
+            imageList1.Images.Add(Image.FromFile("Resources/off.png"));
+            imageList1.Images.Add(Image.FromFile("Resources/on.png"));
+            imageList1.Images.Add("ascending", Image.FromFile("Resources/ascending.png"));
+            imageList1.Images.Add("descending", Image.FromFile("Resources/descending.png"));
+
+            toolStripStatusLabel_addonInfoDownloadStrategy.Text = 
+                "模组信息下载模式：" + 
+                Service.AddonInfoDownload.AddonInfoDownloadService.CurrentDownloadStrtegyName;
+
+            foreach (ColumnHeader column in listView1.Columns)
+                headers.Add(column.Index, column.Text);
+            UpdateModListColumnHeader(listView1);
         }
 
         /// <summary>
@@ -57,6 +73,7 @@ namespace L4d2_Mod_Manager_Tool
             // 如果有新增模型，开启任务界面，开始扫描
             if (tasks.Length > 0)
                 new Form_RunningTask("扫描模组", tasks).ShowDialog();
+            AddonListService.Load();
             // 最后更新模组列表
             UpdateModList();
         }
@@ -67,11 +84,10 @@ namespace L4d2_Mod_Manager_Tool
         private void UpdateModList()
         {
             listView1.Items.Clear();
-            imageList1.Images.Clear();
             modDetails.Clear();
 
             modDetails = ModOperation.FilteredModInfo().ToList();
-            modDetails.Sort(new ModDetailNameComparer());
+            //modDetails.Sort(new ModDetailNameComparer());
             listView1.VirtualListSize = modDetails.Count;
             listView1.Invalidate();
 
@@ -96,14 +112,14 @@ namespace L4d2_Mod_Manager_Tool
 
         private void UpdateModPreview(int modId)
         {
-            ModOperation.GetModDetail(modId).Match(detail =>
+            ModOperation.GetModPreviewInfo(modId).Match(previewInfo =>
             {
-                widget_ModOverview1.ModPreview = detail.Img;
-                widget_ModOverview1.ModName = detail.Name;
-                widget_ModOverview1.ModAuthor = detail.Author;
-                widget_ModOverview1.ModCategories = detail.Categories;
-                widget_ModOverview1.ModDescript = detail.Descript;
-                widget_ModOverview1.ModTags = detail.Tags;
+                widget_ModOverview1.ModPreview = previewInfo.PreviewImg;
+                widget_ModOverview1.ModName = previewInfo.Name;
+                widget_ModOverview1.ModAuthor = previewInfo.Author;
+                widget_ModOverview1.ModCategories = previewInfo.Categories;
+                widget_ModOverview1.ModDescript = previewInfo.Descript;
+                widget_ModOverview1.ModTags = previewInfo.Tags;
                 widget_ModOverview1.ShowModOverview = true;
             }, () =>
             {
@@ -162,12 +178,7 @@ namespace L4d2_Mod_Manager_Tool
 
             public void DoTask()
             {
-                var (newMod, succ) = ModOperation.UpdateWorkshopInfo(mod);
-                if (succ)
-                {
-                    newMod = ModOperation.MoveWorkshopPreviewImage(newMod);
-                    ModOperation.UpdateMod(newMod);
-                }
+                Service.AddonInfoDownload.AddonInfoDownloadService.DownloadAddonInfo(mod);
             }
         }
         #endregion
@@ -178,18 +189,64 @@ namespace L4d2_Mod_Manager_Tool
         {
             if (e.Button == MouseButtons.Right)
             {
-                contextMenuStrip1.Show(listView1, e.Location);
+                WhenModSelected((sender as ListView), indices =>
+                {
+                    if (indices.Length == 1)
+                    {
+                        var modDetail = modDetails[indices[0]];
+                        bool enable = AddonListService.IsModEnabled(modDetail.Id);
+                        // 启用模组、禁用模组按钮的正确设置
+                        contextMenuStrip1.Items.Find("toolStripMenuItem_enableMod", false)[0].Enabled = !enable;
+                        contextMenuStrip1.Items.Find("toolStripMenuItem_disableMod", false)[0].Enabled = enable;
+                    }
+                    else
+                    {
+                        // 多选时无视开启/关闭
+                        contextMenuStrip1.Items.Find("toolStripMenuItem_enableMod", false)[0].Enabled = true;
+                        contextMenuStrip1.Items.Find("toolStripMenuItem_disableMod", false)[0].Enabled = true;
+                    }
+                    contextMenuStrip1.Show(listView1, e.Location);
+                });
             }
         }
-
+        #region 模组列表菜单回调
         private void toolStripMenuItem_showInExplorer_Click(object sender, EventArgs e)
         {
-            WhenModSelected(listView1, indices => {
+            WhenModSelected(listView1, indices => 
+            {
                 int modId = modDetails[indices[0]].Id;
-                ModOperation.ShowModInFileExplorer(modId);
+                ModCrossServer.ShowModInFileExplorer(modId);
             });
         }
 
+        private void toolStripMenuItem_enableMod_Click(object sender, EventArgs e)
+        {
+            WhenModSelected(listView1, indices =>
+                indices.Iter(index =>
+                {
+                    var detail = modDetails[index];
+                    AddonListService.SetModEnabled(detail.Id, true);
+                    // 重绘项
+                    listView1.RedrawItems(index, index, false);
+                })
+            );
+            AddonListService.ApplyAddonList();
+        }
+
+        private void toolStripMenuItem_disableMod_Click(object sender, EventArgs e)
+        {
+            WhenModSelected(listView1, indices =>
+                indices.Iter(index =>
+                {
+                    var detail = modDetails[index];
+                    AddonListService.SetModEnabled(detail.Id, false);
+                    // 重绘项
+                    listView1.RedrawItems(index, index, false);
+                })
+            );
+            AddonListService.ApplyAddonList();
+        }
+        #endregion
         // 刷新只更新列表
         private void toolStripMenuItem_refresh_Click(object sender, EventArgs e)
         {
@@ -222,7 +279,7 @@ namespace L4d2_Mod_Manager_Tool
         {
             WhenModSelected(sender as ListView, indices => {
                 int modId = modDetails[indices[0]].Id;
-                ModOperation.OpenModFileInExplorer(modId);
+                ModCrossServer.OpenModFileInExplorer(modId);
             });
         }
 
@@ -250,12 +307,55 @@ namespace L4d2_Mod_Manager_Tool
             var detail = modDetails[e.ItemIndex];
             ListViewItem item = new(new string[] {
                 detail.Name,
-                detail.Vpkid,
+                detail.FileName,
+                detail.Enabled ? "启用" : "禁用",
                 detail.Author,
                 detail.Tagline
             });
-            //item.ImageIndex = e.ItemIndex;
+
+            item.ImageIndex = detail.Enabled ? 1 : 0;
             e.Item = item;
+            item.BackColor = e.ItemIndex % 2 == 0 ? Color.White : SystemColors.Control;
+            item.ForeColor = detail.Enabled ? SystemColors.WindowText : SystemColors.GrayText;
+        }
+
+        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            var listview = (sender as ListView);
+            var clickedColumn = listview.Columns[e.Column];
+            // 重复点击，切换正倒序
+            if (orderHeader == clickedColumn.Index)
+            {
+                order = order switch
+                {
+                    0 => 1,
+                    1 => 0,
+                    _ => 0
+                };
+            }
+            else
+            {
+                orderHeader = clickedColumn.Index;
+                order = 0;
+            }
+            UpdateModListColumnHeader(listview);
+            ModOperation.SetModSortMod(headers[orderHeader], order == 0 ? Domain.ModSorter.ModSortOrder.Ascending : Domain.ModSorter.ModSortOrder.Descending);
+            UpdateModList();
+        }
+
+        private void UpdateModListColumnHeader(ListView listview)
+        {
+            foreach (ColumnHeader column in listview.Columns)
+            {
+                if (orderHeader == column.Index)
+                {
+                    column.Text = headers[column.Index] + (order == 0 ? " ▼" : " ▲");
+                }
+                else
+                {
+                    column.Text = headers[column.Index];
+                }
+            }
         }
         #endregion
 
@@ -279,7 +379,7 @@ namespace L4d2_Mod_Manager_Tool
             }
             catch
             {
-                return Utility.Maybe.None;
+                return Maybe.None;
             }
         }
     }

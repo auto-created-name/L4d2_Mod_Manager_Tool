@@ -1,5 +1,6 @@
 ﻿using L4d2_Mod_Manager_Tool.Domain;
 using L4d2_Mod_Manager_Tool.Domain.ModFilter;
+using L4d2_Mod_Manager_Tool.Domain.ModSorter;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
 using L4d2_Mod_Manager_Tool.Utility;
 using System;
@@ -27,82 +28,105 @@ namespace L4d2_Mod_Manager_Tool.Service
         private static ModFilterBuilder filterBuilder = new();
 
         /// <summary>
-        /// 增加一个模组过滤标签
+        /// 增加模组标签过滤
         /// </summary>
         public static void AddModFilterTag(string tagName)
             => filterBuilder.AddTag(tagName);
 
+        /// <summary>
+        /// 删除模组标签过滤
+        /// </summary>
         public static void RemoveModFilterTag(string tagName)
             => filterBuilder.RemoveTag(tagName);
+
+        /// <summary>
+        /// 增加模组分类过滤
+        /// </summary>
+        public static void AddModFilterCategory(string catName)
+            => filterBuilder.AddCategory(catName);
+
+        /// <summary>
+        /// 删除模组分类过滤
+        /// </summary>
+        public static void RemoveModFilterCategory(string catName)
+            => filterBuilder.RemoveCategory(catName);
 
         public static void SetModFilterName(string name)
             => filterBuilder.SetName(name);
 
+        public static Maybe<Mod> FindModById(int modId)
+            => Repo.FindModById(modId);
+
         public static IEnumerable<ModDetail> FilteredModInfo()
         {
-            return filterBuilder.FinalFilter
-                .FilterMod(ModRepository.Instance.GetMods())
-                .Select(GetModDetail);
+            var mds = new ModDetailQuery(AddonListService.Repo).FindAll(filterBuilder.FinalSpec);
+            return modSorter.Sort(mds);
+            //return modSorter.Sort(
+            //    filterBuilder.FinalFilter
+            //    .FilterMod(ModRepository.Instance.GetMods())
+            //    .Select(GetModDetail)
+            //    );
         }
-
-        public static IEnumerable<ModDetail> ModInfos()
+        #region 模组排序
+        private static IModSorter modSorter = new ModSorter_ByName(ModSortOrder.Ascending);
+        public static void SetModSortMod(string label, ModSortOrder order)
         {
-            return ModRepository.Instance.GetMods()
-                .Select(GetModDetail);
+            modSorter = label switch
+            {
+                "名称" => new ModSorter_ByName(order),
+                "文件名" => new ModSorter_ByFile(order),
+                "状态" => new ModSorter_ByEnabled(order),
+                "作者" => new ModSorter_ByAuthor(order),
+                _ => new ModSorter_Default()
+            };
         }
-
+        #endregion
         /// <summary>
-        /// 打开资源管理器，选中模组文件
+        /// 通过文件名找到模组
         /// </summary>
-        public static void ShowModInFileExplorer(int modId)
+        public static Maybe<Mod> FindModByFileName(string fn)
         {
-            ModRepository.Instance.FindModById(modId)
-                .Map(m => m.FileId)
-                .Bind(ModFileService.FindFileById)
-                .Map(f => Module.FileExplorer.FileExplorerUtils.OpenFileExplorerAndSelectItem(f.FilePath));
+            return ModFileService.FindFileByFileName(fn)
+                .Bind(x => Repo.FindModByFileId(x.Id));
         }
 
-        /// <summary>
-        /// 使用资源管理器打开模组文件
-        /// </summary>
-        public static void OpenModFileInExplorer(int modId)
-        {
-            ModRepository.Instance.FindModById(modId)
-                .Map(m => m.FileId)
-                .Bind(ModFileService.FindFileById)
-                .Map(f => Module.FileExplorer.FileExplorerUtils.OpenFileInExplorer(f.FilePath));
-        }
+        //public static IEnumerable<ModDetail> ModInfos()
+        //{
+        //    return ModRepository.Instance.GetMods()
+        //        .Select(GetModDetail);
+        //}
 
-        public static ModDetail GetModDetail(Mod m)
-        {
-            return new(m.Id,
-                ModFP.SelectPreview(m)
-                , ModFP.SelectName(m)
-                , m.vpkId
-                , m.Author
-                , m.Tagline
-                , ModFP.CategoriesSingleLine(m)
-                , ModFP.TagsSingleLine(m)
-                , ModFP.SelectDescription(m));
-        }
+        //public static ModDetail GetModDetail(Mod m)
+        //{
+        //    var enabled = AddonListService.IsModEnabled(m.Id);
+        //    var fileName = ModCrossServer.GetModFileByModId(m.Id).ValueOrThrow("ModFile不存在");
+        //    return new(m.Id
+        //        , ModFP.SelectName(m)
+        //        , fileName
+        //        , enabled
+        //        , m.Author
+        //        , m.Tagline
+        //    );
+        //}
 
-        public static Maybe<ModDetail> GetModDetail(int modId)
+        public static Maybe<ModPreviewInfo> GetModPreviewInfo(int modId)
         {
-            return Repo.FindModById(modId).Map(GetModDetail);
+            return Repo.FindModById(modId).Map(m =>
+                new ModPreviewInfo
+                {
+                    PreviewImg = ModFP.SelectPreview(m),
+                    Author = m.Author,
+                    Descript = ModFP.SelectDescription(m),
+                    Name = ModFP.SelectName(m),
+                    Categories = m.CategoriesSingleLine(),
+                    Tags = m.TagsSingleLine()
+                }
+            );
         }
 
         public static IEnumerable<Mod> FilterMod(string filter)
         {
             return ModRepository.Instance.GetMods().Where(m => FilterMod(filter, m));
-        }
-
-        /// <summary>
-        /// 取消激活模组
-        /// </summary>
-        public static void DeactiveMod(Mod mod)
-        {
-            var modFile = modFileRepo.FindModFileById(mod.FileId);
-            modFile.Map(mf => ModFileService.DeactiveModFile(mf));
         }
 
         public static bool UpdateMod(Mod mod)
@@ -167,26 +191,6 @@ namespace L4d2_Mod_Manager_Tool.Service
             return newMod.ValueOr(mod);
         }
 
-        /// <summary>
-        /// 更新创意工坊数据
-        /// </summary>
-        /// <param name="mod"></param>
-        /// <returns></returns>
-        public static (Mod, bool) UpdateWorkshopInfo(Mod mod)
-        {
-            var modFile = modFileRepo.FindModFileById(mod.FileId);
-            var newMod = modFile
-                .Bind(mf => Spider.CollectModInfo(ModFileFP.ModFileName(mf)))
-                .Map(info => mod with
-                {
-                    WorkshopTitle = info.Title,
-                    WorkshopDescript = info.Descript,
-                    WorkshopPreviewImage = info.PreviewImage,
-                    Tags = info.Tags
-                });
-            return newMod.Match(x => (x, true), () => (mod, false));
-        }
-
         private static bool FilterMod(string filter, Mod mod)
         {
             if (string.IsNullOrEmpty(filter))
@@ -199,7 +203,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                     || mod.vpkId.Contains(filter);
         }
 
-        static StreamWriter fs = new StreamWriter(File.OpenWrite("out.txt"));
+        //static StreamWriter fs = new StreamWriter(File.OpenWrite("out.txt"));
         private static IEnumerable<string> ParseLine(string line)
         {
             line = line.Trim();
@@ -208,35 +212,14 @@ namespace L4d2_Mod_Manager_Tool.Service
 
             if (words.Length >= 2)
             {
-                fs.WriteLine($"{words[0]} -- {words[1]}");
-                fs.Flush();
+                //fs.WriteLine($"{words[0]} -- {words[1]}");
+                //fs.Flush();
                 return words.Take(2);
             }
             else
             {
                 return Array.Empty<string>();
             }
-        }
-
-        /// <summary>
-        /// 对原始addonInfo数据进行剪枝，方便后续处理
-        /// </summary>
-        private static string PruningAddonInfo(string content)
-        {
-            int lbrace = content.IndexOf('{');
-            if(lbrace > 0)
-                content = content.Substring(lbrace + 1);
-            int rbrace = content.LastIndexOf('}');
-            if(rbrace > 0)
-                content = content.Substring(0, rbrace);
-
-            //这里不能将//.*作为注释消除，因为包含网址的时候,http://...会被当成注释
-            //content = Regex.Replace(content, @"//.*", "");
-            //没有区别
-            //content = Regex.Replace(content, @"\s+", " ");
-
-            content = content.Trim();
-            return content;
         }
 
         private static IEnumerable<(T,T)> PairQue<T>(T[] xs)
@@ -255,15 +238,25 @@ namespace L4d2_Mod_Manager_Tool.Service
         {
             return pair.Item1 switch
             {
-                "addoncontent_campaign" => pair.Item2.Equals("1") ? "Campaign" : Maybe.None,
-                "addoncontent_map"      => pair.Item2.Equals("1") ? "Map"      : Maybe.None,
-                "addoncontent_skin"     => pair.Item2.Equals("1") ? "Skin"     : Maybe.None,
-                "addoncontent_weapon"   => pair.Item2.Equals("1") ? "Weapon"   : Maybe.None,
-                "addoncontent_survivor" => pair.Item2.Equals("1") ? "Survivor" : Maybe.None,
-                "addoncontent_sound"    => pair.Item2.Equals("1") ? "Sound"    : Maybe.None,
-                "addoncontent_script"   => pair.Item2.Equals("1") ? "Script"   : Maybe.None,
-                "addoncontent_prop"     => pair.Item2.Equals("1") ? "Prop"     : Maybe.None,
-                _ => Maybe.None
+                "addoncontent_bossinfected"     => pair.Item2.Equals("1") ? "Special Infected"  : Maybe.None,
+                "addoncontent_campaign"         => pair.Item2.Equals("1") ? "Campaign"          : Maybe.None,
+                "addoncontent_commoninfected"   => pair.Item2.Equals("1") ? "Common Infected"   : Maybe.None,
+                "addoncontent_map"              => pair.Item2.Equals("1") ? "Map"               : Maybe.None,
+                "addoncontent_music"            => pair.Item2.Equals("1") ? "Music"             : Maybe.None,
+                "addoncontent_prefab"           => pair.Item2.Equals("1") ? "Prefab"            : Maybe.None,
+                "addoncontent_prop"             => pair.Item2.Equals("1") ? "Prop"              : Maybe.None,
+                "addoncontent_realism"          => pair.Item2.Equals("1") ? "Realism"           : Maybe.None,
+                "addoncontent_scavenge"         => pair.Item2.Equals("1") ? "Scavenge"          : Maybe.None,
+                "addoncontent_script"           => pair.Item2.Equals("1") ? "Script"            : Maybe.None,
+                "addoncontent_skin"             => pair.Item2.Equals("1") ? "Skin"              : Maybe.None,
+                "addoncontent_sound"            => pair.Item2.Equals("1") ? "Sound"             : Maybe.None,
+                "addoncontent_spray"            => pair.Item2.Equals("1") ? "Spray"             : Maybe.None,
+                "addoncontent_survival"         => pair.Item2.Equals("1") ? "Survival"          : Maybe.None,
+                "addoncontent_survivor"         => pair.Item2.Equals("1") ? "Survivor"          : Maybe.None,
+                "addoncontent_versus"           => pair.Item2.Equals("1") ? "Versus"            : Maybe.None,
+                "addoncontent_weapon"           => pair.Item2.Equals("1") ? "Weapon"            : Maybe.None,
+                "addoncontent_weaponmodel"      => pair.Item2.Equals("1") ? "WeaponModel"       : Maybe.None,
+                _                               => Maybe.None
             };
         }
 

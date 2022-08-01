@@ -14,15 +14,15 @@ using System.Collections.Immutable;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
-    public class VPKServices
+    public static class VPKServices
     {
         /// <summary>
         /// 扫描所有的模组文件
         /// </summary>
         public static IEnumerable<ModFile> ScanAllModFile()
         {
-            return ModFolders
-                .SelectMany(ListVpk)
+            return ListVpk(OfflineModFolder)
+                .Concat(ListVpk(WorkshopModFolder).Select(x => $"workshop\\{x}"))
                 .Select(file => ModFileFP.CreateModFile(file));
         }
 
@@ -66,12 +66,15 @@ namespace L4d2_Mod_Manager_Tool.Service
         public static VpkSnippet SnippedVpk(string vpk)
         {
             VpkArchive archive = new();
-            archive.Load(vpk);
+            archive.Load(Path.Combine(L4d2Folder.AddonsFolder, vpk));
             
             // 列出所有vpk内容，找到addonimage
             var files = archive.Directories.SelectMany(dir => dir.Entries).ToArray();
-            var tags = files.Select(FindCategoryFromVPKEntry)
-                .Where(tag => tag != null).Distinct().ToArray();
+            //var categories = files.Select(FindCategoryFromVPKEntry)
+            //    .Where(tag => tag != null).Distinct().ToArray();
+            var categories = files
+                .SelectMany(entry => ModCategoryService.MatchCategories(entry.FullName()))
+                .Distinct();
 
             var imgEntry = files.Where(IsAddonImage).FirstElementSafe();
             var infoEntry = files.Where(IsAddonInfo).FirstElementSafe();
@@ -106,7 +109,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                     Path.GetFileName(vpk),
                     addonimageFile,
                     addoninfoFile,
-                    tags.ToImmutableArray()
+                    categories.ToImmutableArray()
                 );
             });
         }
@@ -116,14 +119,15 @@ namespace L4d2_Mod_Manager_Tool.Service
         /// </summary>
         public static IEnumerable<string> ListVpk(string folder)
         {
-            DirectoryInfo di = new DirectoryInfo(folder);
+            DirectoryInfo di = new(folder);
             if (di.Exists)
             {
-                return di.GetFiles("*.vpk").Select(f => f.FullName);
+                var res = di.GetFiles("*.vpk").Select(f => f.Name).ToArray();
+                return res;
             }
             else
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
         }
 
@@ -154,9 +158,13 @@ namespace L4d2_Mod_Manager_Tool.Service
         }
 
         /// <summary>
-        /// 模组文件夹
+        /// 离线模组文件夹
         /// </summary>
-        private static IEnumerable<string> ModFolders => SettingFP.GetSetting().modFileFolder;
+        private static string OfflineModFolder => Path.Combine(SettingFP.GetSetting().GamePath, "left4dead2", "addons");
+        /// <summary>
+        /// 创意工坊模组文件夹
+        /// </summary>
+        private static string WorkshopModFolder => Path.Combine(OfflineModFolder, "workshop");
 
         private static void ExtraVpkEntry(string file, VpkEntry entry)
         {
@@ -170,26 +178,9 @@ namespace L4d2_Mod_Manager_Tool.Service
             File.WriteAllBytes(file, data);
         }
 
-        private static List<(string, string)> CategoryRegexes =
-            new()
-            {
-                ("Maps", @"maps/(?:.+)"),
-                ("Scripts", @"cfg/autoexec\.cfg"),
-                ("Survivor", @"models/survivors/survivor_(.+)\.mdl"),
-                ("Infected", @"models/infected/(.+)\.mdl"),
-                ("CommonInfected", @"models/infected/common(?:.*)\.mdl"),
-                ("Weapons", @"models/weapons/(?:.+)\.mdl"),
-            };
-
-        /// <summary>
-        /// 从VPK项中通过文件名判断分类
-        /// </summary>
-        private static string FindCategoryFromVPKEntry(VpkEntry entry){
-            string file = $"{entry.Path}/{entry.Filename}.{entry.Extension}";
-            return CategoryRegexes
-                .Where(x => Regex.IsMatch(file, x.Item2))
-                .Select(x => x.Item1)
-                .FirstOrDefault();
+        private static string FullName(this VpkEntry entry)
+        {
+            return $"{entry.Path}/{entry.Filename}.{entry.Extension}";
         }
         #region 查找文件
         /// <summary>
