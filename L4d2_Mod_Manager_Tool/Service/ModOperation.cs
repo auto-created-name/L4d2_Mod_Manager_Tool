@@ -27,6 +27,11 @@ namespace L4d2_Mod_Manager_Tool.Service
 
         private static ModFilterBuilder filterBuilder = new();
 
+        public static void Load()
+        {
+            Repo.Initialize();
+        }
+
         /// <summary>
         /// 增加模组标签过滤
         /// </summary>
