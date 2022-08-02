@@ -16,7 +16,10 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
         {
             this.addonListRepo = addonListRepo;
         }
-        protected override void CreateDatabase() { }
+        protected override void CreateDatabase() {
+            var mfr = new ModFileRepository();
+            ModRepository.Instance.FindModByFileId(1);
+        }
 
         public Maybe<ModDetail> FindOne(ModDetailSpecification spec)
         {

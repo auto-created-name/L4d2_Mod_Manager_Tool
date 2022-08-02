@@ -49,6 +49,16 @@ namespace L4d2_Mod_Manager_Tool
             foreach (ColumnHeader column in listView1.Columns)
                 headers.Add(column.Index, column.Text);
             UpdateModListColumnHeader(listView1);
+
+            TaskFramework.BackgroundWorks.Instance.OnBackgroundWorkStatusChanged += BackgroundWorks_OnBackgroundWorkStatusChanged;
+        }
+
+        private void BackgroundWorks_OnBackgroundWorkStatusChanged(object sender, TaskFramework.BackgroundWorkStatusChangedArgs args)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                toolStripProgressBar_backgroundworkProgress.Value = args.WorkProgress;
+            }));
         }
 
         /// <summary>
@@ -67,15 +77,24 @@ namespace L4d2_Mod_Manager_Tool
             // 保存数据库（同步）
             // 将文件转换为模组文件（解压vpk），解析Maddoninfo，获取详细信息
             // 入库
-            var tasks = VPKServices.ScanAllModFile()
-                .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
-                .Select(mf => new ExtraModTask(mf)).ToArray();
-            // 如果有新增模型，开启任务界面，开始扫描
-            if (tasks.Length > 0)
-                new Form_RunningTask("扫描模组", tasks).ShowDialog();
-            AddonListService.Load();
+            Progress<float> rep = new(f => {
+                toolStripProgressBar_backgroundworkProgress.Value = (int)(f * 100);
+                if (f == 1.0f)
+                {
+                    AddonListService.Load();
+                    UpdateModList();
+                }
+            });
+            ModFileService.BeginScanModFile(rep);
+            //var tasks = VPKServices.ScanAllModFile()
+            //    .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
+            //    .Select(mf => new ExtraModTask(mf)).ToArray();
+            //// 如果有新增模型，开启任务界面，开始扫描
+            //if (tasks.Length > 0)
+            //    new Form_RunningTask("扫描模组", tasks).ShowDialog();
+            //AddonListService.Load();
             // 最后更新模组列表
-            UpdateModList();
+            //UpdateModList();
         }
 
         /// <summary>

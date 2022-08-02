@@ -72,9 +72,10 @@ namespace L4d2_Mod_Manager_Tool.Service
             var files = archive.Directories.SelectMany(dir => dir.Entries).ToArray();
             //var categories = files.Select(FindCategoryFromVPKEntry)
             //    .Where(tag => tag != null).Distinct().ToArray();
-            var categories = files
-                .SelectMany(entry => ModCategoryService.MatchCategories(entry.FullName()))
-                .Distinct();
+            var categories = Enumerable.Empty<string>();
+                //files
+                //.SelectMany(entry => ModCategoryService.MatchCategories(entry.FullName()))
+                //.Distinct();
 
             var imgEntry = files.Where(IsAddonImage).FirstElementSafe();
             var infoEntry = files.Where(IsAddonInfo).FirstElementSafe();
@@ -93,8 +94,8 @@ namespace L4d2_Mod_Manager_Tool.Service
                     ExtraVpkEntry(file, entry);
                     if (file.EndsWith(".vtf"))
                     {
-                        NoVtfConverter.ConverVtf(file);
-                        file = Path.ChangeExtension(file, ".png");
+                        //NoVtfConverter.ConverVtf(file);
+                        //file = Path.ChangeExtension(file, ".png");
                     }
                     return file;
                 });

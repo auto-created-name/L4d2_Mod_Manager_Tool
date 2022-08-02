@@ -22,6 +22,8 @@ namespace L4d2_Mod_Manager_Tool
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+
+            TaskFramework.BackgroundWorks.Instance.Dispose();
         }
     }
 }
