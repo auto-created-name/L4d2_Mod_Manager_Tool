@@ -51,16 +51,6 @@ namespace L4d2_Mod_Manager_Tool
             foreach (ColumnHeader column in listView1.Columns)
                 headers.Add(column.Index, column.Text);
             UpdateModListColumnHeader(listView1);
-
-            TaskFramework.BackgroundWorks.Instance.OnBackgroundWorkStatusChanged += BackgroundWorks_OnBackgroundWorkStatusChanged;
-        }
-
-        private void BackgroundWorks_OnBackgroundWorkStatusChanged(object sender, TaskFramework.BackgroundWorkStatusChangedArgs args)
-        {
-            BeginInvoke(new Action(() =>
-            {
-                toolStripProgressBar_backgroundworkProgress.Value = args.WorkProgress;
-            }));
         }
 
         /// <summary>
@@ -123,12 +113,25 @@ namespace L4d2_Mod_Manager_Tool
         /// </summary>
         private void DownloadWorkshopInfoIfDontHave()
         {
-            var tasks = ModRepository.Instance.GetMods()
+            //var tasks = ModRepository.Instance.GetMods()
+            //    .Where(ModFP.HaveVpkNumber)
+            //    .Where(Utility.FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo))
+            //    .Select(x => new DownloadWorkshopInfoTask(x));
+            //new Form_RunningTask("下载创意工坊信息", tasks.ToArray()).ShowDialog();
+            //UpdateModList();
+            Progress<float> rep = new(f => {
+                toolStripProgressBar_backgroundworkProgress.Value = (int)(f * 100);
+                if (f == 1.0f)
+                {
+                    AddonListService.Load();
+                    UpdateModList();
+                }
+            });
+
+            var mods = ModRepository.Instance.GetMods()
                 .Where(ModFP.HaveVpkNumber)
-                .Where(Utility.FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo))
-                .Select(x => new DownloadWorkshopInfoTask(x));
-            new Form_RunningTask("下载创意工坊信息", tasks.ToArray()).ShowDialog();
-            UpdateModList();
+                .Where(FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo));
+            Service.AddonInfoDownload.AddonInfoDownloadService.BeginDownloadAddonInfos(mods, rep);
         }
 
         private void UpdateModPreview(int modId)
@@ -157,36 +160,7 @@ namespace L4d2_Mod_Manager_Tool
             }
         }
         #region 定义
-        //private class TestMessageTask : TaskFramework.IMessageTask
-        //{
-        //    public string TaskName { get; private set; }
-        //    public TestMessageTask(int i)
-        //    {
-        //        TaskName = $"正在进行任务{i}...";
-        //    }
-        //
-        //    public void DoTask()
-        //    {
-        //        System.Threading.Thread.Sleep(10);
-        //    }
-        //}
-        private class ExtraModTask : TaskFramework.IMessageTask
-        {
-            private ModFile mf;
-            public string TaskName { get; private set; }
-            public ExtraModTask(ModFile mf)
-            {
-                TaskName = $"正在解压{mf.FilePath}...";
-                this.mf = mf;
-            }
-            public void DoTask()
-            {
-                var savedMf = ModFileService.SaveModFile(mf);
-                var mod = VPKServices.ExtraMod(savedMf);
-                ModRepository.Instance.SaveMod(mod);
-            }
-        }
-
+        
         private class DownloadWorkshopInfoTask : TaskFramework.IMessageTask
         {
             private Mod mod;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using L4d2_Mod_Manager_Tool.Domain;
+using L4d2_Mod_Manager_Tool.Domain.Repository;
 using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
@@ -27,11 +28,33 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
             );
         }
 
+        public static void BeginDownloadAddonInfos(IEnumerable<Mod> mods, IProgress<float> rep)
+        {
+            DownloadAddonInfos(mods, rep);
+        }
+
+
+        private static async Task DownloadAddonInfos(IEnumerable<Mod> mods, IProgress<float> rep)
+        {
+            await Task.Run(() =>
+            {
+                rep.Report(0);
+                int finished = 0;
+                int count = mods.Count();
+                var newMods = mods.AsParallel().Select(x => {
+                    var newMod = DownloadAddonInfo(x);
+                    rep.Report(++finished / (float)count);
+                    return newMod;
+                }).ToArray();
+                rep.Report(1);
+                ModRepository.Instance.UpdateRange(newMods);
+            });
+        }
         /// <summary>
         /// 下载模组信息
         /// </summary>
         /// <param name="m"></param>
-        public static void DownloadAddonInfo(Mod m)
+        public static Mod DownloadAddonInfo(Mod m)
         {
             var vpkId = ulong.Parse(m.vpkId);
             var info = downloadStrategy.DownloadAddonInfo(vpkId);
@@ -43,7 +66,8 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
                     Tags = i.Tags,
                     WorkshopPreviewImage = i.PreviewImage
                 }).ValueOr(m);
-            ModOperation.UpdateMod(newMod);
+            return newMod;
+            //ModOperation.UpdateMod(newMod);
         }
     }
 }

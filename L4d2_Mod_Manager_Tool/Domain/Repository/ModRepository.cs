@@ -76,33 +76,31 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
 
         public void SaveRange(IEnumerable<Mod> mods)
         {
-            rwlock.AcquireWriterLock(int.MaxValue);
-            var command = connection.CreateCommand();
-            command.CommandText = "begin;";
-            command.ExecuteNonQuery();
-            foreach (var mod in mods)
-            {
-                command = connection.CreateCommand();
-                command.CommandText = $"INSERT INTO mod VALUES(" +
-                    $"NULL" +
-                    $",\"{mod.FileId}\"" +
-                    $",\"{mod.vpkId}\"" +
-                    $",\"{mod.Thumbnail}\"" +
-                    $",\"{mod.Title}\"" +
-                    $",\"{mod.Version}\"" +
-                    $",\"{mod.Tagline}\"" +
-                    $",\"{mod.Author}\"" +
-                    $",\"{mod.Description}\"" +
-                    $",\"{mod.CategoriesSingleLine()}\"" +
-                    $",\"{HttpUtility.UrlEncode(mod.WorkshopTitle)}\"" +
-                    $",\"{mod.WorkshopDescript}\"" +
-                    $",\"{mod.WorkshopPreviewImage}\"" +
-                    $",\"{mod.TagsSingleLine()}\");";
-                command.ExecuteScalar();
-            }
-            command.CommandText = "commit;";
-            command.ExecuteNonQuery();
-            rwlock.ReleaseWriterLock();
+            WithWriterLock(
+                () => Transaction(() =>
+                {
+                    foreach (var mod in mods)
+                    {
+                        var command = connection.CreateCommand();
+                        command.CommandText = $"INSERT INTO mod VALUES(" +
+                            $"NULL" +
+                            $",\"{mod.FileId}\"" +
+                            $",\"{mod.vpkId}\"" +
+                            $",\"{mod.Thumbnail}\"" +
+                            $",\"{mod.Title}\"" +
+                            $",\"{mod.Version}\"" +
+                            $",\"{mod.Tagline}\"" +
+                            $",\"{mod.Author}\"" +
+                            $",\"{mod.Description}\"" +
+                            $",\"{mod.CategoriesSingleLine()}\"" +
+                            $",\"{HttpUtility.UrlEncode(mod.WorkshopTitle)}\"" +
+                            $",\"{mod.WorkshopDescript}\"" +
+                            $",\"{mod.WorkshopPreviewImage}\"" +
+                            $",\"{mod.TagsSingleLine()}\");";
+                        command.ExecuteScalar();
+                    }
+                })
+            );
         }
 
         /// <summary>
@@ -126,11 +124,34 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             return res > 0;
         }
 
+        public void UpdateRange(IEnumerable<Mod> mods)
+        {
+            WithWriterLock(
+                () => Transaction(() =>
+                {
+                    foreach (var mod in mods)
+                    {
+                        string descriptBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(mod.WorkshopDescript));
+
+                        var command = connection.CreateCommand();
+                        command.CommandText = $"UPDATE mod SET " +
+                            $"workshop_title = \"{HttpUtility.UrlEncode(mod.WorkshopTitle)}\"" +
+                            $",workshop_descript = \"{descriptBase64}\"" +
+                            $",workshop_previewImage = \"{mod.WorkshopPreviewImage}\"" +
+                            $",workshop_tags = \"{mod.TagsSingleLine()}\"" +
+                            $" WHERE " +
+                            $"id = {mod.Id}";
+                        command.ExecuteNonQuery();
+                    }
+                })
+            );
+        }
+
         public IEnumerable<Mod> GetMods()
         {
             var command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM mod";
-            List<Mod> mods = new List<Mod>();
+            List<Mod> mods = new();
 
             rwlock.AcquireReaderLock(int.MaxValue);
             using var reader = command.ExecuteReader();
@@ -174,6 +195,30 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 connection.Close();
                 connection = null;
             }
+        }
+
+        /// <summary>
+        /// 获取写入锁执行操作
+        /// </summary>
+        private void WithWriterLock(Action a)
+        {
+            rwlock.AcquireWriterLock(int.MaxValue);
+            a();
+            rwlock.ReleaseWriterLock();
+        }
+
+        /// <summary>
+        /// 执行事务
+        /// </summary>
+        private void Transaction(Action a)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = "begin;";
+            command.ExecuteNonQuery();
+            a();
+            command = connection.CreateCommand();
+            command.CommandText = "commit;";
+            command.ExecuteNonQuery();
         }
 
         private static Maybe<Mod> CreateFromReaderWithRead(SQLiteDataReader reader) {
