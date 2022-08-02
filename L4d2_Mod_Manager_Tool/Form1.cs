@@ -30,6 +30,8 @@ namespace L4d2_Mod_Manager_Tool
             UpdateModList();
 
             widget_FilterMod1.OnFilterUpdated += widget_FilterMod1_OnFilterUpdated;
+            //自动更新模组列表
+            RefreshModFile();
         }
 
         private void SetupControl()

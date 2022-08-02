@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using System.Data.SQLite;
 using L4d2_Mod_Manager_Tool.Utility;
 using System.Web;
+using System.Threading;
 
 namespace L4d2_Mod_Manager_Tool.Domain.Repository
 {
     public class ModRepository : IDisposable
     {
         private SQLiteConnection connection;
+        private ReaderWriterLock rwlock = new();
         public static ModRepository Instance { get; } = new ModRepository();
 
         private ModRepository()
@@ -26,17 +28,22 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
         {
             var command = connection.CreateCommand();
             command.CommandText = $"SELECT * FROM mod WHERE file_id={fid}";
+            rwlock.AcquireReaderLock(int.MaxValue);
             using var reader = command.ExecuteReader();
-            return CreateFromReaderWithRead(reader);
+            var res = CreateFromReaderWithRead(reader);
+            rwlock.ReleaseReaderLock();
+            return res;
         }
 
         public Maybe<Mod> FindModById(int modId)
         {
-
             var command = connection.CreateCommand();
             command.CommandText = $"SELECT * FROM mod WHERE id={modId}";
+            rwlock.AcquireReaderLock(int.MaxValue);
             using var reader = command.ExecuteReader();
-            return CreateFromReaderWithRead(reader);
+            var res = CreateFromReaderWithRead(reader);
+            rwlock.ReleaseReaderLock();
+            return res;
         }
 
         /// <summary>
@@ -61,9 +68,41 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 $",\"{mod.WorkshopPreviewImage}\"" +
                 $",\"{mod.TagsSingleLine()}\");" +
                 $"select last_insert_rowid();";
+            rwlock.AcquireWriterLock(int.MaxValue);
             long id = (long) command.ExecuteScalar();
-
+            rwlock.ReleaseWriterLock();
             return mod with { Id = (int)id };
+        }
+
+        public void SaveRange(IEnumerable<Mod> mods)
+        {
+            rwlock.AcquireWriterLock(int.MaxValue);
+            var command = connection.CreateCommand();
+            command.CommandText = "begin;";
+            command.ExecuteNonQuery();
+            foreach (var mod in mods)
+            {
+                command = connection.CreateCommand();
+                command.CommandText = $"INSERT INTO mod VALUES(" +
+                    $"NULL" +
+                    $",\"{mod.FileId}\"" +
+                    $",\"{mod.vpkId}\"" +
+                    $",\"{mod.Thumbnail}\"" +
+                    $",\"{mod.Title}\"" +
+                    $",\"{mod.Version}\"" +
+                    $",\"{mod.Tagline}\"" +
+                    $",\"{mod.Author}\"" +
+                    $",\"{mod.Description}\"" +
+                    $",\"{mod.CategoriesSingleLine()}\"" +
+                    $",\"{HttpUtility.UrlEncode(mod.WorkshopTitle)}\"" +
+                    $",\"{mod.WorkshopDescript}\"" +
+                    $",\"{mod.WorkshopPreviewImage}\"" +
+                    $",\"{mod.TagsSingleLine()}\");";
+                command.ExecuteScalar();
+            }
+            command.CommandText = "commit;";
+            command.ExecuteNonQuery();
+            rwlock.ReleaseWriterLock();
         }
 
         /// <summary>
@@ -81,7 +120,9 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
                 $",workshop_tags = \"{mod.TagsSingleLine()}\"" +
                 $" WHERE " +
                 $"id = {mod.Id}";
+            rwlock.AcquireWriterLock(int.MaxValue);
             int res = command.ExecuteNonQuery();
+            rwlock.ReleaseWriterLock();
             return res > 0;
         }
 
@@ -89,14 +130,14 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
         {
             var command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM mod";
+            List<Mod> mods = new List<Mod>();
+
+            rwlock.AcquireReaderLock(int.MaxValue);
             using var reader = command.ExecuteReader();
             while (reader.Read())
-            {
-                yield return CreateFromReader(reader);
-                //var base64Data = Convert.FromBase64String(mod.WorkshopDescript);
-                //var descript = Encoding.UTF8.GetString(base64Data);
-                //yield return mod with { WorkshopDescript = descript };
-            }
+                mods.Add(CreateFromReader(reader));
+            rwlock.ReleaseReaderLock();
+            return mods;
         }
 
         /// <summary>

@@ -55,27 +55,24 @@ namespace L4d2_Mod_Manager_Tool.Service
             {
                 int total = modFiles.Length;
                 int finished = 0;
-                Parallel.ForEach(modFiles, (mf) =>
+                var tmpMods = modFiles.AsParallel().Select(mf =>
                 {
                     if (token.IsCancellationRequested)
-                        return;
-                    ExtraMod(mf);
+                        return null;
+                    var tmpMod = ExtraMod(mf);
                     reporter.Report(++finished / (float)total);
-                });
+                    return tmpMod;
+                }).ToArray();
+                //批量储存到数据库
+                ModRepository.Instance.SaveRange(tmpMods);
                 reporter.Report(1);
             }, token);
-            //await new Task(() =>
-            //{
-            //    var tasks = modFiles.Select(x => ExtraMod(x).ContinueWith(_ => reporter.Report(++finished / (float)total))).ToArray();
-            //    Task.WaitAll(tasks, token);
-            //}, token);
         }
 
-        static void ExtraMod(ModFile modFile)
+        static Mod ExtraMod(ModFile modFile)
         {
             var savedMf = ModFileService.SaveModFile(modFile);
-            var mod = VPKServices.ExtraMod(savedMf);
-            ModRepository.Instance.SaveMod(mod);
+            return VPKServices.ExtraMod(savedMf);
         }
     }
 }
