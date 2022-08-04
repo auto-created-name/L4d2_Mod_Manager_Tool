@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using L4d2_Mod_Manager_Tool.Domain.Specifications;
+using System.Web;
 
 namespace L4d2_Mod_Manager_Tool.Domain.Repository
 {
@@ -16,7 +17,10 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
         {
             this.addonListRepo = addonListRepo;
         }
-        protected override void CreateDatabase() { }
+        protected override void CreateDatabase() {
+            var mfr = new ModFileRepository();
+            ModRepository.Instance.FindModByFileId(1);
+        }
 
         public Maybe<ModDetail> FindOne(ModDetailSpecification spec)
         {
@@ -42,9 +46,11 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
         {
             int id = reader.GetInt32(0);
             bool enabled = addonListRepo.ModEnabled(id).ValueOr(true);
+            var ws_title = HttpUtility.UrlDecode(reader["workshop_title"].ToString());
+            var title = HttpUtility.UrlDecode(reader["title"].ToString());
             return new ModDetail(
                     id
-                    , IfEmptyReturn(reader["title"].ToString(), "<无名称>")
+                    , IfEmptyReturn(string.IsNullOrEmpty(ws_title) ? title : ws_title, "<无名称>")
                     , reader["filename"].ToString()
                     , enabled
                     , IfEmptyReturn(reader["author"].ToString(), "<未知作者>")
