@@ -43,7 +43,7 @@ namespace L4d2_Mod_Manager_Tool.Service
             // 扫描所有本地模组，如果模组还未入系统，则解压并读取信息，存入数据库
             // 构建解压任务集
             // 推入后台任务系统
-            var mfs = VPKServices.ScanAllModFile().ToArray();
+            var mfs = VPKServices.ScanAllModFile().Where(x => !modFileRepo.ModFileExists(x.FilePath)).ToArray();
             CancellationTokenSource source = new();
             //TaskFramework.BackgroundWorks.Instance.AppendTasks("扫描模组信息", mfs.Select(ExtraMod).ToArray());
             ExtraMods(mfs, reporter, source.Token);
