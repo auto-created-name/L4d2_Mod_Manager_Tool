@@ -22,6 +22,11 @@ namespace L4d2_Mod_Manager_Tool.Domain.Repository
             CreateModDBIfNotExists();
         }
 
+        public void Initialize()
+        {
+            CreateModDBIfNotExists();
+        }
+
         public Maybe<Mod> FindModByFileId(int fid)
         {
             var command = connection.CreateCommand();
