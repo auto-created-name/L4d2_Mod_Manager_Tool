@@ -227,6 +227,7 @@ namespace L4d2_Mod_Manager_Tool
                     var detail = modDetails[index];
                     AddonListService.SetModEnabled(detail.Id, true);
                     // 重绘项
+                    modDetails[index] = detail with { Enabled = true };
                     listView1.RedrawItems(index, index, false);
                 })
             );
@@ -241,6 +242,7 @@ namespace L4d2_Mod_Manager_Tool
                     var detail = modDetails[index];
                     AddonListService.SetModEnabled(detail.Id, false);
                     // 重绘项
+                    modDetails[index] = detail with { Enabled = false };
                     listView1.RedrawItems(index, index, false);
                 })
             );
