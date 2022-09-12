@@ -23,6 +23,8 @@ namespace L4d2_Mod_Manager_Tool
         private int order = 0;
         private Dictionary<int, string> headers = new();
 
+        private readonly App.ModFileApplication modFileApplication = new App.ModFileApplication();
+
         public Form1()
         {
             InitializeComponent();
@@ -78,6 +80,9 @@ namespace L4d2_Mod_Manager_Tool
                 }
             });
             ModFileService.BeginScanModFile(rep);
+
+            //新版行为
+            modFileApplication.ScanAndSaveNewModFile();
             //var tasks = VPKServices.ScanAllModFile()
             //    .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
             //    .Select(mf => new ExtraModTask(mf)).ToArray();

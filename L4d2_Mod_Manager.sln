@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.31402.337
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L4d2_Mod_Manager_Tool", "L4d2_Mod_Manager_Tool\L4d2_Mod_Manager_Tool.csproj", "{220C411B-4CE1-4370-8890-3C1580C2E2D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpVPK", "SharpVPK\SharpVPK.csproj", "{BAA47121-EC01-406C-9591-96B22E54D551}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpVPK", "SharpVPK\SharpVPK.csproj", "{BAA47121-EC01-406C-9591-96B22E54D551}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{7D5323CB-685E-477F-96D4-26727378DF40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{E51AC64C-DD28-4BE4-A566-2BFC42B97E48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{BAA47121-EC01-406C-9591-96B22E54D551}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAA47121-EC01-406C-9591-96B22E54D551}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAA47121-EC01-406C-9591-96B22E54D551}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D5323CB-685E-477F-96D4-26727378DF40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D5323CB-685E-477F-96D4-26727378DF40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D5323CB-685E-477F-96D4-26727378DF40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D5323CB-685E-477F-96D4-26727378DF40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E51AC64C-DD28-4BE4-A566-2BFC42B97E48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E51AC64C-DD28-4BE4-A566-2BFC42B97E48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E51AC64C-DD28-4BE4-A566-2BFC42B97E48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E51AC64C-DD28-4BE4-A566-2BFC42B97E48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
