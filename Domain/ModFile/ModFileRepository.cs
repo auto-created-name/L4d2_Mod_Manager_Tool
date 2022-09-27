@@ -28,6 +28,12 @@ namespace Domain.ModFile
             return savedList;
         }
 
+        public List<ModFile> GetAllNotLocalInfo()
+        {
+            var pos = dapperHelper.Query<PO_ModFile>("SELECT * FROM mod_file WHERE localinfo_id=0");
+            return pos.Select(ModFile_PoToDo).ToList();
+        }
+
         public List<ModFile> GetAll()
         {
             var po = dapperHelper.GetAll<PO_ModFile>();

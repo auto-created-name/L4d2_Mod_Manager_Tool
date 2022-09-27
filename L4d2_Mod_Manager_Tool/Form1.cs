@@ -83,6 +83,7 @@ namespace L4d2_Mod_Manager_Tool
 
             //新版行为
             modFileApplication.ScanAndSaveNewModFile();
+            modFileApplication.AnalysisModFileLocalInfoIfDontHave();
             //var tasks = VPKServices.ScanAllModFile()
             //    .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
             //    .Select(mf => new ExtraModTask(mf)).ToArray();
