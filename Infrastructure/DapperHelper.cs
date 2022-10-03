@@ -90,6 +90,12 @@ namespace Infrastructure
             return conn.Query<T>(sql);
         }
 
+        public bool Update<T>(T po) where T : class
+        {
+            using var conn = new SQLiteConnection(ConnectString);
+            return conn.Update<T>(po);
+        }
+
         public IEnumerable<T> GetAll<T>(IDbTransaction transaction = null, int? timeout = null) where T : class
         {
             using var conn = new SQLiteConnection(ConnectString);

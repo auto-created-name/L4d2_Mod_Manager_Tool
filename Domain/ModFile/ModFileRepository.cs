@@ -28,6 +28,18 @@ namespace Domain.ModFile
             return savedList;
         }
 
+        public void Update(ModFile mf)
+        {
+            var po = ModFile_DoToPo(mf);
+            dapperHelper.Update(po);
+        }
+
+        public ModFile FindById(int id)
+        {
+            var po = dapperHelper.Get<PO_ModFile>(id);
+            return ModFile_PoToDo(po);
+        }
+
         public List<ModFile> GetAllNotLocalInfo()
         {
             var pos = dapperHelper.Query<PO_ModFile>("SELECT * FROM mod_file WHERE localinfo_id=0");
@@ -41,15 +53,25 @@ namespace Domain.ModFile
         }
 
         private static PO_ModFile ModFile_DoToPo(ModFile mf)
-            => new() { 
-                id = mf.Id, 
-                vpk_id = mf.VpkId.Id, 
-                file_name = mf.FileLoc,
-                localinfo_id = mf.LocalinfoId, 
-                workshopinfo_id = mf.WorkshopinfoId 
-            };
+        {
+            if(mf == null)
+                return null;
+
+           return new()
+               {
+                   id = mf.Id,
+                   vpk_id = mf.VpkId.Id,
+                   file_name = mf.FileLoc,
+                   localinfo_id = mf.LocalinfoId,
+                   workshopinfo_id = mf.WorkshopinfoId
+               };
+        }
 
         private static ModFile ModFile_PoToDo(PO_ModFile po)
-            => new(po.id, new(po.vpk_id), po.file_name, po.localinfo_id, po.workshopinfo_id);
+        {
+            if (po == null)
+                return null;
+            return new(po.id, new(po.vpk_id), po.file_name, po.localinfo_id, po.workshopinfo_id);
+        }
     }
 }

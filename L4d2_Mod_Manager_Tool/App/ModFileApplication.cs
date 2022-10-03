@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.ModFile;
 using Domain.ModLocalInfo;
+using L4d2_Mod_Manager_Tool.Domain;
+using ModFile = Domain.ModFile.ModFile;
 
 namespace L4d2_Mod_Manager_Tool.App
 {
@@ -23,6 +25,46 @@ namespace L4d2_Mod_Manager_Tool.App
             modFileRepository.SaveRange(modChanged.New);
         }
 
+        public ModDetail[] ModDetails
+        {
+            get
+            {
+                var mfs = modFileRepository.GetAll();
+                return mfs.Select(m =>
+                {
+                    ModDetail md = ModDetail.Default with { Id = m.Id, FileName = m.FileLoc };
+                    if (m.LocalinfoId != 0)
+                    {
+                        var li = localInfoRepository.FindById(m.LocalinfoId);
+                        md = md with { Author = li.Author, Name = li.Title, Tagline = li.Tagline };
+                    }
+                    return md;
+                }).ToArray();
+            }
+        }
+
+        public ModPreviewInfo? GetModPreview(int modId)
+        {
+            var mf = modFileRepository.FindById(modId);
+            if(mf == null) return null;
+
+            var li = localInfoRepository.FindById(mf.LocalinfoId);
+            if(li != null)
+            {
+                ModPreviewInfo mp = new();
+                mp.Author = li.Author;
+                mp.Name = li.Title;
+                mp.Descript = li.Description;
+                mp.Categories = Category.Concat(li.Categories);
+                mp.PreviewImg = li.AddonImage.File;
+                return mp;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// 【可能需要迁移到其他应用类中】
         /// 分析模组文件的本地信息
@@ -32,8 +74,17 @@ namespace L4d2_Mod_Manager_Tool.App
             var notLocalInfo = modFileRepository.GetAllNotLocalInfo();
             ModAnalysisServer analysisServer = new();
             var localInfo = notLocalInfo.AsParallel().Select(mf => (mf, li:analysisServer.AnalysisMod(mf))).Where(x => x.li != null).ToList();
-            localInfo.ForEach(x => localInfoRepository.Save(x.li));
-            //TODO: 储存后的localinfo id 需要更新到 modfile 记录中
+            localInfo.ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
+        }
+
+        /// <summary>
+        /// 保存LocalInfo，同时更新ModFile
+        /// </summary>
+        private void SaveLocalInfoAndUpdateModFile(ModFile mf, LocalInfo li)
+        {
+            var savedLi = localInfoRepository.Save(li);
+            var newMf = mf with { LocalinfoId = savedLi.Id };
+            modFileRepository.Update(newMf);
         }
     }
 }
