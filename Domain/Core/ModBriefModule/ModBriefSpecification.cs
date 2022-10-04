@@ -37,7 +37,7 @@ namespace Domain.Core.ModBriefModule
             };
         }
 
-        public static bool IsSpecified(this ModBriefSpecification spec, ModDetail md)
+        public static bool IsSpecified(this ModBriefSpecification spec, ModBrief md)
         {
             return spec switch
             {

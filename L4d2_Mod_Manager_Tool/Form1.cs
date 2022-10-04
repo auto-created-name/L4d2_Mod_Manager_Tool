@@ -15,13 +15,13 @@ using L4d2_Mod_Manager_Tool.Domain.Repository;
 using L4d2_Mod_Manager_Tool.Service;
 using L4d2_Mod_Manager_Tool.Utility;
 using L4d2_Mod_Manager_Tool.Widget;
-using ModDetail = Domain.Core.ModDetail;
+using ModBrief = Domain.Core.ModBrief;
 
 namespace L4d2_Mod_Manager_Tool
 {
     public partial class Form1 : Form
     {
-        private List<ModDetail> modDetails = new();
+        private List<ModBrief> modDetails = new();
         private int orderHeader = 0;
         private int order = 0;
         private Dictionary<int, string> headers = new();
@@ -223,7 +223,7 @@ namespace L4d2_Mod_Manager_Tool
                     var detail = modDetails[index];
                     modFileApplication.EnableMod(detail.Id);
                     // 重绘项
-                    modDetails[index] = detail with { Enabled = true };
+                    modDetails[index].Enabled = true;
                     listView1.RedrawItems(index, index, false);
                 })
             );
@@ -238,7 +238,7 @@ namespace L4d2_Mod_Manager_Tool
                     var detail = modDetails[index];
                     modFileApplication.DisableMod(detail.Id);
                     // 重绘项
-                    modDetails[index] = detail with { Enabled = false };
+                    modDetails[index].Enabled = false;
                     listView1.RedrawItems(index, index, false);
                 })
             );
@@ -305,11 +305,11 @@ namespace L4d2_Mod_Manager_Tool
         {
             var detail = modDetails[e.ItemIndex];
             ListViewItem item = new(new string[] {
-                detail.Name,
+                detail.ReadableName,
                 detail.FileName,
-                detail.Enabled ? "启用" : "禁用",
-                detail.Author,
-                detail.Tagline
+                detail.ReadableEnabled,
+                detail.ReadableAuthor,
+                detail.ReadableTagline
             });
 
             item.ImageIndex = detail.Enabled ? 1 : 0;

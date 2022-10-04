@@ -22,6 +22,6 @@ namespace Domain.ModSorter
     }
     public interface IModSorter
     {
-        IEnumerable<ModDetail> Sort(IEnumerable<ModDetail> mods);
+        IEnumerable<ModBrief> Sort(IEnumerable<ModBrief> mods);
     }
 }

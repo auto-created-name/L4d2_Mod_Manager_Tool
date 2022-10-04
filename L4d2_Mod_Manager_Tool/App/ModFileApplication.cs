@@ -40,7 +40,7 @@ namespace L4d2_Mod_Manager_Tool.App
         /// 获取过滤后的所有模组信息
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ModDetail> FilteredModInfo()
+        public IEnumerable<ModBrief> FilteredModInfo()
         {
             var details = briefList.GetSpecified(specBuilder.FinalSpec);
             return modSorter.Sort(details);

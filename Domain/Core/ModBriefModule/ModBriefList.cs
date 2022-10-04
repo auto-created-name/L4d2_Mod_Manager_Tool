@@ -11,15 +11,14 @@ namespace Domain.Core.ModBriefModule
     /// </summary>
     public class ModBriefList
     {
-        private Dictionary<int, ModDetail> modDetails = new();
+        private Dictionary<int, ModBrief> modDetails = new();
 
         public ModBriefList(ModFileRepository mfRepo, LocalInfoRepository liRepo, AddonListRepository alRepo)
         {
             mfRepo.GetAll().ForEach(mf => 
             {
-                ModDetail md = ModDetail.Default with 
+                ModBrief md = new ModBrief(mf.Id)
                 { 
-                    Id = mf.Id, 
                     FileName = mf.FileLoc, 
                     VpkId = mf.VpkId, 
                     Enabled = alRepo[mf.FileLoc].ValueOr(false)
@@ -28,19 +27,16 @@ namespace Domain.Core.ModBriefModule
                 if(mf.LocalinfoId > 0)
                 {
                     var li = liRepo.FindById(mf.LocalinfoId);
-                    md = md with
-                    {
-                        Author = li.Author, 
-                        Name = li.Title, 
-                        Tagline = li.Tagline, 
-                        Categories = Category.Concat(li.Categories) 
-                    };
+                    md.Author = li.Author;
+                    md.Name = li.Title;
+                    md.Tagline = li.Tagline;
+                    md.Categories = Category.Concat(li.Categories);
                 }
                 modDetails.Add(md.Id, md);
             });
         }
 
-        public ModDetail[] GetSpecified(ModBriefSpecification spec)
+        public ModBrief[] GetSpecified(ModBriefSpecification spec)
         {
             return modDetails.Values.Where(x => spec.IsSpecified(x)).ToArray();
         }

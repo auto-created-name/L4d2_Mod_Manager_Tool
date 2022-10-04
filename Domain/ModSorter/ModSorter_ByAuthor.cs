@@ -14,7 +14,7 @@ namespace Domain.ModSorter
         {
             this.order = order;
         }
-        public IEnumerable<ModDetail> Sort(IEnumerable<ModDetail> mods)
+        public IEnumerable<ModBrief> Sort(IEnumerable<ModBrief> mods)
         {
             var ord = mods.OrderBy(m => m.Author, StringComparer.CurrentCultureIgnoreCase);
             return order switch

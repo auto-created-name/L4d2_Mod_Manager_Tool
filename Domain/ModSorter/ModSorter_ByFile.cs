@@ -15,7 +15,7 @@ namespace Domain.ModSorter
             this.order = order;
         }
 
-        public IEnumerable<ModDetail> Sort(IEnumerable<ModDetail> mods)
+        public IEnumerable<ModBrief> Sort(IEnumerable<ModBrief> mods)
         {
             return order switch
             {

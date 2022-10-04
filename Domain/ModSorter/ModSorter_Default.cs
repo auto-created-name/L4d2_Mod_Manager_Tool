@@ -9,6 +9,6 @@ namespace Domain.ModSorter
 {
     public class ModSorter_Default : IModSorter
     {
-        public IEnumerable<ModDetail> Sort(IEnumerable<ModDetail> mods) => mods;
+        public IEnumerable<ModBrief> Sort(IEnumerable<ModBrief> mods) => mods;
     }
 }
