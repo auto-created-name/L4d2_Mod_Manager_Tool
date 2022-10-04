@@ -13,6 +13,8 @@ using L4d2_Mod_Manager_Tool.Domain;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
 using L4d2_Mod_Manager_Tool.Service;
 using L4d2_Mod_Manager_Tool.Utility;
+using L4d2_Mod_Manager_Tool.Widget;
+using ModDetail = Domain.Core.ModDetail;
 
 namespace L4d2_Mod_Manager_Tool
 {
@@ -91,8 +93,8 @@ namespace L4d2_Mod_Manager_Tool
             listView1.Items.Clear();
             modDetails.Clear();
 
-            var mds = modFileApplication.ModDetails;
-            modDetails = mds.ToList();//ModOperation.FilteredModInfo().ToList();
+            var mds = modFileApplication.FilteredModInfo();
+            modDetails = mds.ToList();
 
             listView1.VirtualListSize = modDetails.Count;
             listView1.Invalidate();
@@ -292,8 +294,9 @@ namespace L4d2_Mod_Manager_Tool
             }
         }
 
-        private void widget_FilterMod1_OnFilterUpdated(object sender, EventArgs e)
+        private void widget_FilterMod1_OnFilterUpdated(object sender, ModFilterChangedArgs e)
         {
+            modFileApplication.SetModFilter(e.Name, e.Tags, e.Categories);
             UpdateModList();
         }
 

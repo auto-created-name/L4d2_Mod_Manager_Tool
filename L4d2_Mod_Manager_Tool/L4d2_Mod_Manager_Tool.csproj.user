@@ -13,6 +13,9 @@
     <Compile Update="Form_Settings.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Widget\Widget_FilterMod.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Widget\Widget_ModOverview.cs">
       <SubType>UserControl</SubType>
     </Compile>
