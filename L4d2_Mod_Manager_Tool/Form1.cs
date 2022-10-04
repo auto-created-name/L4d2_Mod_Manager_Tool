@@ -189,7 +189,7 @@ namespace L4d2_Mod_Manager_Tool
                     if (indices.Length == 1)
                     {
                         var modDetail = modDetails[indices[0]];
-                        bool enable = AddonListService.IsModEnabled(modDetail.Id);
+                        bool enable = modFileApplication.GetModStatus(modDetail.Id); 
                         // 启用模组、禁用模组按钮的正确设置
                         contextMenuStrip1.Items.Find("toolStripMenuItem_enableMod", false)[0].Enabled = !enable;
                         contextMenuStrip1.Items.Find("toolStripMenuItem_disableMod", false)[0].Enabled = enable;
@@ -210,7 +210,7 @@ namespace L4d2_Mod_Manager_Tool
             WhenModSelected(listView1, indices => 
             {
                 int modId = modDetails[indices[0]].Id;
-                ModCrossServer.ShowModInFileExplorer(modId);
+                modFileApplication.ShowModFileInFileExplorer(modId);
             });
         }
 
@@ -220,13 +220,13 @@ namespace L4d2_Mod_Manager_Tool
                 indices.Iter(index =>
                 {
                     var detail = modDetails[index];
-                    AddonListService.SetModEnabled(detail.Id, true);
+                    modFileApplication.EnableMod(detail.Id);
                     // 重绘项
                     modDetails[index] = detail with { Enabled = true };
                     listView1.RedrawItems(index, index, false);
                 })
             );
-            AddonListService.ApplyAddonList();
+            modFileApplication.SaveModStatus();
         }
 
         private void toolStripMenuItem_disableMod_Click(object sender, EventArgs e)
@@ -235,13 +235,13 @@ namespace L4d2_Mod_Manager_Tool
                 indices.Iter(index =>
                 {
                     var detail = modDetails[index];
-                    AddonListService.SetModEnabled(detail.Id, false);
+                    modFileApplication.DisableMod(detail.Id);
                     // 重绘项
                     modDetails[index] = detail with { Enabled = false };
                     listView1.RedrawItems(index, index, false);
                 })
             );
-            AddonListService.ApplyAddonList();
+            modFileApplication.SaveModStatus();
         }
         #endregion
         // 刷新只更新列表

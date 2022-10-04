@@ -1,11 +1,8 @@
-﻿using Domain.Core;
+﻿using Domain.Core.ModStatusModule;
 using Domain.ModFile;
 using Domain.ModLocalInfo;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Core.ModBriefModule
 {
@@ -16,11 +13,18 @@ namespace Domain.Core.ModBriefModule
     {
         private Dictionary<int, ModDetail> modDetails = new();
 
-        public ModBriefList(ModFileRepository mfRepo, LocalInfoRepository liRepo)
+        public ModBriefList(ModFileRepository mfRepo, LocalInfoRepository liRepo, AddonListRepository alRepo)
         {
             mfRepo.GetAll().ForEach(mf => 
             {
-                ModDetail md = ModDetail.Default with { Id = mf.Id, FileName = mf.FileLoc, VpkId = mf.VpkId };
+                ModDetail md = ModDetail.Default with 
+                { 
+                    Id = mf.Id, 
+                    FileName = mf.FileLoc, 
+                    VpkId = mf.VpkId, 
+                    Enabled = alRepo[mf.FileLoc].ValueOr(false)
+                };
+
                 if(mf.LocalinfoId > 0)
                 {
                     var li = liRepo.FindById(mf.LocalinfoId);

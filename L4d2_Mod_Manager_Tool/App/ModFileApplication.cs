@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Core;
 using Domain.Core.ModBriefModule;
+using Domain.Core.ModStatusModule;
 using Domain.ModFile;
 using Domain.ModLocalInfo;
+using L4d2_Mod_Manager_Tool.Module.FileExplorer;
 using ModFile = Domain.ModFile.ModFile;
 using ModPreviewInfo = L4d2_Mod_Manager_Tool.Domain.ModPreviewInfo;
 
@@ -17,11 +19,12 @@ namespace L4d2_Mod_Manager_Tool.App
         private readonly ModFileRepository modFileRepository = new();
         private readonly LocalInfoRepository localInfoRepository = new();
         private readonly ModBriefSpecificationBuilder specBuilder = new();
+        private readonly AddonListRepository addonListRepository = new();
         private readonly ModBriefList briefList;
 
         public ModFileApplication()
         {
-            briefList = new(modFileRepository, localInfoRepository);
+            briefList = new(modFileRepository, localInfoRepository, addonListRepository);
         }
 
         #region 模组过滤相关
@@ -31,37 +34,7 @@ namespace L4d2_Mod_Manager_Tool.App
             specBuilder.SetTags(tags);
             specBuilder.SetCategories(cats);
         }
-        /// <summary>
-        /// 增加模组标签过滤
-        /// </summary>
-        public void AddModFilterTag(string tagName)
-            => specBuilder.AddTag(tagName);
-
-        /// <summary>
-        /// 删除模组标签过滤
-        /// </summary>
-        public void RemoveModFilterTag(string tagName)
-            => specBuilder.RemoveTag(tagName);
-
-        /// <summary>
-        /// 增加模组分类过滤
-        /// </summary>
-        public void AddModFilterCategory(string catName)
-            => specBuilder.AddCategory(catName);
-
-        /// <summary>
-        /// 删除模组分类过滤
-        /// </summary>
-        public void RemoveModFilterCategory(string catName)
-            => specBuilder.RemoveCategory(catName);
-
-        /// <summary>
-        /// 过滤模组名字
-        /// </summary>
-        /// <param name="name"></param>
-        public void SetModFilterName(string name)
-            => specBuilder.SetName(name);
-
+      
         /// <summary>
         /// 获取过滤后的所有模组信息
         /// </summary>
@@ -71,6 +44,38 @@ namespace L4d2_Mod_Manager_Tool.App
             return briefList.GetSpecified(specBuilder.FinalSpec);
         }
         #endregion
+        #region 模组状态
+        public void EnableMod(int modId)
+        {
+            var f = modFileRepository.FindById(modId).FileLoc;
+            addonListRepository.SetModStatus(f, true);
+        }
+
+        public void DisableMod(int modId)
+        {
+            var f = modFileRepository.FindById(modId).FileLoc;
+            addonListRepository.SetModStatus(f, false);
+        }
+
+        public bool GetModStatus(int modId)
+        {
+            var f = modFileRepository.FindById(modId).FileLoc;
+            return addonListRepository[f].ValueOr(false);
+        }
+
+        public void SaveModStatus() 
+            => addonListRepository.Save();
+        #endregion
+
+        /// <summary>
+        /// 在文件浏览器里查看模组文件
+        /// </summary>
+        /// <param name="modId"></param>
+        public void ShowModFileInFileExplorer(int modId)
+        {
+            var file = L4d2Folder.GetAddonFileFullPath(modFileRepository.FindById(modId).FileLoc);
+            FileExplorerUtils.OpenFileExplorerAndSelectItem(file);
+        }
 
         /// <summary>
         /// 扫描并保存新模组文件
@@ -80,24 +85,6 @@ namespace L4d2_Mod_Manager_Tool.App
             ModScanner modScanner = new(modFileRepository);
             var modChanged = modScanner.ScanModFileChanged();
             modFileRepository.SaveRange(modChanged.New);
-        }
-
-        public ModDetail[] ModDetails
-        {
-            get
-            {
-                var mfs = modFileRepository.GetAll();
-                return mfs.Select(m =>
-                {
-                    ModDetail md = ModDetail.Default with { Id = m.Id, FileName = m.FileLoc };
-                    if (m.LocalinfoId != 0)
-                    {
-                        var li = localInfoRepository.FindById(m.LocalinfoId);
-                        md = md with { Author = li.Author, Name = li.Title, Tagline = li.Tagline };
-                    }
-                    return md;
-                }).ToArray();
-            }
         }
 
         public ModPreviewInfo? GetModPreview(int modId)
