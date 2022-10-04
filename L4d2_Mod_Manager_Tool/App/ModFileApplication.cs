@@ -7,6 +7,7 @@ using Domain.Core;
 using Domain.Core.ModBriefModule;
 using Domain.Core.ModStatusModule;
 using Domain.ModFile;
+using Domain.ModSorter;
 using Domain.ModLocalInfo;
 using L4d2_Mod_Manager_Tool.Module.FileExplorer;
 using ModFile = Domain.ModFile.ModFile;
@@ -41,7 +42,8 @@ namespace L4d2_Mod_Manager_Tool.App
         /// <returns></returns>
         public IEnumerable<ModDetail> FilteredModInfo()
         {
-            return briefList.GetSpecified(specBuilder.FinalSpec);
+            var details = briefList.GetSpecified(specBuilder.FinalSpec);
+            return modSorter.Sort(details);
         }
         #endregion
         #region 模组状态
@@ -66,7 +68,20 @@ namespace L4d2_Mod_Manager_Tool.App
         public void SaveModStatus() 
             => addonListRepository.Save();
         #endregion
-
+        #region 模组排序
+        private IModSorter modSorter = new ModSorter_ByName(ModSortOrder.Ascending);
+        public void SetModSortMod(string label, ModSortOrder order)
+        {
+            modSorter = label switch
+            {
+                "名称" => new ModSorter_ByName(order),
+                "文件名" => new ModSorter_ByFile(order),
+                "状态" => new ModSorter_ByEnabled(order),
+                "作者" => new ModSorter_ByAuthor(order),
+                _ => new ModSorter_Default()
+            };
+        }
+        #endregion
         /// <summary>
         /// 在文件浏览器里查看模组文件
         /// </summary>

@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Domain.ModSorter;
 using L4d2_Mod_Manager_Tool.Domain;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
 using L4d2_Mod_Manager_Tool.Service;
@@ -337,7 +338,7 @@ namespace L4d2_Mod_Manager_Tool
                 order = 0;
             }
             UpdateModListColumnHeader(listview);
-            ModOperation.SetModSortMod(headers[orderHeader], order == 0 ? Domain.ModSorter.ModSortOrder.Ascending : Domain.ModSorter.ModSortOrder.Descending);
+            modFileApplication.SetModSortMod(headers[orderHeader], order == 0 ? ModSortOrder.Ascending : ModSortOrder.Descending);
             UpdateModList();
         }
 

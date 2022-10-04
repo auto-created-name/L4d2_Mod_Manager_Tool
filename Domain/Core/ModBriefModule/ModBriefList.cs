@@ -36,7 +36,6 @@ namespace Domain.Core.ModBriefModule
                         Categories = Category.Concat(li.Categories) 
                     };
                 }
-
                 modDetails.Add(md.Id, md);
             });
         }

@@ -33,6 +33,7 @@ namespace Domain.ModLocalInfo
                 li.Title = ai.Title;
                 li.Author = ai.Author;
                 li.Version = ai.Version;
+                li.Tagline = ai.Tagline;
                 li.Description = ai.Description;
                 li.Categories = li.Categories.Concat(ai.Categories).Distinct().ToArray();
             }, () => { });
