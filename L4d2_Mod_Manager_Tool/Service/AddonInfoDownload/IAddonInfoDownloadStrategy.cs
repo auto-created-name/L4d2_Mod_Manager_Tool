@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Infrastructure.Utility;
 using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
 {

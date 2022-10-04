@@ -71,6 +71,13 @@ namespace Infrastructure
             + ",author TEXT"
             + ",description TEXT"
             + ",categories TEXT"
+            + ");" 
+            + "CREATE TABLE IF NOT EXISTS workshopinfo("
+            + "vpk_id PRIMARY KEY" 
+            + ",preview TEXT"
+            + ",title TEXT"
+            + ",description TEXT"
+            + ",tags TEXT"
             + ");";
 
         public static DapperHelper Instance { get; } = new DapperHelper();

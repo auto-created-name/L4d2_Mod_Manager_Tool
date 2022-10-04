@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
+using Infrastructure.Utility;
 using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

@@ -16,6 +16,7 @@ using L4d2_Mod_Manager_Tool.Service;
 using L4d2_Mod_Manager_Tool.Utility;
 using L4d2_Mod_Manager_Tool.Widget;
 using ModBrief = Domain.Core.ModBrief;
+using ModFileRepository = Domain.ModFile.ModFileRepository;
 
 namespace L4d2_Mod_Manager_Tool
 {
@@ -26,10 +27,15 @@ namespace L4d2_Mod_Manager_Tool
         private int order = 0;
         private Dictionary<int, string> headers = new();
 
-        private readonly App.ModFileApplication modFileApplication = new App.ModFileApplication();
+        private readonly ModFileRepository mfRepo = new();
+        private readonly App.ModFileApplication modFileApplication;
+        private readonly App.WorkshopInfoApplication worshopInfoApplication;
 
         public Form1()
         {
+            modFileApplication = new(mfRepo);
+            worshopInfoApplication = new(mfRepo);
+
             InitializeComponent();
             SetupControl();
             UpdateModList();
@@ -49,9 +55,8 @@ namespace L4d2_Mod_Manager_Tool
             imageList1.Images.Add("ascending", Image.FromFile("Resources/ascending.png"));
             imageList1.Images.Add("descending", Image.FromFile("Resources/descending.png"));
 
-            toolStripStatusLabel_addonInfoDownloadStrategy.Text = 
-                "模组信息下载模式：" + 
-                Service.AddonInfoDownload.AddonInfoDownloadService.CurrentDownloadStrtegyName;
+            toolStripStatusLabel_addonInfoDownloadStrategy.Text =
+                $"模组信息下载模式：{worshopInfoApplication.AddonInfoDownloadStretegyName}";
 
             foreach (ColumnHeader column in listView1.Columns)
                 headers.Add(column.Index, column.Text);
@@ -101,31 +106,27 @@ namespace L4d2_Mod_Manager_Tool
             listView1.Invalidate();
         }
 
-        /// <summary>
-        /// 为没有创意工坊信息的模组下载创意工坊数据
-        /// </summary>
-        private void DownloadWorkshopInfoIfDontHave()
-        {
-            //var tasks = ModRepository.Instance.GetMods()
-            //    .Where(ModFP.HaveVpkNumber)
-            //    .Where(Utility.FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo))
-            //    .Select(x => new DownloadWorkshopInfoTask(x));
-            //new Form_RunningTask("下载创意工坊信息", tasks.ToArray()).ShowDialog();
-            //UpdateModList();
-            Progress<float> rep = new(f => {
-                toolStripProgressBar_backgroundworkProgress.Value = (int)(f * 100);
-                if (f == 1.0f)
-                {
-                    AddonListService.Load();
-                    UpdateModList();
-                }
-            });
+        ///// <summary>
+        ///// 为没有创意工坊信息的模组下载创意工坊数据
+        ///// </summary>
+        //private void DownloadWorkshopInfoIfDontHave()
+        //{
+        //    Progress<float> rep = new(f => {
+        //        toolStripProgressBar_backgroundworkProgress.Value = (int)(f * 100);
+        //        if (f == 1.0f)
+        //        {
+        //            AddonListService.Load();
+        //            UpdateModList();
+        //        }
+        //    });
 
-            var mods = ModRepository.Instance.GetMods()
-                .Where(ModFP.HaveVpkNumber)
-                .Where(FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo));
-            Service.AddonInfoDownload.AddonInfoDownloadService.BeginDownloadAddonInfos(mods, rep);
-        }
+        //    worshopInfoApplication.DownloadWorkshopInfoIfDontHave();
+
+        //    var mods = ModRepository.Instance.GetMods()
+        //        .Where(ModFP.HaveVpkNumber)
+        //        .Where(FPExtension.Not<Mod>(ModFP.HaveWorkshopInfo));
+        //    Service.AddonInfoDownload.AddonInfoDownloadService.BeginDownloadAddonInfos(mods, rep);
+        //}
 
         private void UpdateModPreview(int modId)
         {
@@ -162,21 +163,21 @@ namespace L4d2_Mod_Manager_Tool
         }
         #region 定义
         
-        private class DownloadWorkshopInfoTask : TaskFramework.IMessageTask
-        {
-            private Mod mod;
-            public string TaskName { get; private set; }
-            public DownloadWorkshopInfoTask(Mod mod)
-            {
-                TaskName = "下载创意工坊信息，VPKID=" + mod.vpkId + "...";
-                this.mod = mod;
-            }
+        //private class DownloadWorkshopInfoTask : TaskFramework.IMessageTask
+        //{
+        //    private Mod mod;
+        //    public string TaskName { get; private set; }
+        //    public DownloadWorkshopInfoTask(Mod mod)
+        //    {
+        //        TaskName = "下载创意工坊信息，VPKID=" + mod.vpkId + "...";
+        //        this.mod = mod;
+        //    }
 
-            public void DoTask()
-            {
-                Service.AddonInfoDownload.AddonInfoDownloadService.DownloadAddonInfo(mod);
-            }
-        }
+        //    public void DoTask()
+        //    {
+        //        Service.AddonInfoDownload.AddonInfoDownloadService.DownloadAddonInfo(mod);
+        //    }
+        //}
         #endregion
         #region UI事件
 
@@ -270,7 +271,7 @@ namespace L4d2_Mod_Manager_Tool
 
         private void toolStripMenuItem_downloadWorkshopInfo_Click(object sender, EventArgs e)
         {
-            DownloadWorkshopInfoIfDontHave();
+            worshopInfoApplication.DownloadWorkshopInfoIfDontHave();
         }
 
         private void listView1_DoubleClick(object sender, EventArgs e)

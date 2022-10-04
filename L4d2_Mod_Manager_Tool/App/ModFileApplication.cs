@@ -17,14 +17,15 @@ namespace L4d2_Mod_Manager_Tool.App
 {
     class ModFileApplication
     {
-        private readonly ModFileRepository modFileRepository = new();
+        private readonly ModFileRepository modFileRepository;
         private readonly LocalInfoRepository localInfoRepository = new();
         private readonly ModBriefSpecificationBuilder specBuilder = new();
         private readonly AddonListRepository addonListRepository = new();
         private readonly ModBriefList briefList;
 
-        public ModFileApplication()
+        public ModFileApplication(ModFileRepository modFileRepository)
         {
+            this.modFileRepository = modFileRepository;
             briefList = new(modFileRepository, localInfoRepository, addonListRepository);
         }
 

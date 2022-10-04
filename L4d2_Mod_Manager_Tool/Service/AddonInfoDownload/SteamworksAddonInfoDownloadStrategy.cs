@@ -1,5 +1,5 @@
-﻿using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Utility;
+﻿using Infrastructure.Utility;
+using L4d2_Mod_Manager_Tool.Domain;
 using Steamworks;
 using System;
 using System.Collections.Generic;

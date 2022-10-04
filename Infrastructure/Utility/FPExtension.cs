@@ -52,5 +52,14 @@ namespace Infrastructure.Utility
         {
             return xs.Any() ? xs.First() : Maybe.None;
         }
+
+        public static IEnumerable<T> DiscardMaybe<T>(this IEnumerable<Maybe<T>> xs)
+        {
+            foreach(var x in xs)
+            {
+                if (x.HasValue)
+                    yield return x.ValueOrThrow("");
+            }
+        }
     }
 }

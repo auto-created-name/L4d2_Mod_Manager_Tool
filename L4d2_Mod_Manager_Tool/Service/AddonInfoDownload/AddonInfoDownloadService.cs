@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using L4d2_Mod_Manager_Tool.Domain;
+using Domain.Core;
+using Domain.Core.WorkshopInfoModule;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
-using L4d2_Mod_Manager_Tool.Utility;
+using Infrastructure.Utility;
 
 namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
 {
     /// <summary>
     /// 模组信息下载服务
     /// </summary>
-    static class AddonInfoDownloadService
+    class AddonInfoDownloadService
     {
-        private static IAddonInfoDownloadStrategy downloadStrategy;
+        private IAddonInfoDownloadStrategy downloadStrategy;
 
-        public static string CurrentDownloadStrtegyName => downloadStrategy.StrategyName;
+        public string CurrentDownloadStretegyName => downloadStrategy.StrategyName;
 
-        public static void Load()
+        public AddonInfoDownloadService()
         {
             //首先尝试载入steamworks策略，如果失败再载入爬虫策略
             downloadStrategy = SteamworksAddonInfoDownloadStrategy.CreateStrategy()
@@ -27,47 +28,27 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
                     () => new SpiderAddonInfoDownloadStrategy()
             );
         }
-
-        public static void BeginDownloadAddonInfos(IEnumerable<Mod> mods, IProgress<float> rep)
+        public IEnumerable<WorkshopInfo> DownloadAddonInfos(IEnumerable<VpkId> vpks)
         {
-            DownloadAddonInfos(mods, rep);
-        }
-
-
-        private static async Task DownloadAddonInfos(IEnumerable<Mod> mods, IProgress<float> rep)
-        {
-            await Task.Run(() =>
-            {
-                rep.Report(0);
-                int finished = 0;
-                int count = mods.Count();
-                var newMods = mods.AsParallel().Select(x => {
-                    var newMod = DownloadAddonInfo(x);
-                    rep.Report(++finished / (float)count);
-                    return newMod;
-                }).ToArray();
-                rep.Report(1);
-                ModRepository.Instance.UpdateRange(newMods);
-            });
+            var newMods = vpks.AsParallel().Select(DownloadAddonInfo).ToArray();
+            return newMods.DiscardMaybe();
         }
         /// <summary>
         /// 下载模组信息
         /// </summary>
         /// <param name="m"></param>
-        public static Mod DownloadAddonInfo(Mod m)
+        public Maybe<WorkshopInfo> DownloadAddonInfo(VpkId id)
         {
-            var vpkId = ulong.Parse(m.vpkId);
-            var info = downloadStrategy.DownloadAddonInfo(vpkId);
-            var newMod = info.Map(i =>
-                m with
+            var info = downloadStrategy.DownloadAddonInfo((ulong)id.Id);
+            return info.Map(i =>
+                new WorkshopInfo(id)
                 {
-                    WorkshopTitle = i.Title,
-                    WorkshopDescript = i.Descript,
-                    Tags = i.Tags,
-                    WorkshopPreviewImage = i.PreviewImage
-                }).ValueOr(m);
-            return newMod;
-            //ModOperation.UpdateMod(newMod);
+                    Description = i.Descript,
+                    Preview = new ImageFile(i.PreviewImage),
+                    Tags = i.Tags.Select(x => new Tag(x)).ToArray(),
+                    Title = i.Title
+                }
+            );
         }
     }
 }
