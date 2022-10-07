@@ -7,6 +7,7 @@ using Domain.Core;
 using Domain.Core.WorkshopInfoModule;
 using L4d2_Mod_Manager_Tool.Domain.Repository;
 using Infrastructure.Utility;
+using System.Collections.Immutable;
 
 namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
 {
@@ -28,18 +29,25 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
                     () => new SpiderAddonInfoDownloadStrategy()
             );
         }
-        public IEnumerable<WorkshopInfo> DownloadAddonInfos(IEnumerable<VpkId> vpks)
+        public async Task<WorkshopInfo[]> DownloadAddonInfosAsync(IEnumerable<VpkId> vpks)
         {
-            var newMods = vpks.AsParallel().Select(DownloadAddonInfo).ToArray();
-            return newMods.DiscardMaybe();
+            List<WorkshopInfo> res = new();
+            foreach (var vpk in vpks)
+            {
+                var wi = await DownloadAddonInfo(vpk);
+                wi.Match(some => res.Add(some), ()=>{ });
+            }
+            return res.ToArray();
+            //var newMods = vpks.AsParallel().Select(x => DownloadAddonInfo(x)).ToArray();
+            //return newMods.DiscardMaybe().ToArray();
         }
         /// <summary>
         /// 下载模组信息
         /// </summary>
         /// <param name="m"></param>
-        public Maybe<WorkshopInfo> DownloadAddonInfo(VpkId id)
+        public async Task<Maybe<WorkshopInfo>> DownloadAddonInfo(VpkId id)
         {
-            var info = downloadStrategy.DownloadAddonInfo((ulong)id.Id);
+            var info = await downloadStrategy.DownloadAddonInfoAsync((ulong)id.Id);
             return info.Map(i =>
                 new WorkshopInfo(id)
                 {

@@ -47,6 +47,9 @@ namespace Infrastructure
         public long Insert<T>(T po) where T : class
             => connection.Insert(po, transaction);
 
+        public int Execute(string sql, object param = null)
+            => connection.Execute(sql, param);
+
         public void Update<T>(T po) where T : class
             => connection.Update(po, transaction);
     }
@@ -73,7 +76,7 @@ namespace Infrastructure
             + ",categories TEXT"
             + ");" 
             + "CREATE TABLE IF NOT EXISTS workshopinfo("
-            + "vpk_id PRIMARY KEY" 
+            + "vpk_id INTEGER PRIMARY KEY"
             + ",preview TEXT"
             + ",title TEXT"
             + ",description TEXT"

@@ -1,21 +1,15 @@
-﻿using System;
+﻿using Domain.Core;
+using Domain.ModSorter;
+using L4d2_Mod_Manager_Tool.Service;
+using L4d2_Mod_Manager_Tool.Utility;
+using L4d2_Mod_Manager_Tool.Widget;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Domain.ModSorter;
-using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Domain.Repository;
-using L4d2_Mod_Manager_Tool.Service;
-using L4d2_Mod_Manager_Tool.Utility;
-using L4d2_Mod_Manager_Tool.Widget;
-using ModBrief = Domain.Core.ModBrief;
 using ModFileRepository = Domain.ModFile.ModFileRepository;
 
 namespace L4d2_Mod_Manager_Tool
@@ -42,7 +36,7 @@ namespace L4d2_Mod_Manager_Tool
 
             widget_FilterMod1.OnFilterUpdated += widget_FilterMod1_OnFilterUpdated;
             //自动更新模组列表
-            RefreshModFile();
+            //RefreshModFile();
         }
 
         private void SetupControl()
@@ -269,9 +263,9 @@ namespace L4d2_Mod_Manager_Tool
             form.ShowDialog(this);
         }
 
-        private void toolStripMenuItem_downloadWorkshopInfo_Click(object sender, EventArgs e)
+        private async void toolStripMenuItem_downloadWorkshopInfo_Click(object sender, EventArgs e)
         {
-            worshopInfoApplication.DownloadWorkshopInfoIfDontHave();
+            await worshopInfoApplication.DownloadWorkshopInfoIfDontHaveAsync();
         }
 
         private void listView1_DoubleClick(object sender, EventArgs e)

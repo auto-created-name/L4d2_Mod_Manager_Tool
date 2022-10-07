@@ -19,13 +19,15 @@ namespace L4d2_Mod_Manager_Tool.App
         {
             modFileRepository = mfRepo;
         }
-        public void DownloadWorkshopInfoIfDontHave()
+        public async Task DownloadWorkshopInfoIfDontHaveAsync()
         {
             var allVpkIds = modFileRepository.GetAll().Where(x => x.VpkId != VpkId.Undefined).Select(x => x.VpkId);
             var savedVpkIds = workshopInfoRepository.GetAll().Select(x => x.Id);
             // 找到未记录的
             var dontHave = allVpkIds.Except(savedVpkIds);
-            addonInfoDownloadService.DownloadAddonInfos(dontHave);
+            var res = await addonInfoDownloadService.DownloadAddonInfosAsync(dontHave);
+            
+            workshopInfoRepository.SaveRange(res);
         }
 
         public string AddonInfoDownloadStretegyName

@@ -42,23 +42,13 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         }
 
 
-        public Maybe<ModWorkshopInfo> DownloadAddonInfo(ulong vpkid)
+        public async Task<Maybe<ModWorkshopInfo>> DownloadAddonInfoAsync(ulong vpkid)
         {
             try
             {
-                var task = SteamUGC.QueryFileAsync(new() { Value = vpkid });
-                // 等待5秒超时取消
-                if (task.Wait(5000))
-                {
-                    var res = task.Result;
-
-                    var f = DownloadImageFromURL(res.Value.PreviewImageUrl);
-                    return Maybe.Some(new ModWorkshopInfo(res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
-                }
-                else
-                {
-                    return Maybe.None;
-                }
+                var res = await SteamUGC.QueryFileAsync(new() { Value = vpkid });
+                var f = DownloadImageFromURL(res.Value.PreviewImageUrl);
+                return Maybe.Some(new ModWorkshopInfo(res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
             }
             catch (Exception e)
             {

@@ -13,7 +13,7 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
     /// </summary>
     interface IAddonInfoDownloadStrategy
     {
-        Maybe<ModWorkshopInfo> DownloadAddonInfo(ulong vpkid);
+        Task<Maybe<ModWorkshopInfo>> DownloadAddonInfoAsync(ulong vpkid);
         string StrategyName { get; }
     }
 }

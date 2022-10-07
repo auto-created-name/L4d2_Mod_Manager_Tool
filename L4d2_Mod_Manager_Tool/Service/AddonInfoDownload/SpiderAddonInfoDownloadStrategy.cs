@@ -17,26 +17,29 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
     {
         public string StrategyName => "网络爬虫模式";
 
-        public Maybe<ModWorkshopInfo> DownloadAddonInfo(ulong itemId)
+        public Task<Maybe<ModWorkshopInfo>> DownloadAddonInfoAsync(ulong itemId)
         {
             string url = $"https://steamcommunity.com/sharedfiles/filedetails/?id={itemId}";
-            try
+            return Task.Run(() =>
             {
-                HtmlWeb webClient = new();
-                var doc = webClient.Load(url);
+                try
+                {
+                    HtmlWeb webClient = new();
+                    var doc = webClient.Load(url);
 
-                var tags = GetWorkshopItemTags(doc);
-                var title = GetWorkshopItemTitle(doc);
-                var desc = GetWorkshopItemDescription(doc);
-                string previewImageUrl = GetWorkshopPreviewImageUrl(doc);
+                    var tags = GetWorkshopItemTags(doc);
+                    var title = GetWorkshopItemTitle(doc);
+                    var desc = GetWorkshopItemDescription(doc);
+                    string previewImageUrl = GetWorkshopPreviewImageUrl(doc);
 
-                var imgFile = DownloadImageFromURL(previewImageUrl);
-                return Maybe.Some(new ModWorkshopInfo(title, desc, imgFile, tags.ToImmutableArray()));
-            }
-            catch
-            {
-                return Maybe.None;
-            }
+                    var imgFile = DownloadImageFromURL(previewImageUrl);
+                    return Maybe.Some(new ModWorkshopInfo(title, desc, imgFile, tags.ToImmutableArray()));
+                }
+                catch
+                {
+                    return Maybe.None;
+                }
+            });
         }
 
         /// <summary>
