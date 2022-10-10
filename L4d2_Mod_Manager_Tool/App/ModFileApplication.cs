@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Domain.Core;
 using Domain.Core.ModBriefModule;
 using Domain.Core.ModStatusModule;
+using Domain.Core.WorkshopInfoModule;
 using Domain.ModFile;
 using Domain.ModSorter;
 using Domain.ModLocalInfo;
@@ -19,6 +20,7 @@ namespace L4d2_Mod_Manager_Tool.App
     {
         private readonly ModFileRepository modFileRepository;
         private readonly LocalInfoRepository localInfoRepository = new();
+        private readonly WorkshopInfoRepository workshopInfoRepository = new();
         private readonly ModBriefSpecificationBuilder specBuilder = new();
         private readonly AddonListRepository addonListRepository = new();
         private readonly ModBriefList briefList;
@@ -26,7 +28,7 @@ namespace L4d2_Mod_Manager_Tool.App
         public ModFileApplication(ModFileRepository modFileRepository)
         {
             this.modFileRepository = modFileRepository;
-            briefList = new(modFileRepository, localInfoRepository, addonListRepository);
+            briefList = new(modFileRepository, localInfoRepository, workshopInfoRepository, addonListRepository);
         }
 
         #region 模组过滤相关

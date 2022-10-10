@@ -13,6 +13,7 @@ namespace Domain.Core.WorkshopInfoModule
        [Key]
         public long vpk_id { get; set; }
         public string preview { get; set; }
+        public string author { get; set; }
         public string title { get; set; }
         public string description { get; set; }
         public string tags { get; set; }

@@ -48,15 +48,18 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         public async Task<Maybe<WorkshopInfo>> DownloadAddonInfo(VpkId id)
         {
             var info = await downloadStrategy.DownloadAddonInfoAsync((ulong)id.Id);
-            return info.Map(i =>
-                new WorkshopInfo(id)
-                {
-                    Description = i.Descript,
-                    Preview = new ImageFile(i.PreviewImage),
-                    Tags = i.Tags.Select(x => new Tag(x)).ToArray(),
-                    Title = i.Title
-                }
-            );
+            return info.Bind(x => ConvertIfNotEmpty(id, x));
         }
+
+        private Maybe<WorkshopInfo> ConvertIfNotEmpty(VpkId id, Domain.ModWorkshopInfo i) 
+            => i.IsEmpty ? Maybe.None 
+            : new WorkshopInfo(id)
+            {
+                Description = i.Descript,
+                Preview = new ImageFile(i.PreviewImage),
+                Tags = i.Tags.Select(x => new Tag(x)).ToArray(),
+                Title = i.Title,
+                Autor = i.Author
+            };
     }
 }

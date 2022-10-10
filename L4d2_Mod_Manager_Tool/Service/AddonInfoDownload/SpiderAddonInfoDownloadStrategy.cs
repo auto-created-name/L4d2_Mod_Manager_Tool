@@ -27,13 +27,14 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
                     HtmlWeb webClient = new();
                     var doc = webClient.Load(url);
 
+                    var author = GetWorkShopItemAuthor(doc);
                     var tags = GetWorkshopItemTags(doc);
                     var title = GetWorkshopItemTitle(doc);
                     var desc = GetWorkshopItemDescription(doc);
                     string previewImageUrl = GetWorkshopPreviewImageUrl(doc);
 
                     var imgFile = DownloadImageFromURL(previewImageUrl);
-                    return Maybe.Some(new ModWorkshopInfo(title, desc, imgFile, tags.ToImmutableArray()));
+                    return Maybe.Some(new ModWorkshopInfo(author, title, desc, imgFile, tags.ToImmutableArray()));
                 }
                 catch
                 {
@@ -42,16 +43,23 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
             });
         }
 
+        private static string GetWorkShopItemAuthor(HtmlDocument doc)
+        {
+            var nodes = doc.DocumentNode.SelectNodes("//div[@class='friendBlockContent']");
+            return string.Join(',', nodes.Select(x => 
+            {
+                var nameNode = x.ChildNodes[0];
+                return Regex.Replace(nameNode.InnerText, @"\s", "");
+            }));
+        }
+
         /// <summary>
         /// 获取创意工坊物品标题
         /// </summary>
         private static string GetWorkshopItemTitle(HtmlDocument doc)
         {
             var node = doc.DocumentNode.SelectSingleNode("//div[@class='workshopItemTitle']");
-            if (node == null)
-                return "";
-            else
-                return node.InnerText;
+            return GetInnerTextOrEmpty(node);
         }
 
         /// <summary>
@@ -60,10 +68,7 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         private static string GetWorkshopItemDescription(HtmlDocument doc)
         {
             var node = doc.DocumentNode.SelectSingleNode("//div[@class='workshopItemDescription']");
-            if (node == null)
-                return "";
-            else
-                return node.InnerText;
+            return GetInnerTextOrEmpty(node);
         }
 
         /// <summary>
@@ -137,5 +142,8 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
                 throw new Exception("Unsupported Content Type:" + str);
             }
         }
+
+        private static string GetInnerTextOrEmpty(HtmlNode node)
+            => node?.InnerText ?? string.Empty;
     }
 }

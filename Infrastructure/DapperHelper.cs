@@ -77,6 +77,7 @@ namespace Infrastructure
             + ");" 
             + "CREATE TABLE IF NOT EXISTS workshopinfo("
             + "vpk_id INTEGER PRIMARY KEY"
+            + ",author TEXT"
             + ",preview TEXT"
             + ",title TEXT"
             + ",description TEXT"
@@ -125,6 +126,12 @@ namespace Infrastructure
         }
 
         public T Get<T>(int id) where T : class
+        {
+            using var conn = new SQLiteConnection(ConnectString);
+            return conn.Get<T>(id);
+        }
+
+        public T Get<T>(long id) where T : class
         {
             using var conn = new SQLiteConnection(ConnectString);
             return conn.Get<T>(id);

@@ -1,6 +1,7 @@
 ﻿using Domain.Core.ModStatusModule;
 using Domain.ModFile;
 using Domain.ModLocalInfo;
+using Domain.Core.WorkshopInfoModule;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,11 +14,11 @@ namespace Domain.Core.ModBriefModule
     {
         private Dictionary<int, ModBrief> modDetails = new();
 
-        public ModBriefList(ModFileRepository mfRepo, LocalInfoRepository liRepo, AddonListRepository alRepo)
+        public ModBriefList(ModFileRepository mfRepo, LocalInfoRepository liRepo, WorkshopInfoRepository wiRepo, AddonListRepository alRepo)
         {
             mfRepo.GetAll().ForEach(mf => 
             {
-                ModBrief md = new ModBrief(mf.Id)
+                ModBrief md = new(mf.Id)
                 { 
                     FileName = mf.FileLoc, 
                     VpkId = mf.VpkId, 
@@ -32,6 +33,13 @@ namespace Domain.Core.ModBriefModule
                     md.Tagline = li.Tagline;
                     md.Categories = Category.Concat(li.Categories);
                 }
+
+                wiRepo.GetByVpkId(mf.VpkId).Match(wi => 
+                {
+                    md.Name = string.IsNullOrEmpty(wi.Title) ? md.Name : wi.Title;
+                    md.Author = string.IsNullOrEmpty(wi.Autor) ? md.Author : wi.Autor;
+                    md.Tags = Tag.Concat(wi.Tags);
+                }, () => { });
                 modDetails.Add(md.Id, md);
             });
         }

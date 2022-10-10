@@ -48,7 +48,12 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
             {
                 var res = await SteamUGC.QueryFileAsync(new() { Value = vpkid });
                 var f = DownloadImageFromURL(res.Value.PreviewImageUrl);
-                return Maybe.Some(new ModWorkshopInfo(res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
+
+                var owner = res.Value.Owner;
+                // 下载用户名称
+                await owner.RequestInfoAsync();
+                var author = res.Value.Owner.Name;
+                return Maybe.Some(new ModWorkshopInfo(author, res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
             }
             catch (Exception e)
             {
