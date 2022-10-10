@@ -114,21 +114,29 @@ namespace L4d2_Mod_Manager_Tool.App
             var mf = modFileRepository.FindById(modId);
             if (mf == null) return null;
 
+            ModPreviewInfo mp = ModPreviewInfo.Default;
+
             var li = localInfoRepository.FindById(mf.LocalinfoId);
             if (li != null)
             {
-                ModPreviewInfo mp = new();
                 mp.Author = li.Author;
-                mp.Name = li.Title;
-                mp.Descript = li.Description;
                 mp.Categories = Category.Concat(li.Categories);
+                mp.Descript = li.Description;
+                mp.Name = li.Title;
                 mp.PreviewImg = li.AddonImage.File;
-                return mp;
             }
-            else
+
+            var wi = workshopInfoRepository.GetByVpkId(mf.VpkId);
+            wi.Match(wi =>
             {
-                return null;
-            }
+                mp.Author = wi.Autor;
+                mp.Descript = wi.Description;
+                mp.Name = wi.Title;
+                mp.PreviewImg = wi.Preview.File;
+                mp.Tags = Tag.Concat(wi.Tags);
+            }, () => { });
+
+            return mp;
         }
 
         /// <summary>

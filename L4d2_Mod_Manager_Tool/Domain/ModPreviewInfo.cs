@@ -17,5 +17,16 @@ namespace L4d2_Mod_Manager_Tool.Domain
         public string Descript;
         public string Categories;
         public string Tags;
+
+        public static ModPreviewInfo Default
+            => new()
+            {
+                PreviewImg = string.Empty,
+                Name = string.Empty,
+                Author = string.Empty,
+                Descript = string.Empty,
+                Categories = string.Empty,
+                Tags = string.Empty,
+            };
     }
 }
