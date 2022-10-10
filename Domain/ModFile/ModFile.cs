@@ -1,9 +1,5 @@
 ﻿using Domain.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Infrastructure.Utility;
 
 namespace Domain.ModFile
 {
@@ -19,5 +15,17 @@ namespace Domain.ModFile
     ){
         public static ModFile CreateFromFile(string file)
             => new(0, VpkId.TryParse(file), file, 0, 0);
+
+        public void ShowFileInExplorer()
+        {
+            var file = L4d2Folder.GetAddonFileFullPath(FileLoc);
+            FileExplorerUtils.OpenFileExplorerAndSelectItem(file);
+        }
+
+        public void OpenModFile()
+        {
+            var file = L4d2Folder.GetAddonFileFullPath(FileLoc);
+            FileExplorerUtils.OpenFileInExplorer(file);
+        }
     };
 }

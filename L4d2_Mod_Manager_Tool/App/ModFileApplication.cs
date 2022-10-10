@@ -91,8 +91,12 @@ namespace L4d2_Mod_Manager_Tool.App
         /// <param name="modId"></param>
         public void ShowModFileInFileExplorer(int modId)
         {
-            var file = L4d2Folder.GetAddonFileFullPath(modFileRepository.FindById(modId).FileLoc);
-            FileExplorerUtils.OpenFileExplorerAndSelectItem(file);
+            modFileRepository.FindById(modId).ShowFileInExplorer();
+        }
+
+        public void OpenModFile(int modId)
+        {
+            modFileRepository.FindById(modId).OpenModFile();
         }
 
         /// <summary>

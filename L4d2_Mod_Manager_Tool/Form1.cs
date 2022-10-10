@@ -272,7 +272,7 @@ namespace L4d2_Mod_Manager_Tool
         {
             WhenModSelected(sender as ListView, indices => {
                 int modId = modDetails[indices[0]].Id;
-                ModCrossServer.OpenModFileInExplorer(modId);
+                modFileApplication.OpenModFile(modId);
             });
         }
 
