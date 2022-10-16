@@ -9,6 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ModFileRepository = Domain.ModFile.ModFileRepository;
 
@@ -24,6 +25,7 @@ namespace L4d2_Mod_Manager_Tool
         private readonly ModFileRepository mfRepo = new();
         private readonly App.ModFileApplication modFileApplication;
         private readonly App.WorkshopInfoApplication worshopInfoApplication;
+        private readonly TaskFramework.BackgroundTaskList backgroundTaskList = new();
 
         public Form1()
         {
@@ -60,7 +62,7 @@ namespace L4d2_Mod_Manager_Tool
         /// <summary>
         /// 更新模组文件
         /// </summary>
-        private void RefreshModFile()
+        private async Task RefreshModFile()
         {
             // 开始前检查
             var setting = Module.Settings.SettingFP.GetSetting();
@@ -72,7 +74,7 @@ namespace L4d2_Mod_Manager_Tool
 
             //新版行为
             modFileApplication.ScanAndSaveNewModFile();
-            modFileApplication.AnalysisModFileLocalInfoIfDontHave();
+            await modFileApplication.AnalysisModFileLocalInfoIfDontHaveAsync();
             UpdateModList();
             //var tasks = VPKServices.ScanAllModFile()
             //    .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
@@ -246,9 +248,9 @@ namespace L4d2_Mod_Manager_Tool
             UpdateModList();
         }
 
-        private void toolStripMenuItem_scanModFile_Click(object sender, EventArgs e)
+        private async void toolStripMenuItem_scanModFile_Click(object sender, EventArgs e)
         {
-            RefreshModFile();
+            await RefreshModFile();
         }
 
         private void toolStripMenuItem_about_Click(object sender, EventArgs e)
@@ -350,6 +352,11 @@ namespace L4d2_Mod_Manager_Tool
                     column.Text = headers[column.Index];
                 }
             }
+        }
+
+        private void button_showBackgroundTaskWnd_Click(object sender, EventArgs e)
+        {
+            widget_BackgroundTaskList1.Visible = true;
         }
         #endregion
 

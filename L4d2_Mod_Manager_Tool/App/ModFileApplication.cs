@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ using Domain.ModLocalInfo;
 using L4d2_Mod_Manager_Tool.Module.FileExplorer;
 using ModFile = Domain.ModFile.ModFile;
 using ModPreviewInfo = L4d2_Mod_Manager_Tool.Domain.ModPreviewInfo;
+using System.Threading;
+using L4d2_Mod_Manager_Tool.TaskFramework;
 
 namespace L4d2_Mod_Manager_Tool.App
 {
@@ -24,6 +27,7 @@ namespace L4d2_Mod_Manager_Tool.App
         private readonly ModBriefSpecificationBuilder specBuilder = new();
         private readonly AddonListRepository addonListRepository = new();
         private readonly ModBriefList briefList;
+        private readonly BackgroundTaskList backgroundTaskList = new();
 
         public ModFileApplication(ModFileRepository modFileRepository)
         {
@@ -143,12 +147,33 @@ namespace L4d2_Mod_Manager_Tool.App
         /// 【可能需要迁移到其他应用类中】
         /// 分析模组文件的本地信息
         /// </summary>
-        public void AnalysisModFileLocalInfoIfDontHave()
+        public async Task AnalysisModFileLocalInfoIfDontHaveAsync()
         {
-            var notLocalInfo = modFileRepository.GetAllNotLocalInfo();
-            ModAnalysisServer analysisServer = new();
-            var localInfo = notLocalInfo.AsParallel().Select(mf => (mf, li: analysisServer.AnalysisMod(mf))).Where(x => x.li != null).ToList();
-            localInfo.ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
+            await Task.Run(() =>
+            {
+                var notLocalInfo = modFileRepository.GetAllNotLocalInfo();
+                ModAnalysisServer analysisServer = new();
+                //var localInfo = notLocalInfo.AsParallel().Select(mf => (mf, li: analysisServer.AnalysisMod(mf))).Where(x => x.li != null).ToList();
+
+                using var btask = backgroundTaskList.NewTask("解析模组本地信息");
+                ConcurrentBag<(ModFile mf, LocalInfo li)> resultBag = new();
+                var cts = new CancellationTokenSource();
+                int finishedCount = 0, totalCount = notLocalInfo.Count;
+                Parallel.For(0, totalCount, new ParallelOptions() { CancellationToken = cts.Token }, x =>
+                {
+                    var mf = notLocalInfo[x];
+                    btask.Status = $"正在解析 {mf.FileLoc}";
+                    btask.Progress = finishedCount / (float)totalCount;
+                    btask.UpdateProgress();
+
+                    var li = analysisServer.AnalysisMod(mf);
+                    if (li != null)
+                        resultBag.Add((mf, li));
+                    ++finishedCount;
+                });
+                //localInfo.ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
+                resultBag.ToList().ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
