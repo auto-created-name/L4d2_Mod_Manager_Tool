@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace L4d2_Mod_Manager_Tool.DTO
 {
-    internal class BackgroundTaskProgress
+    public class BackgroundTaskProgress
     {
         public int Id { get; set; }
         public string Name { get; set; }

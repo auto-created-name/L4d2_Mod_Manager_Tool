@@ -1,6 +1,7 @@
 ﻿using Domain.Core;
 using Domain.ModSorter;
 using L4d2_Mod_Manager_Tool.Service;
+using L4d2_Mod_Manager_Tool.TaskFramework;
 using L4d2_Mod_Manager_Tool.Utility;
 using L4d2_Mod_Manager_Tool.Widget;
 using System;
@@ -25,11 +26,11 @@ namespace L4d2_Mod_Manager_Tool
         private readonly ModFileRepository mfRepo = new();
         private readonly App.ModFileApplication modFileApplication;
         private readonly App.WorkshopInfoApplication worshopInfoApplication;
-        private readonly TaskFramework.BackgroundTaskList backgroundTaskList = new();
+        private readonly BackgroundTaskList backgroundTaskList = new();
 
         public Form1()
         {
-            modFileApplication = new(mfRepo);
+            modFileApplication = new(mfRepo, backgroundTaskList);
             worshopInfoApplication = new(mfRepo);
 
             InitializeComponent();
@@ -48,6 +49,7 @@ namespace L4d2_Mod_Manager_Tool
             Text = "求生之路2模组管理工具 " + WinformUtility.SoftwareVersion;
             listView1.VirtualMode = true;
 
+
             imageList1.Images.Add(Image.FromFile("Resources/off.png"));
             imageList1.Images.Add(Image.FromFile("Resources/on.png"));
             imageList1.Images.Add("ascending", Image.FromFile("Resources/ascending.png"));
@@ -58,6 +60,9 @@ namespace L4d2_Mod_Manager_Tool
 
             foreach (ColumnHeader column in listView1.Columns)
                 headers.Add(column.Index, column.Text);
+
+            widget_BackgroundTaskList1.BackgroundTaskList = backgroundTaskList;
+
             UpdateModListColumnHeader(listView1);
         }
 

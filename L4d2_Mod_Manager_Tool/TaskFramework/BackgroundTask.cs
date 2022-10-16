@@ -9,7 +9,7 @@ namespace L4d2_Mod_Manager_Tool.TaskFramework
     /// <summary>
     /// 描述一个正在进行的后台任务
     /// </summary>
-    internal class BackgroundTask : IDisposable
+    public class BackgroundTask : IDisposable
     {
         public event EventHandler OnProgressChanged;
         public event EventHandler OnFinished;

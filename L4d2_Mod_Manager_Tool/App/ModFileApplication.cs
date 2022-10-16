@@ -28,11 +28,13 @@ namespace L4d2_Mod_Manager_Tool.App
         private readonly ModBriefSpecificationBuilder specBuilder = new();
         private readonly AddonListRepository addonListRepository = new();
         private readonly ModBriefList briefList;
-        private readonly BackgroundTaskList backgroundTaskList = new();
+        private readonly BackgroundTaskList backgroundTaskList;
 
-        public ModFileApplication(ModFileRepository modFileRepository)
+        public ModFileApplication(ModFileRepository modFileRepository, BackgroundTaskList backgroundTaskList)
         {
             this.modFileRepository = modFileRepository;
+            this.backgroundTaskList = backgroundTaskList;
+
             briefList = new(modFileRepository, localInfoRepository, workshopInfoRepository, addonListRepository);
 
             // 连接事件
