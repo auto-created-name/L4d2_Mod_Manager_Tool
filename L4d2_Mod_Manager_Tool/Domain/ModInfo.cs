@@ -12,7 +12,7 @@ namespace L4d2_Mod_Manager_Tool.Domain
     /// Entity - 模组信息
     /// </summary>
     public record ModInfo(
-        Maybe<string> Title, 
+        Maybe<string> Title,
         Maybe<string> Version,
         Maybe<string> Tagline,
         Maybe<string> Author,

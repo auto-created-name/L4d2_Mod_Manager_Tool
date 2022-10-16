@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
+using Infrastructure.Utility;
 using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -17,26 +17,40 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
     {
         public string StrategyName => "网络爬虫模式";
 
-        public Maybe<ModWorkshopInfo> DownloadAddonInfo(ulong itemId)
+        public Task<Maybe<ModWorkshopInfo>> DownloadAddonInfoAsync(ulong itemId)
         {
             string url = $"https://steamcommunity.com/sharedfiles/filedetails/?id={itemId}";
-            try
+            return Task.Run(() =>
             {
-                HtmlWeb webClient = new();
-                var doc = webClient.Load(url);
+                try
+                {
+                    HtmlWeb webClient = new();
+                    var doc = webClient.Load(url);
 
-                var tags = GetWorkshopItemTags(doc);
-                var title = GetWorkshopItemTitle(doc);
-                var desc = GetWorkshopItemDescription(doc);
-                string previewImageUrl = GetWorkshopPreviewImageUrl(doc);
+                    var author = GetWorkShopItemAuthor(doc);
+                    var tags = GetWorkshopItemTags(doc);
+                    var title = GetWorkshopItemTitle(doc);
+                    var desc = GetWorkshopItemDescription(doc);
+                    string previewImageUrl = GetWorkshopPreviewImageUrl(doc);
 
-                var imgFile = DownloadImageFromURL(previewImageUrl);
-                return Maybe.Some(new ModWorkshopInfo(title, desc, imgFile, tags.ToImmutableArray()));
-            }
-            catch
+                    var imgFile = DownloadImageFromURL(previewImageUrl);
+                    return Maybe.Some(new ModWorkshopInfo(author, title, desc, imgFile, tags.ToImmutableArray()));
+                }
+                catch
+                {
+                    return Maybe.None;
+                }
+            });
+        }
+
+        private static string GetWorkShopItemAuthor(HtmlDocument doc)
+        {
+            var nodes = doc.DocumentNode.SelectNodes("//div[@class='friendBlockContent']");
+            return string.Join(',', nodes.Select(x => 
             {
-                return Maybe.None;
-            }
+                var nameNode = x.ChildNodes[0];
+                return Regex.Replace(nameNode.InnerText, @"\s", "");
+            }));
         }
 
         /// <summary>
@@ -45,10 +59,7 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         private static string GetWorkshopItemTitle(HtmlDocument doc)
         {
             var node = doc.DocumentNode.SelectSingleNode("//div[@class='workshopItemTitle']");
-            if (node == null)
-                return "";
-            else
-                return node.InnerText;
+            return GetInnerTextOrEmpty(node);
         }
 
         /// <summary>
@@ -57,10 +68,7 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         private static string GetWorkshopItemDescription(HtmlDocument doc)
         {
             var node = doc.DocumentNode.SelectSingleNode("//div[@class='workshopItemDescription']");
-            if (node == null)
-                return "";
-            else
-                return node.InnerText;
+            return GetInnerTextOrEmpty(node);
         }
 
         /// <summary>
@@ -134,5 +142,8 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
                 throw new Exception("Unsupported Content Type:" + str);
             }
         }
+
+        private static string GetInnerTextOrEmpty(HtmlNode node)
+            => node?.InnerText ?? string.Empty;
     }
 }

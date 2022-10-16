@@ -1,5 +1,5 @@
-﻿using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Utility;
+﻿using Infrastructure.Utility;
+using L4d2_Mod_Manager_Tool.Domain;
 using Steamworks;
 using System;
 using System.Collections.Generic;
@@ -42,23 +42,18 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         }
 
 
-        public Maybe<ModWorkshopInfo> DownloadAddonInfo(ulong vpkid)
+        public async Task<Maybe<ModWorkshopInfo>> DownloadAddonInfoAsync(ulong vpkid)
         {
             try
             {
-                var task = SteamUGC.QueryFileAsync(new() { Value = vpkid });
-                // 等待5秒超时取消
-                if (task.Wait(5000))
-                {
-                    var res = task.Result;
+                var res = await SteamUGC.QueryFileAsync(new() { Value = vpkid });
+                var f = DownloadImageFromURL(res.Value.PreviewImageUrl);
 
-                    var f = DownloadImageFromURL(res.Value.PreviewImageUrl);
-                    return Maybe.Some(new ModWorkshopInfo(res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
-                }
-                else
-                {
-                    return Maybe.None;
-                }
+                var owner = res.Value.Owner;
+                // 下载用户名称
+                await owner.RequestInfoAsync();
+                var author = res.Value.Owner.Name;
+                return Maybe.Some(new ModWorkshopInfo(author, res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
             }
             catch (Exception e)
             {
