@@ -37,6 +37,8 @@ namespace L4d2_Mod_Manager_Tool
             UpdateModList();
 
             widget_FilterMod1.OnFilterUpdated += widget_FilterMod1_OnFilterUpdated;
+            // 当模组摘要信息列表更新时，重新生成模组信息列表
+            modFileApplication.OnModBriefListUpdate += (sender, args) => UpdateModList();
             //自动更新模组列表
             //RefreshModFile();
         }
@@ -75,7 +77,6 @@ namespace L4d2_Mod_Manager_Tool
             //新版行为
             modFileApplication.ScanAndSaveNewModFile();
             await modFileApplication.AnalysisModFileLocalInfoIfDontHaveAsync();
-            UpdateModList();
             //var tasks = VPKServices.ScanAllModFile()
             //    .Where(mf => !ModFileService.ModFileExists(mf.FilePath))
             //    .Select(mf => new ExtraModTask(mf)).ToArray();

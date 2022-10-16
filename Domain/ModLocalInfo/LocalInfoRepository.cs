@@ -1,4 +1,5 @@
 ﻿using Infrastructure;
+using Infrastructure.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +8,19 @@ using System.Threading.Tasks;
 
 namespace Domain.ModLocalInfo
 {
+    public delegate void LocalInfosDel(IEnumerable<LocalInfo> localInfos);
     public class LocalInfoRepository
     {
         private DapperHelper dapperHelper = DapperHelper.Instance;
+        public event LocalInfosDel OnLocalInfosAdded;
 
         public LocalInfo Save(LocalInfo li)
         {
             var po = LocalInfo_DoToPo(li);
             int id = (int)dapperHelper.Insert(po);
-            return li.WithId(id);
+            var resLi = li.WithId(id);
+            OnLocalInfosAdded?.Invoke(FPExtension.Pure(resLi));
+            return resLi;
         }
 
         public LocalInfo FindById(int id)

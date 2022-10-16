@@ -21,6 +21,7 @@ namespace L4d2_Mod_Manager_Tool.App
 {
     class ModFileApplication
     {
+        public event EventHandler OnModBriefListUpdate;
         private readonly ModFileRepository modFileRepository;
         private readonly LocalInfoRepository localInfoRepository = new();
         private readonly WorkshopInfoRepository workshopInfoRepository = new();
@@ -33,6 +34,9 @@ namespace L4d2_Mod_Manager_Tool.App
         {
             this.modFileRepository = modFileRepository;
             briefList = new(modFileRepository, localInfoRepository, workshopInfoRepository, addonListRepository);
+
+            // 连接事件
+            briefList.OnBriefUpdate += (sender, e) => OnModBriefListUpdate?.Invoke(this, e);
         }
 
         #region 模组过滤相关

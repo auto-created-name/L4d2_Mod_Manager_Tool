@@ -12,6 +12,11 @@ namespace Infrastructure.Utility
 
         public static T Identity<T>(T t) => t;
 
+        public static IEnumerable<T> Pure<T>(T element)
+        {
+            yield return element;   
+        }
+
         /// <summary>
         /// 在序列间插入制定元素
         /// </summary>

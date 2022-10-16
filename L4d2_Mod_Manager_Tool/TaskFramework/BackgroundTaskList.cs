@@ -30,7 +30,7 @@ namespace L4d2_Mod_Manager_Tool.TaskFramework
         private void BackgroundTask_OnProgressChanged(object sender, EventArgs e)
         {
             var bt = sender as BackgroundTask;
-            Utility.WinformUtility.ErrorMessageBox(bt.Status + bt.Progress.ToString(), bt.Name);
+            //Utility.WinformUtility.ErrorMessageBox(bt.Status + bt.Progress.ToString(), bt.Name);
         }
 
         private void BackgroundTask_OnFinished(object sender, EventArgs e)

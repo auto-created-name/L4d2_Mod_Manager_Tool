@@ -8,10 +8,12 @@ using Infrastructure.Utility;
 
 namespace Domain.Core.WorkshopInfoModule
 {
+    public delegate void WorkshopInfoDel(IEnumerable<WorkshopInfo> workshopInfos);
     public class WorkshopInfoRepository
     {
         private DapperHelper dapperHelper = DapperHelper.Instance;
 
+        public event WorkshopInfoDel OnWorkshopInfoAdded;
 
         public WorkshopInfo[] GetAll() 
         { 
@@ -36,6 +38,7 @@ namespace Domain.Core.WorkshopInfoModule
 
             var pos = xs.Select(WorkshopInfo_DoToPo).ToList();//.ForEach(x => trans.Execute("INSERT INTO workshopinfo VALUES(@vpk_id, @preview, @title, @description", x));
             trans.Execute("INSERT INTO workshopinfo VALUES(@vpk_id, @author, @preview, @title, @description, @tags)", pos);
+            OnWorkshopInfoAdded?.Invoke(xs);
         }
 
         private static WorkshopInfo WorkshopInfo_PoToDo(PO_WorkshopInfo po)
