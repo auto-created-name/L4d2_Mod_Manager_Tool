@@ -14,6 +14,7 @@ namespace L4d2_Mod_Manager_Tool.TaskFramework
     {
         public event EventHandler OnProgressChanged;
         public event EventHandler OnFinished;
+        public event EventHandler OnCanceling;
 
         public int Id { get; private set; }
         public string Name { get; set; }
@@ -22,6 +23,9 @@ namespace L4d2_Mod_Manager_Tool.TaskFramework
 
         public BackgroundTask(int id)
             => Id = id;
+
+        public void Cancel()
+            => OnCanceling?.Invoke(this, null);
 
         public void UpdateProgress()
             => OnProgressChanged?.Invoke(this, null);

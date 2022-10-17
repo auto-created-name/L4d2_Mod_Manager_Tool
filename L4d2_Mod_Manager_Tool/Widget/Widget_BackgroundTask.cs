@@ -12,6 +12,7 @@ namespace L4d2_Mod_Manager_Tool.Widget
 {
     public partial class Widget_BackgroundTask : UserControl
     {
+        public event EventHandler OnTaskCancelRequested;
         private int _id = 0;
         public Widget_BackgroundTask()
         {
@@ -37,12 +38,9 @@ namespace L4d2_Mod_Manager_Tool.Widget
             set => progressBar_taskProgress.Value = value;
         }
 
-        public void BindModel(VOBackgroundTaskModel model)
+        private void button_cancel_Click(object sender, EventArgs e)
         {
-            _id = model.Id;
-            label_taskName.DataBindings.Add("Text", model, "Name");
-            progressBar_taskProgress.DataBindings.Add("Value", model, "Progress");
-            label_status.DataBindings.Add("Text", model, "Status");
+            OnTaskCancelRequested?.Invoke(this, null);
         }
     }
 }

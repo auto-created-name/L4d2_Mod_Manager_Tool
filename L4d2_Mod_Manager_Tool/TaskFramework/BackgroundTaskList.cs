@@ -23,6 +23,12 @@ namespace L4d2_Mod_Manager_Tool.TaskFramework
         public event EventHandler<BackgroundTaskProgressChangedArgs> OnBackgroundTaskChanged;
         private ConcurrentDictionary<int, BackgroundTask> taskList = new ();
         private int id = 0;
+
+        public void CancelTask(int id)
+        {
+            taskList[id].Cancel();
+        }
+
         public BackgroundTask NewTask(string name)
         {
             int newId = Interlocked.Increment (ref id);

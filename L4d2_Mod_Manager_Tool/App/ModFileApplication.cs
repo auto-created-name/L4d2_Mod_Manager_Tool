@@ -157,40 +157,32 @@ namespace L4d2_Mod_Manager_Tool.App
         {
             await Task.Run(() =>
             {
-                var notLocalInfo = modFileRepository.GetAllNotLocalInfo();
+                var notLocalInfo = modFileRepository.GetAllNotLocalInfo().ToArray();
                 ModAnalysisServer analysisServer = new();
-                //var localInfo = notLocalInfo.AsParallel().Select(mf => (mf, li: analysisServer.AnalysisMod(mf))).Where(x => x.li != null).ToList();
 
-                using var btask = backgroundTaskList.NewTask("解析模组本地信息");
-                //ConcurrentBag<(ModFile mf, LocalInfo li)> resultBag = new();
                 var cts = new CancellationTokenSource();
-                int finishedCount = 0, totalCount = notLocalInfo.Count;
-                Parallel.For(0, totalCount, new ParallelOptions() { CancellationToken = cts.Token }, x =>
-                {
-                    var mf = notLocalInfo[x];
-                    var li = analysisServer.AnalysisMod(mf);
-                    //if (li != null)
-                    //    resultBag.Add((mf, li));
-                    if(li != null)
-                        SaveLocalInfoAndUpdateModFile(mf, li);
-                    btask.Status = $"正在解析 {mf.FileLoc}";
-                    btask.Progress = (int)(finishedCount / (float)totalCount * 100);
-                    btask.UpdateProgress();
-                    ++finishedCount;
-                });
-                //localInfo.ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
-                //resultBag.ToList().ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
-            }).ConfigureAwait(false);
-        }
+                using var btask = backgroundTaskList.NewTask("解析模组本地信息");
+                btask.OnCanceling += (sender, args) => cts.Cancel();
 
-        /// <summary>
-        /// 保存LocalInfo，同时更新ModFile
-        /// </summary>
-        private void SaveLocalInfoAndUpdateModFile(ModFile mf, LocalInfo li)
-        {
-            var savedLi = localInfoRepository.Save(li);
-            var newMf = mf with { LocalinfoId = savedLi.Id };
-            modFileRepository.Update(newMf);
+                var batches = BatchAnalysis.InBatches(notLocalInfo, 10).ToArray();
+
+                try
+                {
+                    int finishedCount = 0, totalCount = batches.Length;
+                    foreach(var batch in batches)
+                    {
+                        btask.Status = $"正在解析({finishedCount + 1} / {totalCount})";
+                        btask.Progress = (int)(finishedCount / (float)totalCount * 100);
+                        btask.UpdateProgress();
+
+                        batch.DoBatchAnalysis(analysisServer, cts.Token);
+                        batch.UpdateEntities(localInfoRepository, modFileRepository);
+
+                        Interlocked.Increment(ref finishedCount);
+                    }
+                }
+                catch { }
+            }).ConfigureAwait(false);
         }
     }
 }

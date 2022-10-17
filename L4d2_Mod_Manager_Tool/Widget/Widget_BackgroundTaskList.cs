@@ -44,8 +44,12 @@ namespace L4d2_Mod_Manager_Tool.Widget
 
         private void BackgroundTaskList_OnBackgroundTaskAdded(object sender, BackgroundTaskProgressChangedArgs args)
         {
+            int id = args.Progress.Id;
             Widget_BackgroundTask widget = new();
-            taskWidgets.Add(args.Progress.Id, widget);
+            widget.OnTaskCancelRequested += (sender, args) =>
+                backgroundTaskList.CancelTask(id);
+
+            taskWidgets.Add(id, widget);
             if (flowLayoutPanel1.InvokeRequired) 
                 flowLayoutPanel1.Invoke(new Action(() => flowLayoutPanel1.Controls.Add(widget)));
         }
