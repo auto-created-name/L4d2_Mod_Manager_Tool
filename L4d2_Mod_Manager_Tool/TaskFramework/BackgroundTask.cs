@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using L4d2_Mod_Manager_Tool.Widget;
 
 namespace L4d2_Mod_Manager_Tool.TaskFramework
 {
@@ -13,10 +14,11 @@ namespace L4d2_Mod_Manager_Tool.TaskFramework
     {
         public event EventHandler OnProgressChanged;
         public event EventHandler OnFinished;
+
         public int Id { get; private set; }
         public string Name { get; set; }
         public string Status { get; set; }
-        public float Progress { get; set; }
+        public int Progress { get; set; }
 
         public BackgroundTask(int id)
             => Id = id;

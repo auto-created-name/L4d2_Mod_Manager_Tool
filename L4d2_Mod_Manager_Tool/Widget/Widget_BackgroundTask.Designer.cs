@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label_raskName = new System.Windows.Forms.Label();
+            this.label_taskName = new System.Windows.Forms.Label();
             this.progressBar_taskProgress = new System.Windows.Forms.ProgressBar();
             this.label_status = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // label_raskName
+            // label_taskName
             // 
-            this.label_raskName.AutoEllipsis = true;
-            this.label_raskName.Location = new System.Drawing.Point(7, 6);
-            this.label_raskName.Name = "label_raskName";
-            this.label_raskName.Size = new System.Drawing.Size(152, 17);
-            this.label_raskName.TabIndex = 0;
-            this.label_raskName.Text = "正在进行的任务名称";
+            this.label_taskName.AutoEllipsis = true;
+            this.label_taskName.Location = new System.Drawing.Point(7, 6);
+            this.label_taskName.Name = "label_taskName";
+            this.label_taskName.Size = new System.Drawing.Size(152, 17);
+            this.label_taskName.TabIndex = 0;
+            this.label_taskName.Text = "正在进行的任务名称";
             // 
             // progressBar_taskProgress
             // 
@@ -77,7 +77,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label_status);
             this.Controls.Add(this.progressBar_taskProgress);
-            this.Controls.Add(this.label_raskName);
+            this.Controls.Add(this.label_taskName);
             this.Name = "Widget_BackgroundTask";
             this.Size = new System.Drawing.Size(369, 47);
             this.ResumeLayout(false);
@@ -86,7 +86,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label_raskName;
+        private System.Windows.Forms.Label label_taskName;
         private System.Windows.Forms.ProgressBar progressBar_taskProgress;
         private System.Windows.Forms.Label label_status;
         private System.Windows.Forms.Button button1;

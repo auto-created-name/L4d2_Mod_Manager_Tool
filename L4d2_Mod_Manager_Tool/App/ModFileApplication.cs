@@ -162,23 +162,24 @@ namespace L4d2_Mod_Manager_Tool.App
                 //var localInfo = notLocalInfo.AsParallel().Select(mf => (mf, li: analysisServer.AnalysisMod(mf))).Where(x => x.li != null).ToList();
 
                 using var btask = backgroundTaskList.NewTask("解析模组本地信息");
-                ConcurrentBag<(ModFile mf, LocalInfo li)> resultBag = new();
+                //ConcurrentBag<(ModFile mf, LocalInfo li)> resultBag = new();
                 var cts = new CancellationTokenSource();
                 int finishedCount = 0, totalCount = notLocalInfo.Count;
                 Parallel.For(0, totalCount, new ParallelOptions() { CancellationToken = cts.Token }, x =>
                 {
                     var mf = notLocalInfo[x];
-                    btask.Status = $"正在解析 {mf.FileLoc}";
-                    btask.Progress = finishedCount / (float)totalCount;
-                    btask.UpdateProgress();
-
                     var li = analysisServer.AnalysisMod(mf);
-                    if (li != null)
-                        resultBag.Add((mf, li));
+                    //if (li != null)
+                    //    resultBag.Add((mf, li));
+                    if(li != null)
+                        SaveLocalInfoAndUpdateModFile(mf, li);
+                    btask.Status = $"正在解析 {mf.FileLoc}";
+                    btask.Progress = (int)(finishedCount / (float)totalCount * 100);
+                    btask.UpdateProgress();
                     ++finishedCount;
                 });
                 //localInfo.ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
-                resultBag.ToList().ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
+                //resultBag.ToList().ForEach(x => SaveLocalInfoAndUpdateModFile(x.mf, x.li));
             }).ConfigureAwait(false);
         }
 

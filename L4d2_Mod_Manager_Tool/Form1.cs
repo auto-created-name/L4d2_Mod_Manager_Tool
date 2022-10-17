@@ -39,7 +39,11 @@ namespace L4d2_Mod_Manager_Tool
 
             widget_FilterMod1.OnFilterUpdated += widget_FilterMod1_OnFilterUpdated;
             // 当模组摘要信息列表更新时，重新生成模组信息列表
-            modFileApplication.OnModBriefListUpdate += (sender, args) => UpdateModList();
+            modFileApplication.OnModBriefListUpdate += (sender, args) =>
+            {
+                if (InvokeRequired)
+                    Invoke(new Action(() => UpdateModList()));
+            };
             //自动更新模组列表
             //RefreshModFile();
         }

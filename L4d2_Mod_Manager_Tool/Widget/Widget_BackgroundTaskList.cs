@@ -1,6 +1,7 @@
 ﻿using L4d2_Mod_Manager_Tool.TaskFramework;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace L4d2_Mod_Manager_Tool.Widget
@@ -8,6 +9,7 @@ namespace L4d2_Mod_Manager_Tool.Widget
     public partial class Widget_BackgroundTaskList : UserControl
     {
         private BackgroundTaskList backgroundTaskList;
+        BindingList<VOBackgroundTaskModel> _backgroundTaskListBinding = new();
 
         public BackgroundTaskList BackgroundTaskList
         {
@@ -50,7 +52,16 @@ namespace L4d2_Mod_Manager_Tool.Widget
 
         private void BackgroundTaskList_OnBackgroundTaskChanged(object sender, BackgroundTaskProgressChangedArgs args)
         {
-
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() =>
+                {
+                    var widget = taskWidgets[args.Progress.Id];
+                    widget.TaskName = args.Progress.Name;
+                    widget.TaskStatus = args.Progress.Status;
+                    widget.Progress = args.Progress.Progress;
+                }));
+            }
         }
 
         private void BackgroundTaskList_OnBackgroundTaskFinished(object sender, BackgroundTaskProgressChangedArgs args)
