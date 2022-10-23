@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label_raskName = new System.Windows.Forms.Label();
+            this.label_taskName = new System.Windows.Forms.Label();
             this.progressBar_taskProgress = new System.Windows.Forms.ProgressBar();
             this.label_status = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button_cancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // label_raskName
+            // label_taskName
             // 
-            this.label_raskName.AutoEllipsis = true;
-            this.label_raskName.Location = new System.Drawing.Point(7, 6);
-            this.label_raskName.Name = "label_raskName";
-            this.label_raskName.Size = new System.Drawing.Size(152, 17);
-            this.label_raskName.TabIndex = 0;
-            this.label_raskName.Text = "正在进行的任务名称";
+            this.label_taskName.AutoEllipsis = true;
+            this.label_taskName.Location = new System.Drawing.Point(7, 6);
+            this.label_taskName.Name = "label_taskName";
+            this.label_taskName.Size = new System.Drawing.Size(152, 17);
+            this.label_taskName.TabIndex = 0;
+            this.label_taskName.Text = "正在进行的任务名称";
             // 
             // progressBar_taskProgress
             // 
@@ -59,25 +59,26 @@
             this.label_status.TabIndex = 2;
             this.label_status.Text = "具体正在进行的任务名称XXXXXXXXXXXXXXXXXXXXXX";
             // 
-            // button1
+            // button_cancel
             // 
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(334, 10);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(24, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "X";
-            this.button1.UseVisualStyleBackColor = false;
+            this.button_cancel.FlatAppearance.BorderSize = 0;
+            this.button_cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_cancel.Location = new System.Drawing.Point(334, 10);
+            this.button_cancel.Name = "button_cancel";
+            this.button_cancel.Size = new System.Drawing.Size(24, 23);
+            this.button_cancel.TabIndex = 3;
+            this.button_cancel.Text = "X";
+            this.button_cancel.UseVisualStyleBackColor = false;
+            this.button_cancel.Click += new System.EventHandler(this.button_cancel_Click);
             // 
             // Widget_BackgroundTask
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.button_cancel);
             this.Controls.Add(this.label_status);
             this.Controls.Add(this.progressBar_taskProgress);
-            this.Controls.Add(this.label_raskName);
+            this.Controls.Add(this.label_taskName);
             this.Name = "Widget_BackgroundTask";
             this.Size = new System.Drawing.Size(369, 47);
             this.ResumeLayout(false);
@@ -86,9 +87,9 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label_raskName;
+        private System.Windows.Forms.Label label_taskName;
         private System.Windows.Forms.ProgressBar progressBar_taskProgress;
         private System.Windows.Forms.Label label_status;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button_cancel;
     }
 }

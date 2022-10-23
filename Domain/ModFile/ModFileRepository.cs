@@ -50,7 +50,7 @@ namespace Domain.ModFile
 
         public Maybe<ModFile> FindByVpkId(VpkId vpkId)
         {
-            var po = dapperHelper.QuerySingle<PO_ModFile>($"SELECT * FROM mod_file WHERE vpk_id={vpkId.Id}");
+            var po = dapperHelper.QueryFirst<PO_ModFile>($"SELECT * FROM mod_file WHERE vpk_id={vpkId.Id}");
             return po switch
             {
                 null => Maybe.None,
