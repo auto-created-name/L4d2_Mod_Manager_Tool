@@ -33,11 +33,13 @@ namespace Domain.Core.WorkshopInfoModule
 
         public void SaveRange(IEnumerable<WorkshopInfo> xs)
         {
-            using var conn = DapperHelper.OpenConnection();
-            using var trans = conn.BeginTransaction();
+            {
+                using var conn = DapperHelper.OpenConnection();
+                using var trans = conn.BeginTransaction();
 
-            var pos = xs.Select(WorkshopInfo_DoToPo).ToList();//.ForEach(x => trans.Execute("INSERT INTO workshopinfo VALUES(@vpk_id, @preview, @title, @description", x));
-            trans.Execute("INSERT INTO workshopinfo VALUES(@vpk_id, @author, @preview, @title, @description, @tags)", pos);
+                var pos = xs.Select(WorkshopInfo_DoToPo).ToList();//.ForEach(x => trans.Execute("INSERT INTO workshopinfo VALUES(@vpk_id, @preview, @title, @description", x));
+                trans.Execute("INSERT INTO workshopinfo VALUES(@vpk_id, @author, @preview, @title, @description, @tags)", pos);
+            }
             OnWorkshopInfoAdded?.Invoke(xs);
         }
 

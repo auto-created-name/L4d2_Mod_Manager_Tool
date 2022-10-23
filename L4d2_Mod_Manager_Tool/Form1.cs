@@ -1,4 +1,5 @@
 ﻿using Domain.Core;
+using Domain.Core.WorkshopInfoModule;
 using Domain.ModSorter;
 using L4d2_Mod_Manager_Tool.Service;
 using L4d2_Mod_Manager_Tool.TaskFramework;
@@ -24,14 +25,15 @@ namespace L4d2_Mod_Manager_Tool
         private Dictionary<int, string> headers = new();
 
         private readonly ModFileRepository mfRepo = new();
+        private readonly WorkshopInfoRepository workshopInfoRepository = new();
         private readonly App.ModFileApplication modFileApplication;
         private readonly App.WorkshopInfoApplication worshopInfoApplication;
         private readonly BackgroundTaskList backgroundTaskList = new();
 
         public Form1()
         {
-            modFileApplication = new(mfRepo, backgroundTaskList);
-            worshopInfoApplication = new(mfRepo);
+            modFileApplication = new(mfRepo, workshopInfoRepository, backgroundTaskList);
+            worshopInfoApplication = new(mfRepo, workshopInfoRepository, backgroundTaskList);
 
             InitializeComponent();
             SetupControl();
@@ -275,9 +277,9 @@ namespace L4d2_Mod_Manager_Tool
             form.ShowDialog(this);
         }
 
-        private async void toolStripMenuItem_downloadWorkshopInfo_Click(object sender, EventArgs e)
+        private void toolStripMenuItem_downloadWorkshopInfo_Click(object sender, EventArgs e)
         {
-            await worshopInfoApplication.DownloadWorkshopInfoIfDontHaveAsync();
+            _ = worshopInfoApplication.DownloadWorkshopInfoIfDontHaveAsync();
         }
 
         private void listView1_DoubleClick(object sender, EventArgs e)

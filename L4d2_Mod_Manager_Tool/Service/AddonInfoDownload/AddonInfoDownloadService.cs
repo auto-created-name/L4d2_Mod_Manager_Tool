@@ -47,7 +47,7 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         /// <param name="m"></param>
         public async Task<Maybe<WorkshopInfo>> DownloadAddonInfo(VpkId id)
         {
-            var info = await downloadStrategy.DownloadAddonInfoAsync((ulong)id.Id);
+            var info = await downloadStrategy.DownloadAddonInfoAsync((ulong)id.Id).ConfigureAwait(false);
             return info.Bind(x => ConvertIfNotEmpty(id, x));
         }
 

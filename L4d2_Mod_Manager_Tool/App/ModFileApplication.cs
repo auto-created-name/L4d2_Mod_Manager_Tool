@@ -24,15 +24,16 @@ namespace L4d2_Mod_Manager_Tool.App
         public event EventHandler OnModBriefListUpdate;
         private readonly ModFileRepository modFileRepository;
         private readonly LocalInfoRepository localInfoRepository = new();
-        private readonly WorkshopInfoRepository workshopInfoRepository = new();
+        private readonly WorkshopInfoRepository workshopInfoRepository;
         private readonly ModBriefSpecificationBuilder specBuilder = new();
         private readonly AddonListRepository addonListRepository = new();
         private readonly ModBriefList briefList;
         private readonly BackgroundTaskList backgroundTaskList;
 
-        public ModFileApplication(ModFileRepository modFileRepository, BackgroundTaskList backgroundTaskList)
+        public ModFileApplication(ModFileRepository modFileRepository, WorkshopInfoRepository workshopInfoRepository, BackgroundTaskList backgroundTaskList)
         {
             this.modFileRepository = modFileRepository;
+            this.workshopInfoRepository = workshopInfoRepository;
             this.backgroundTaskList = backgroundTaskList;
 
             briefList = new(modFileRepository, localInfoRepository, workshopInfoRepository, addonListRepository);

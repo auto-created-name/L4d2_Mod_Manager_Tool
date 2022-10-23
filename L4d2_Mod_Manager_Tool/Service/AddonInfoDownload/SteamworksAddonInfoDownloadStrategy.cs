@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Utility;
 using L4d2_Mod_Manager_Tool.Domain;
 using Steamworks;
+using Steamworks.Ugc;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -46,14 +47,23 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         {
             try
             {
-                var res = await SteamUGC.QueryFileAsync(new() { Value = vpkid });
-                var f = DownloadImageFromURL(res.Value.PreviewImageUrl);
+                ResultPage? result = await Query.All.WithFileId(vpkid).GetPageAsync(1).ConfigureAwait(false);
+                if (!result.HasValue || result.Value.ResultCount != 1)
+                {
+                    return Maybe.None;
+                }
 
-                var owner = res.Value.Owner;
+                Item item = result.Value.Entries.First();
+                result.Value.Dispose();
+
+                //var res = await SteamUGC.QueryFileAsync(new() { Value = vpkid });
+                var f = DownloadImageFromURL(item.PreviewImageUrl);
+
+                var owner = item.Owner;
                 // 下载用户名称
                 await owner.RequestInfoAsync();
-                var author = res.Value.Owner.Name;
-                return Maybe.Some(new ModWorkshopInfo(author, res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
+                var author = item.Owner.Name;
+                return Maybe.Some(new ModWorkshopInfo(author, item.Title, item.Description, f, item.Tags.ToImmutableArray()));
             }
             catch (Exception e)
             {

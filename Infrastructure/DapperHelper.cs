@@ -101,10 +101,10 @@ namespace Infrastructure
             return conn.Query<T>(sql);
         }
 
-        public T QuerySingle<T>(string sql)
+        public T QueryFirst<T>(string sql)
         {
             using var conn = new SQLiteConnection(ConnectString);
-            return conn.QuerySingle<T>(sql);
+            return conn.QueryFirst<T>(sql);
         }
 
         public bool Update<T>(T po) where T : class
