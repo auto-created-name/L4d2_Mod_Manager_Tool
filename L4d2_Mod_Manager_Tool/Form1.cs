@@ -1,6 +1,7 @@
 ﻿using Domain.Core;
 using Domain.Core.WorkshopInfoModule;
 using Domain.ModSorter;
+using Domain.Settings;
 using L4d2_Mod_Manager_Tool.Service;
 using L4d2_Mod_Manager_Tool.TaskFramework;
 using L4d2_Mod_Manager_Tool.Utility;
@@ -78,7 +79,7 @@ namespace L4d2_Mod_Manager_Tool
         private async Task RefreshModFile()
         {
             // 开始前检查
-            var setting = Module.Settings.SettingFP.GetSetting();
+            var setting = SettingFP.GetSetting();
             if (!File.Exists(setting.NoVtfExecutablePath))
             {
                 WinformUtility.ErrorMessageBox("请先设置no_vtf可执行程序", "环境错误");

@@ -1,16 +1,14 @@
-﻿using L4d2_Mod_Manager_Tool.Arthitecture;
+﻿using Domain.Settings;
+using L4d2_Mod_Manager_Tool.Arthitecture;
 using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Module.Settings;
 using L4d2_Mod_Manager_Tool.Utility;
+using SharpVPK;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using SharpVPK;
-using System.Collections.Immutable;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
