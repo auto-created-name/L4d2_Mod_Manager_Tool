@@ -1,6 +1,7 @@
-﻿using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Utility;
+﻿using Infrastructure.Utility;
+using L4d2_Mod_Manager_Tool.Domain;
 using Steamworks;
+using Steamworks.Ugc;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -42,16 +43,27 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
         }
 
 
-        public Maybe<ModWorkshopInfo> DownloadAddonInfo(ulong vpkid)
+        public async Task<Maybe<ModWorkshopInfo>> DownloadAddonInfoAsync(ulong vpkid)
         {
             try
             {
-                var task = SteamUGC.QueryFileAsync(new() { Value = vpkid });
-                task.Wait();
-                var res = task.Result;
+                ResultPage? result = await Query.All.WithFileId(vpkid).GetPageAsync(1).ConfigureAwait(false);
+                if (!result.HasValue || result.Value.ResultCount != 1)
+                {
+                    return Maybe.None;
+                }
 
-                var f = DownloadImageFromURL(res.Value.PreviewImageUrl);
-                return Maybe.Some(new ModWorkshopInfo(res.Value.Title, res.Value.Description, f, res.Value.Tags.ToImmutableArray()));
+                Item item = result.Value.Entries.First();
+                result.Value.Dispose();
+
+                //var res = await SteamUGC.QueryFileAsync(new() { Value = vpkid });
+                var f = DownloadImageFromURL(item.PreviewImageUrl);
+
+                var owner = item.Owner;
+                // 下载用户名称
+                await owner.RequestInfoAsync();
+                var author = item.Owner.Name;
+                return Maybe.Some(new ModWorkshopInfo(author, item.Title, item.Description, f, item.Tags.ToImmutableArray()));
             }
             catch (Exception e)
             {

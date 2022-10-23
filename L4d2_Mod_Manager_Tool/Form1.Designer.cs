@@ -54,8 +54,12 @@ namespace L4d2_Mod_Manager_Tool
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.widget_FilterMod1 = new L4d2_Mod_Manager_Tool.Widget.Widget_FilterMod();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.widget_BackgroundTaskList1 = new L4d2_Mod_Manager_Tool.Widget.Widget_BackgroundTaskList();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel_addonInfoDownloadStrategy = new System.Windows.Forms.ToolStripStatusLabel();
+            this.spring1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripProgressBar_backgroundworkProgress = new System.Windows.Forms.ToolStripProgressBar();
+            this.button_showBackgroundTaskWnd = new System.Windows.Forms.ToolStripDropDownButton();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -242,6 +246,7 @@ namespace L4d2_Mod_Manager_Tool
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.widget_BackgroundTaskList1);
             this.panel1.Controls.Add(this.listView1);
             this.panel1.Controls.Add(this.widget_FilterMod1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -251,10 +256,22 @@ namespace L4d2_Mod_Manager_Tool
             this.panel1.Size = new System.Drawing.Size(741, 564);
             this.panel1.TabIndex = 13;
             // 
+            // widget_BackgroundTaskList1
+            // 
+            this.widget_BackgroundTaskList1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.widget_BackgroundTaskList1.Location = new System.Drawing.Point(312, 417);
+            this.widget_BackgroundTaskList1.Name = "widget_BackgroundTaskList1";
+            this.widget_BackgroundTaskList1.Size = new System.Drawing.Size(394, 139);
+            this.widget_BackgroundTaskList1.TabIndex = 13;
+            this.widget_BackgroundTaskList1.Visible = false;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel_addonInfoDownloadStrategy});
+            this.toolStripStatusLabel_addonInfoDownloadStrategy,
+            this.spring1,
+            this.toolStripProgressBar_backgroundworkProgress,
+            this.button_showBackgroundTaskWnd});
             this.statusStrip1.Location = new System.Drawing.Point(0, 589);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1113, 22);
@@ -266,6 +283,29 @@ namespace L4d2_Mod_Manager_Tool
             this.toolStripStatusLabel_addonInfoDownloadStrategy.Name = "toolStripStatusLabel_addonInfoDownloadStrategy";
             this.toolStripStatusLabel_addonInfoDownloadStrategy.Size = new System.Drawing.Size(131, 17);
             this.toolStripStatusLabel_addonInfoDownloadStrategy.Text = "toolStripStatusLabel1";
+            // 
+            // spring1
+            // 
+            this.spring1.Name = "spring1";
+            this.spring1.Size = new System.Drawing.Size(814, 17);
+            this.spring1.Spring = true;
+            // 
+            // toolStripProgressBar_backgroundworkProgress
+            // 
+            this.toolStripProgressBar_backgroundworkProgress.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripProgressBar_backgroundworkProgress.Name = "toolStripProgressBar_backgroundworkProgress";
+            this.toolStripProgressBar_backgroundworkProgress.Size = new System.Drawing.Size(100, 16);
+            // 
+            // button_showBackgroundTaskWnd
+            // 
+            this.button_showBackgroundTaskWnd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.button_showBackgroundTaskWnd.Image = ((System.Drawing.Image)(resources.GetObject("button_showBackgroundTaskWnd.Image")));
+            this.button_showBackgroundTaskWnd.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.button_showBackgroundTaskWnd.Name = "button_showBackgroundTaskWnd";
+            this.button_showBackgroundTaskWnd.ShowDropDownArrow = false;
+            this.button_showBackgroundTaskWnd.Size = new System.Drawing.Size(20, 20);
+            this.button_showBackgroundTaskWnd.Text = "toolStripDropDownButton1";
+            this.button_showBackgroundTaskWnd.Click += new System.EventHandler(this.button_showBackgroundTaskWnd_Click);
             // 
             // Form1
             // 
@@ -318,6 +358,10 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_addonInfoDownloadStrategy;
         private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar_backgroundworkProgress;
+        private System.Windows.Forms.ToolStripStatusLabel spring1;
+        private System.Windows.Forms.ToolStripDropDownButton button_showBackgroundTaskWnd;
+        private Widget.Widget_BackgroundTaskList widget_BackgroundTaskList1;
     }
 }
 

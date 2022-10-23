@@ -1,71 +1,23 @@
 ﻿using L4d2_Mod_Manager_Tool.Domain;
 using L4d2_Mod_Manager_Tool.Service;
-using L4d2_Mod_Manager_Tool.Domain.ModFilter;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool.Widget
 {
-    class MenuItemsZipper
-    {
-        private ToolStripMenuItem item;
-        public MenuItemsZipper()
-        {
-            item = new ToolStripMenuItem();
-        }
-
-        private MenuItemsZipper(ToolStripMenuItem item)
-        {
-            this.item = item;
-        }
-
-        public ToolStripMenuItem CurrentItem => item;
-
-        public bool HaveChildItem(string text)
-        {
-            return item.DropDownItems.Cast<ToolStripMenuItem>()
-                .Where(x => x.Text.Equals(text)).Any();
-        }
-
-        public Maybe<MenuItemsZipper> GotoItem(string text)
-        {
-            var it = 
-                item.DropDownItems.Cast<ToolStripMenuItem>()
-                .Where(x => x.Text.Equals(text)).FirstElementSafe();
-
-            return it.Select(item => new MenuItemsZipper(item));
-        }
-
-        public MenuItemsZipper InsertItem(string text)
-        {
-            ToolStripMenuItem i = new(text);
-            item.DropDownItems.Add(i);
-            return this;
-        }
-
-        public MenuItemsZipper Top()
-        {
-            var i = item;
-            while (i.OwnerItem != null)
-                i = i.OwnerItem as ToolStripMenuItem;
-            return new MenuItemsZipper(i);
-        }
-    }
-
     public partial class Widget_FilterMod : UserControl
     {
         /// <summary>
         /// 当过滤器被更新时触发
         /// </summary>
-        public event EventHandler OnFilterUpdated;
+        public event EventHandler<ModFilterChangedArgs> OnFilterUpdated;
+        private string name = string.Empty;
+        private List<string> tags = new();
+        private List<string> cats = new();
 
         public Widget_FilterMod()
         {
@@ -82,8 +34,8 @@ namespace L4d2_Mod_Manager_Tool.Widget
             flowLayoutPanel_filter.Controls.Add(btn);
 
             //增加谓词
-            ModOperation.AddModFilterTag(tagName);
-            OnFilterUpdated?.Invoke(this, null);
+            tags.Add(tagName);
+            InvokeOnFilterUpdated();
         }
 
         private void OnCategoryTrigged(string catName)
@@ -96,8 +48,8 @@ namespace L4d2_Mod_Manager_Tool.Widget
             flowLayoutPanel_filter.Controls.Add(btn);
 
             //增加谓词
-            ModOperation.AddModFilterCategory(catName);
-            OnFilterUpdated?.Invoke(this, null);
+            cats.Add(catName);
+            InvokeOnFilterUpdated();
         }
 
         private ToolStripMenuItem[] CreateCategoryMenuItems()
@@ -124,24 +76,27 @@ namespace L4d2_Mod_Manager_Tool.Widget
             return zipper.Top().CurrentItem.DropDownItems.Cast<ToolStripMenuItem>().ToArray();
         }
 
+        private void InvokeOnFilterUpdated()
+        {
+            OnFilterUpdated?.Invoke(this, new ModFilterChangedArgs(name, tags, cats));
+        }
+
         #region 回调函数
         private void button_removeTag_Click(object sender, EventArgs e)
         {
             var btn = (sender as Button);
             //删除谓词
-            ModOperation.RemoveModFilterTag(btn.Text.Substring(3));
+            tags.Remove(btn.Text.Substring(3));
+            InvokeOnFilterUpdated();
             btn.Dispose();
-
-            OnFilterUpdated?.Invoke(this, null);
         }
         private void button_removeCategory_Click(object sender, EventArgs e)
         {
             var btn = (sender as Button);
             //删除谓词
-            ModOperation.RemoveModFilterCategory(btn.Text.Substring(3));
+            cats.Remove(btn.Text.Substring(3));
+            InvokeOnFilterUpdated();
             btn.Dispose();
-
-            OnFilterUpdated?.Invoke(this, null);
         }
         private void button_clearFilter_Click(object sender, EventArgs e)
         {
@@ -150,9 +105,9 @@ namespace L4d2_Mod_Manager_Tool.Widget
 
         private void textBox_search_TextChanged(object sender, EventArgs e)
         {
-            ModOperation.SetModFilterName((sender as TextBox).Text);
             button_clearFilter.Visible = !string.IsNullOrEmpty(textBox_search.Text);
-            OnFilterUpdated?.Invoke(this, null);
+            name = (sender as TextBox).Text;
+            InvokeOnFilterUpdated();
         }
 
         private void button_filter_Click(object sender, EventArgs e)
@@ -186,6 +141,19 @@ namespace L4d2_Mod_Manager_Tool.Widget
                 return item;
             }).ToArray());
             return tmi;
+        }
+    }
+
+    public class ModFilterChangedArgs : EventArgs
+    {
+        public string Name { get; private set; }
+        public List<string> Tags { get; private set; }
+        public List<string> Categories { get; private set; }
+        public ModFilterChangedArgs(string name, List<string> tags, List<string> cats)
+        {
+            Name = name;
+            Tags = tags;
+            Categories = cats;
         }
     }
 }

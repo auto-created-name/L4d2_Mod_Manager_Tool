@@ -10,9 +10,18 @@ namespace L4d2_Mod_Manager_Tool.Domain
     /// 模组的创意工坊信息
     /// </summary>
     public record ModWorkshopInfo(
+        string Author,
         string Title, 
         string Descript, 
         string PreviewImage,
         ImmutableArray<string> Tags
-        );
+        )
+    {
+        public bool IsEmpty
+            => string.IsNullOrEmpty(Author) 
+            && string.IsNullOrEmpty(Title) 
+            && string.IsNullOrEmpty(Descript) 
+            && string.IsNullOrEmpty(PreviewImage) 
+            && Tags.IsEmpty;
+    }
 }

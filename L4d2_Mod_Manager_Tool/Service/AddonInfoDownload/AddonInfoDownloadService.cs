@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Utility;
+using Domain.Core;
+using Domain.Core.WorkshopInfoModule;
+using L4d2_Mod_Manager_Tool.Domain.Repository;
+using Infrastructure.Utility;
+using System.Collections.Immutable;
 
 namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
 {
     /// <summary>
     /// 模组信息下载服务
     /// </summary>
-    static class AddonInfoDownloadService
+    class AddonInfoDownloadService
     {
-        private static IAddonInfoDownloadStrategy downloadStrategy;
+        private IAddonInfoDownloadStrategy downloadStrategy;
 
-        public static string CurrentDownloadStrtegyName => downloadStrategy.StrategyName;
+        public string CurrentDownloadStretegyName => downloadStrategy.StrategyName;
 
-        public static void Load()
+        public AddonInfoDownloadService()
         {
             //首先尝试载入steamworks策略，如果失败再载入爬虫策略
             downloadStrategy = SteamworksAddonInfoDownloadStrategy.CreateStrategy()
@@ -26,24 +29,37 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
                     () => new SpiderAddonInfoDownloadStrategy()
             );
         }
-
+        public async Task<WorkshopInfo[]> DownloadAddonInfosAsync(IEnumerable<VpkId> vpks)
+        {
+            List<WorkshopInfo> res = new();
+            foreach (var vpk in vpks)
+            {
+                var wi = await DownloadAddonInfo(vpk);
+                wi.Match(some => res.Add(some), ()=>{ });
+            }
+            return res.ToArray();
+            //var newMods = vpks.AsParallel().Select(x => DownloadAddonInfo(x)).ToArray();
+            //return newMods.DiscardMaybe().ToArray();
+        }
         /// <summary>
         /// 下载模组信息
         /// </summary>
         /// <param name="m"></param>
-        public static void DownloadAddonInfo(Mod m)
+        public async Task<Maybe<WorkshopInfo>> DownloadAddonInfo(VpkId id)
         {
-            var vpkId = ulong.Parse(m.vpkId);
-            var info = downloadStrategy.DownloadAddonInfo(vpkId);
-            var newMod = info.Map(i =>
-                m with
-                {
-                    WorkshopTitle = i.Title,
-                    WorkshopDescript = i.Descript,
-                    Tags = i.Tags,
-                    WorkshopPreviewImage = i.PreviewImage
-                }).ValueOr(m);
-            ModOperation.UpdateMod(newMod);
+            var info = await downloadStrategy.DownloadAddonInfoAsync((ulong)id.Id).ConfigureAwait(false);
+            return info.Bind(x => ConvertIfNotEmpty(id, x));
         }
+
+        private Maybe<WorkshopInfo> ConvertIfNotEmpty(VpkId id, Domain.ModWorkshopInfo i) 
+            => i.IsEmpty ? Maybe.None 
+            : new WorkshopInfo(id)
+            {
+                Description = i.Descript,
+                Preview = new ImageFile(i.PreviewImage),
+                Tags = i.Tags.Select(x => new Tag(x)).ToArray(),
+                Title = i.Title,
+                Autor = i.Author
+            };
     }
 }

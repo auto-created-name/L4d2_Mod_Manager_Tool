@@ -49,7 +49,7 @@ namespace L4d2_Mod_Manager_Tool.Service
                 string previewImageUrl = GetWorkshopPreviewImageUrl(doc);
 
                 var imgFile = DownloadImageFromURL(previewImageUrl);
-                return Maybe.Some(new ModWorkshopInfo(title, desc, imgFile, tags.ToImmutableArray()));
+                return Maybe.Some(new ModWorkshopInfo("", title, desc, imgFile, tags.ToImmutableArray()));
             }
             catch
             {
