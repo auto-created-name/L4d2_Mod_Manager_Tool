@@ -30,6 +30,13 @@ namespace Domain.Core
         public ModBrief(int id)
         {
             Id = id;
+            Author = string.Empty;
+            Categories = string.Empty;
+            Enabled = false;
+            FileName = string.Empty;
+            Name = string.Empty;
+            Tagline = string.Empty;
+            Tags = string.Empty;
         }
 
         public static ModBrief Default
