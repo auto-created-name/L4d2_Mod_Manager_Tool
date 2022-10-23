@@ -258,6 +258,7 @@ namespace L4d2_Mod_Manager_Tool
             // 
             // widget_BackgroundTaskList1
             // 
+            this.widget_BackgroundTaskList1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.widget_BackgroundTaskList1.Location = new System.Drawing.Point(312, 417);
             this.widget_BackgroundTaskList1.Name = "widget_BackgroundTaskList1";
             this.widget_BackgroundTaskList1.Size = new System.Drawing.Size(394, 139);
@@ -286,7 +287,7 @@ namespace L4d2_Mod_Manager_Tool
             // spring1
             // 
             this.spring1.Name = "spring1";
-            this.spring1.Size = new System.Drawing.Size(845, 17);
+            this.spring1.Size = new System.Drawing.Size(814, 17);
             this.spring1.Spring = true;
             // 
             // toolStripProgressBar_backgroundworkProgress

@@ -55,6 +55,9 @@
     <None Update="Resources\ascending.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\bgtask.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\categories.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

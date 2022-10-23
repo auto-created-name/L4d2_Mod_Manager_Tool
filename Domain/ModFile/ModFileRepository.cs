@@ -80,8 +80,7 @@ namespace Domain.ModFile
                    id = mf.Id,
                    vpk_id = mf.VpkId.Id,
                    file_name = mf.FileLoc,
-                   localinfo_id = mf.LocalinfoId,
-                   workshopinfo_id = mf.WorkshopinfoId
+                   localinfo_id = mf.LocalinfoId
                };
         }
 
@@ -89,7 +88,7 @@ namespace Domain.ModFile
         {
             if (po == null)
                 return null;
-            return new(po.id, new(po.vpk_id), po.file_name, po.localinfo_id, po.workshopinfo_id);
+            return new(po.id, new(po.vpk_id), po.file_name, po.localinfo_id);
         }
         #endregion
     }

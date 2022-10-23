@@ -63,7 +63,6 @@ namespace Infrastructure
             + ",vpk_id INTEGER NOT NULL"
             + ",file_name TEXT NOT NULL UNIQUE"
             + ",localinfo_id INTEGER"
-            + ",workshopinfo_id INTEGER"
             + "); "
             + "CREATE TABLE IF NOT EXISTS mod("
             + "id INTEGER PRIMARY KEY AUTOINCREMENT"

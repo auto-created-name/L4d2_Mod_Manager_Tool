@@ -15,6 +15,5 @@ namespace Domain.ModFile
         public long vpk_id { get; set; }
         public string file_name { get; set; }
         public int localinfo_id { get; set; }
-        public int workshopinfo_id { get; set; }
     }
 }

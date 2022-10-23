@@ -10,11 +10,10 @@ namespace Domain.ModFile
         int Id,
         VpkId VpkId,
         string FileLoc,
-        int LocalinfoId,
-        int WorkshopinfoId
+        int LocalinfoId
     ){
         public static ModFile CreateFromFile(string file)
-            => new(0, VpkId.TryParse(file), file, 0, 0);
+            => new(0, VpkId.TryParse(file), file, 0);
 
         public void ShowFileInExplorer()
         {
