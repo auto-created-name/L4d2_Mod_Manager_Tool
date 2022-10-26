@@ -1,14 +1,11 @@
-﻿using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Domain.Repository;
-using L4d2_Mod_Manager_Tool.Module.Settings;
+﻿using L4d2_Mod_Manager_Tool.Domain.Repository;
+using L4d2_Mod_Manager_Tool.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using L4d2_Mod_Manager_Tool.Utility;
 
 namespace L4d2_Mod_Manager_Tool.Service
 {
