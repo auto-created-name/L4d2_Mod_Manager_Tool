@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Core;
 using Domain.Core.WorkshopInfoModule;
-using L4d2_Mod_Manager_Tool.Domain.Repository;
 using Infrastructure.Utility;
 using System.Collections.Immutable;
 

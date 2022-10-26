@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager_Tool.DTO
+namespace L4d2_Mod_Manager_Tool.TaskFramework
 {
     public class BackgroundTaskProgress
     {

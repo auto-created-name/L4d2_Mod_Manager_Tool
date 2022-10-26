@@ -91,14 +91,13 @@ namespace L4d2_Mod_Manager_Tool.Widget
         /// </summary>
         private static Image SelectImage(string img)
         {
-            return LoadImageSafe(img).ValueOr(
-                    Image.FromFile(@"Resources/no-image.png"));
+            return LoadImageSafe(img) ?? Image.FromFile(@"Resources/no-image.png");
         }
 
         /// <summary>
         /// 安全地载入图片，如果图片不存在或有错返回maybe.none
         /// </summary>
-        private static Utility.Maybe<Image> LoadImageSafe(string file)
+        private static Image LoadImageSafe(string file)
         {
             try
             {
@@ -106,7 +105,7 @@ namespace L4d2_Mod_Manager_Tool.Widget
             }
             catch
             {
-                return Utility.Maybe.None;
+                return null;
             }
         }
     }

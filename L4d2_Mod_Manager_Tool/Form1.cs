@@ -2,6 +2,7 @@
 using Domain.Core.WorkshopInfoModule;
 using Domain.ModSorter;
 using Domain.Settings;
+using Infrastructure.Utility;
 using L4d2_Mod_Manager_Tool.Service;
 using L4d2_Mod_Manager_Tool.TaskFramework;
 using L4d2_Mod_Manager_Tool.Utility;
@@ -372,29 +373,5 @@ namespace L4d2_Mod_Manager_Tool
             widget_BackgroundTaskList1.Visible = true;
         }
         #endregion
-
-        /// <summary>
-        /// 选择正确的图片，如果图片不存在或空使用空图片
-        /// </summary>
-        private static Image SelectImage(string img)
-        {
-            return LoadImageSafe(img).ValueOr(
-                    Image.FromFile(@"Resources/no-image.png"));
-        }
-
-        /// <summary>
-        /// 安全地载入图片，如果图片不存在或有错返回maybe.none
-        /// </summary>
-        private static Maybe<Image> LoadImageSafe(string file)
-        {
-            try
-            {
-                return Image.FromFile(file);
-            }
-            catch
-            {
-                return Maybe.None;
-            }
-        }
     }
 }

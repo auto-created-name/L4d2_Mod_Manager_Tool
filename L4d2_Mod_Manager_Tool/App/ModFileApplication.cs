@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Core;
+﻿using Domain.Core;
 using Domain.Core.ModBriefModule;
 using Domain.Core.ModStatusModule;
 using Domain.Core.WorkshopInfoModule;
 using Domain.ModFile;
-using Domain.ModSorter;
 using Domain.ModLocalInfo;
-using L4d2_Mod_Manager_Tool.Module.FileExplorer;
-using ModFile = Domain.ModFile.ModFile;
-using ModPreviewInfo = L4d2_Mod_Manager_Tool.Domain.ModPreviewInfo;
-using System.Threading;
+using Domain.ModSorter;
 using L4d2_Mod_Manager_Tool.TaskFramework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using ModPreviewInfo = L4d2_Mod_Manager_Tool.Domain.ModPreviewInfo;
 
 namespace L4d2_Mod_Manager_Tool.App
 {
