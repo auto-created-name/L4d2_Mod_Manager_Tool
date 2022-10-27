@@ -10,4 +10,8 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SteamWorks\" />
+  </ItemGroup>
+
 </Project>

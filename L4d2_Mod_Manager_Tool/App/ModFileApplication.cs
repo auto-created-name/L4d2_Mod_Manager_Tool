@@ -9,6 +9,7 @@ using L4d2_Mod_Manager_Tool.TaskFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ModPreviewInfo = L4d2_Mod_Manager_Tool.Domain.ModPreviewInfo;
@@ -45,7 +46,7 @@ namespace L4d2_Mod_Manager_Tool.App
             specBuilder.SetTags(tags);
             specBuilder.SetCategories(cats);
         }
-      
+
         /// <summary>
         /// 获取过滤后的所有模组信息
         /// </summary>
@@ -75,7 +76,7 @@ namespace L4d2_Mod_Manager_Tool.App
             return addonListRepository[f].ValueOr(false);
         }
 
-        public void SaveModStatus() 
+        public void SaveModStatus()
             => addonListRepository.Save();
         #endregion
         #region 模组排序
@@ -166,7 +167,7 @@ namespace L4d2_Mod_Manager_Tool.App
                 try
                 {
                     int finishedCount = 0, totalCount = batches.Length;
-                    foreach(var batch in batches)
+                    foreach (var batch in batches)
                     {
                         btask.Status = $"正在解析({finishedCount + 1} / {totalCount})";
                         btask.Progress = (int)(finishedCount / (float)totalCount * 100);
@@ -180,6 +181,17 @@ namespace L4d2_Mod_Manager_Tool.App
                 }
                 catch { }
             }).ConfigureAwait(false);
+        }
+
+        public string GenerateModShareCode(int[] modIds)
+        {
+            var mfs = modIds.Select(modFileRepository.FindById);
+            return new ShareCodeServer(briefList).GenerateShareCode(mfs);
+        }
+
+        public void SubscriptModByShareCode(string shareCode)
+        {
+            var ids = new ShareCodeServer(briefList).ParseShareCode(shareCode);
         }
     }
 }

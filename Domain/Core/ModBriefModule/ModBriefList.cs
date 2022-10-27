@@ -5,6 +5,7 @@ using Domain.Core.WorkshopInfoModule;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Infrastructure.Utility;
 
 namespace Domain.Core.ModBriefModule
 {
@@ -91,5 +92,8 @@ namespace Domain.Core.ModBriefModule
         {
             return modDetails.Values.Where(x => spec.IsSpecified(x)).ToArray();
         }
+
+        public Maybe<ModBrief> GetById(int id)
+            => modDetails.ContainsKey(id) ? modDetails[id] : Maybe.None;
     }
 }
