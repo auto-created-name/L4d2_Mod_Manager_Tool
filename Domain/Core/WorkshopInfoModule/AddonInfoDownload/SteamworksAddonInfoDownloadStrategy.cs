@@ -1,5 +1,4 @@
 ﻿using Infrastructure.Utility;
-using L4d2_Mod_Manager_Tool.Domain;
 using Steamworks;
 using Steamworks.Ugc;
 using System;
@@ -11,7 +10,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
+namespace Domain.Core.WorkshopInfoModule.AddonInfoDownload
 {
     class SteamworksAddonInfoDownloadStrategy : IAddonInfoDownloadStrategy
     {
@@ -67,7 +66,6 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
                 return Maybe.None;
             }
         }

@@ -16,7 +16,7 @@ namespace Domain.ModLocalInfo
         public string Category;
     }
 
-    internal class CategoryRuleGroupFactory
+    public class CategoryRuleGroupFactory
     {
         private const string CategoriesConfigureFile = "Resources/categories.json";
 

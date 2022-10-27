@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Domain.Core;
+using Domain.Core.WorkshopInfoModule;
+using Domain.Core.WorkshopInfoModule.AddonInfoDownload;
+using Domain.ModFile;
+using L4d2_Mod_Manager_Tool.TaskFramework;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Core;
-using Domain.Core.WorkshopInfoModule;
-using Domain.ModFile;
-using L4d2_Mod_Manager_Tool.Service.AddonInfoDownload;
-using L4d2_Mod_Manager_Tool.TaskFramework;
 
 namespace L4d2_Mod_Manager_Tool.App
 {

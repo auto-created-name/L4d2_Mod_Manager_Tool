@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager_Tool.Domain
+namespace Domain.Core.WorkshopInfoModule.AddonInfoDownload
 {
     /// <summary>
     /// 模组的创意工坊信息

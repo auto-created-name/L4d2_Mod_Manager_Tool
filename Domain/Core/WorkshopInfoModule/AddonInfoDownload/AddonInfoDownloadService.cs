@@ -8,12 +8,12 @@ using Domain.Core.WorkshopInfoModule;
 using Infrastructure.Utility;
 using System.Collections.Immutable;
 
-namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
+namespace Domain.Core.WorkshopInfoModule.AddonInfoDownload
 {
     /// <summary>
     /// 模组信息下载服务
     /// </summary>
-    class AddonInfoDownloadService
+    public class AddonInfoDownloadService
     {
         private IAddonInfoDownloadStrategy downloadStrategy;
 
@@ -50,7 +50,7 @@ namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
             return info.Bind(x => ConvertIfNotEmpty(id, x));
         }
 
-        private Maybe<WorkshopInfo> ConvertIfNotEmpty(VpkId id, Domain.ModWorkshopInfo i) 
+        private Maybe<WorkshopInfo> ConvertIfNotEmpty(VpkId id, ModWorkshopInfo i) 
             => i.IsEmpty ? Maybe.None 
             : new WorkshopInfo(id)
             {

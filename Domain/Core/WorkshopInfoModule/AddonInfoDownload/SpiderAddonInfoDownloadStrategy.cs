@@ -1,6 +1,5 @@
 ﻿using HtmlAgilityPack;
 using Infrastructure.Utility;
-using L4d2_Mod_Manager_Tool.Domain;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -11,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace L4d2_Mod_Manager_Tool.Service.AddonInfoDownload
+namespace Domain.Core.WorkshopInfoModule.AddonInfoDownload
 {
     class SpiderAddonInfoDownloadStrategy : IAddonInfoDownloadStrategy
     {

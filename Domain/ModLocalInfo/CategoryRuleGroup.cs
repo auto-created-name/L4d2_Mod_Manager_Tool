@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.ModLocalInfo
 {
-    record CategoryRule(string Category, string Regular, string Path);
-    internal class CategoryRuleGroup
+    public record CategoryRule(string Category, string Regular, string Path);
+    public class CategoryRuleGroup
     {
         private List<CategoryRule> categoryRules = new();
         public CategoryRuleGroup(List<CategoryRule> rules)

@@ -3,7 +3,6 @@ using Domain.Core.WorkshopInfoModule;
 using Domain.ModSorter;
 using Domain.Settings;
 using Infrastructure.Utility;
-using L4d2_Mod_Manager_Tool.Service;
 using L4d2_Mod_Manager_Tool.TaskFramework;
 using L4d2_Mod_Manager_Tool.Utility;
 using L4d2_Mod_Manager_Tool.Widget;

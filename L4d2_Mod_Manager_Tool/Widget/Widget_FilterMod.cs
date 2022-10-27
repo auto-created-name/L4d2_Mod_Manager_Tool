@@ -1,5 +1,5 @@
-﻿using L4d2_Mod_Manager_Tool.Domain;
-using L4d2_Mod_Manager_Tool.Service;
+﻿using Domain.ModLocalInfo;
+using L4d2_Mod_Manager_Tool.Domain;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -55,7 +55,8 @@ namespace L4d2_Mod_Manager_Tool.Widget
         private ToolStripMenuItem[] CreateCategoryMenuItems()
         {
             // 为每一级的菜单构建项
-            var pathes = ModCategoryService.Pathes;
+            var ruleGroup = new CategoryRuleGroupFactory().Create();
+            var pathes = ruleGroup.Pathes;
             var secs = pathes.Select(path => path.Split('/'));
 
             MenuItemsZipper zipper = new();
