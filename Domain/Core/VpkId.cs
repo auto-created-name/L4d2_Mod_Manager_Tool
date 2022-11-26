@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Core
 {
-    public record VpkId(long Id)
+    public record VpkId(long Id) : IComparable<VpkId>
     {
         public static VpkId Undefined => new(0);
 
@@ -23,5 +23,13 @@ namespace Domain.Core
 
         public static bool IsVpkId(string str)
             => Regex.IsMatch(str, @"^[1-9]?[0-9]{9}$");
-    };
+
+        public override string ToString()
+        {
+            return Id.ToString();
+        }
+
+        public int CompareTo(VpkId other)
+            => Id.CompareTo(other.Id);
+    }
 }

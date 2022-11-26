@@ -323,7 +323,10 @@ namespace L4d2_Mod_Manager_Tool
         {
             var clipboardString = Clipboard.GetText();
             if (!string.IsNullOrEmpty(clipboardString))
-                modFileApplication.SubscriptModByShareCode(clipboardString);
+            {
+                var task = modFileApplication.SubscriptModByShareCode(clipboardString);
+                task.ContinueWith(t => MessageBox.Show(t.Result));
+            }
         }
         #endregion
 

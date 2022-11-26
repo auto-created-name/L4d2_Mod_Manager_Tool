@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ModPreviewInfo = L4d2_Mod_Manager_Tool.Domain.ModPreviewInfo;
+using Domain.Core.SteamWorksModModule;
 
 namespace L4d2_Mod_Manager_Tool.App
 {
@@ -189,9 +190,28 @@ namespace L4d2_Mod_Manager_Tool.App
             return new ShareCodeServer(briefList).GenerateShareCode(mfs);
         }
 
-        public void SubscriptModByShareCode(string shareCode)
+        public Task<string> SubscriptModByShareCode(string shareCode)
         {
-            var ids = new ShareCodeServer(briefList).ParseShareCode(shareCode);
+            return Task.Run(async () =>
+            {
+                var ids = new ShareCodeServer(briefList).ParseShareCode(shareCode);
+                // TODO: 这个判断是一个隐含知识，需要抽离
+                if (Infrastructure.SteamWorks.IsInitSuccess)
+                {
+                    StringBuilder stringBuilder = new();
+                    foreach(var id in ids)
+                    {
+                        var mod = new SteamWorksMod(id);
+                        var succ = await mod.Subscribe();
+                        stringBuilder.Append(id.Id).Append(":").AppendLine(succ ? "成功" : "失败");
+                    }
+                    return stringBuilder.ToString();
+                }
+                else
+                {
+                    return "";
+                }
+            });
         }
     }
 }
