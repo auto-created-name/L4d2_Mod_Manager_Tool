@@ -51,6 +51,8 @@ namespace L4d2_Mod_Manager_Tool
             this.tolStripMenuItem_settings = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_about = new System.Windows.Forms.ToolStripMenuItem();
+            this.模组ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_subscribeByShareCode = new System.Windows.Forms.ToolStripMenuItem();
             this.widget_ModOverview1 = new L4d2_Mod_Manager_Tool.Widget.Widget_ModOverview();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.widget_FilterMod1 = new L4d2_Mod_Manager_Tool.Widget.Widget_FilterMod();
@@ -61,8 +63,6 @@ namespace L4d2_Mod_Manager_Tool
             this.spring1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar_backgroundworkProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.button_showBackgroundTaskWnd = new System.Windows.Forms.ToolStripDropDownButton();
-            this.模组ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_subscribeByShareCode = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -159,6 +159,7 @@ namespace L4d2_Mod_Manager_Tool
             // 
             // toolStripMenuItem_shareMod
             // 
+            this.toolStripMenuItem_shareMod.Enabled = false;
             this.toolStripMenuItem_shareMod.Name = "toolStripMenuItem_shareMod";
             this.toolStripMenuItem_shareMod.Size = new System.Drawing.Size(184, 22);
             this.toolStripMenuItem_shareMod.Text = "分享模组(仅订阅)";
@@ -230,6 +231,22 @@ namespace L4d2_Mod_Manager_Tool
             this.toolStripMenuItem_about.Size = new System.Drawing.Size(140, 22);
             this.toolStripMenuItem_about.Text = "关于软件(&A)";
             this.toolStripMenuItem_about.Click += new System.EventHandler(this.toolStripMenuItem_about_Click);
+            // 
+            // 模组ToolStripMenuItem
+            // 
+            this.模组ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_subscribeByShareCode});
+            this.模组ToolStripMenuItem.Name = "模组ToolStripMenuItem";
+            this.模组ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.模组ToolStripMenuItem.Text = "模组";
+            // 
+            // toolStripMenuItem_subscribeByShareCode
+            // 
+            this.toolStripMenuItem_subscribeByShareCode.Enabled = false;
+            this.toolStripMenuItem_subscribeByShareCode.Name = "toolStripMenuItem_subscribeByShareCode";
+            this.toolStripMenuItem_subscribeByShareCode.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_subscribeByShareCode.Text = "从分享码订阅模组";
+            this.toolStripMenuItem_subscribeByShareCode.Click += new System.EventHandler(this.toolStripMenuItem_subscribeByShareCode_Click);
             // 
             // widget_ModOverview1
             // 
@@ -318,21 +335,6 @@ namespace L4d2_Mod_Manager_Tool
             this.button_showBackgroundTaskWnd.Size = new System.Drawing.Size(20, 20);
             this.button_showBackgroundTaskWnd.Text = "toolStripDropDownButton1";
             this.button_showBackgroundTaskWnd.Click += new System.EventHandler(this.button_showBackgroundTaskWnd_Click);
-            // 
-            // 模组ToolStripMenuItem
-            // 
-            this.模组ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem_subscribeByShareCode});
-            this.模组ToolStripMenuItem.Name = "模组ToolStripMenuItem";
-            this.模组ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.模组ToolStripMenuItem.Text = "模组";
-            // 
-            // toolStripMenuItem_subscribeByShareCode
-            // 
-            this.toolStripMenuItem_subscribeByShareCode.Name = "toolStripMenuItem_subscribeByShareCode";
-            this.toolStripMenuItem_subscribeByShareCode.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuItem_subscribeByShareCode.Text = "从分享码订阅模组";
-            this.toolStripMenuItem_subscribeByShareCode.Click += new System.EventHandler(this.toolStripMenuItem_subscribeByShareCode_Click);
             // 
             // Form1
             // 

@@ -17,7 +17,7 @@ using Domain.Core.SteamWorksModModule;
 
 namespace L4d2_Mod_Manager_Tool.App
 {
-    class ModFileApplication
+    public class ModFileApplication
     {
         public event EventHandler OnModBriefListUpdate;
         private readonly ModFileRepository modFileRepository;
@@ -184,6 +184,15 @@ namespace L4d2_Mod_Manager_Tool.App
             }).ConfigureAwait(false);
         }
 
+        #region 分享码
+        /// <summary>
+        /// 模组分享码是否合法？
+        /// </summary>
+        /// <param name="code">分享码字符串</param>
+        /// <returns></returns>
+        public bool IsModShareCodeValid(string code)
+            => ShareCodeServer.IsShareCodeValid(code);
+
         public string GenerateModShareCode(int[] modIds)
         {
             var mfs = modIds.Select(modFileRepository.FindById);
@@ -213,5 +222,6 @@ namespace L4d2_Mod_Manager_Tool.App
                 }
             });
         }
+        #endregion
     }
 }

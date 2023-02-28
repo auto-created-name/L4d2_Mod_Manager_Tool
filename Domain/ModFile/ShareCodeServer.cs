@@ -21,6 +21,14 @@ namespace Domain.ModFile
         }
 
         /// <summary>
+        /// 判断指定分享码是否合法
+        /// </summary>
+        /// <param name="code">分享码</param>
+        /// <returns></returns>
+        public static bool IsShareCodeValid(string code)
+            => Regex.IsMatch(code, @"VPKID:([0-9;]+)");
+
+        /// <summary>
         /// 生成分享码
         /// </summary>
         public string GenerateShareCode(IEnumerable<ModFile> mfs)
@@ -60,6 +68,8 @@ namespace Domain.ModFile
 
         public VpkId[] ParseShareCode(string code)
         {
+            if(!IsShareCodeValid(code))
+                return Array.Empty<VpkId>();
             //var match = Regex.Match(code, @"INFO:([a-zA-Z0-9\+\/]+=*)");
             var match = Regex.Match(code, @"VPKID:([0-9;]+)");
             try

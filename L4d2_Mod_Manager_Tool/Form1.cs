@@ -274,7 +274,7 @@ namespace L4d2_Mod_Manager_Tool
         {
             WhenModSelected(listView1, indices =>
             {
-                // TODO: 生成模组分享码
+                // 生成模组分享码
                 var ids = indices.Select(i => modDetails[i].Id).ToArray();
                 var shareCode = modFileApplication.GenerateModShareCode(ids);
                 if (string.IsNullOrEmpty(shareCode))
@@ -322,10 +322,18 @@ namespace L4d2_Mod_Manager_Tool
         private void toolStripMenuItem_subscribeByShareCode_Click(object sender, EventArgs e)
         {
             var clipboardString = Clipboard.GetText();
-            if (!string.IsNullOrEmpty(clipboardString))
+            if (string.IsNullOrEmpty(clipboardString) 
+                || !modFileApplication.IsModShareCodeValid(clipboardString))
             {
-                var task = modFileApplication.SubscriptModByShareCode(clipboardString);
-                task.ContinueWith(t => MessageBox.Show(t.Result));
+                MessageBox.Show("没有检测到模组分享码，请重新复制", "订阅失败", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            else
+            {
+                var dialog = new Dialog_SubscribMod(worshopInfoApplication);
+                dialog.ShowDialog();
+                //var task = modFileApplication.SubscriptModByShareCode(clipboardString);
+                //task.ContinueWith(t => MessageBox.Show(t.Result));
             }
         }
         #endregion

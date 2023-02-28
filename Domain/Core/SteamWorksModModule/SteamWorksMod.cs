@@ -1,4 +1,5 @@
-﻿using Steamworks.Ugc;
+﻿using Steamworks;
+using Steamworks.Ugc;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -6,20 +7,30 @@ namespace Domain.Core.SteamWorksModModule
 {
     public class SteamWorksMod : IMod
     {
-        private VpkId _id;
+        public VpkId Id { get; private set; }
         public SteamWorksMod(VpkId id)
         {
-            _id = id;
+            Id = id;
+        }
+
+        public async Task<string> RequestModName()
+        {
+           var item = await SteamUGC.QueryFileAsync((ulong)Id.Id);
+            if (item.HasValue)
+                return item.Value.Title;
+            else
+                return "";
         }
 
         public async Task<bool> Subscribe()
         {
-            Item? item = await QueryItemWithFieldId((ulong)_id.Id);
+            Item? item = await QueryItemWithFieldId((ulong)Id.Id);
 
             // 未找到模组
             if (!item.HasValue)
                 return false;
 
+            //FIXME:Item.IsSubscribed总是返回false，API已经过期，无法获取正确的结果！
             // 已经订阅的模组不能重复订阅
             if (item.Value.IsSubscribed)
                 return false;
@@ -29,7 +40,7 @@ namespace Domain.Core.SteamWorksModModule
 
         public async Task<bool> Unsubscribe()
         {
-            Item? item = await QueryItemWithFieldId((ulong)_id.Id);
+            Item? item = await QueryItemWithFieldId((ulong)Id.Id);
 
             // 未找到模组
             if (!item.HasValue)
