@@ -26,7 +26,9 @@ namespace Domain.ModLocalInfo
 
             var lis = _mfs
                 // 带上取消标记并转换为LocalInfo
-                .Select(analysisServer.AnalysisMod).AsParallel().WithCancellation(cancellationToken)
+                .Select(analysisServer.AnalysisMod)
+                // 并行后保证执行顺序，附带取消符号
+                .AsParallel().AsOrdered().WithCancellation(cancellationToken)
                 // 执行
                 .ToArray();
 
