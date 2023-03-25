@@ -1,4 +1,5 @@
-﻿using Infrastructure.Utility;
+﻿using Infrastructure;
+using Infrastructure.Utility;
 using Steamworks;
 using Steamworks.Ugc;
 using System;
@@ -15,30 +16,12 @@ namespace Domain.Core.WorkshopInfoModule.AddonInfoDownload
     class SteamworksAddonInfoDownloadStrategy : IAddonInfoDownloadStrategy
     {
 
-        public static Maybe<SteamworksAddonInfoDownloadStrategy> CreateStrategy()
-        {
-            try
-            {
-                return Maybe.Some(new SteamworksAddonInfoDownloadStrategy());
-            }
-            catch 
-            {
-                return Maybe.None;
-            }
-        }
-
-        public const int AppID = 550;
-
         public string StrategyName => "SteamWorks模式";
 
-        private SteamworksAddonInfoDownloadStrategy()
+        public SteamworksAddonInfoDownloadStrategy()
         {
-            SteamClient.Init(550);
-        }
-
-        ~SteamworksAddonInfoDownloadStrategy()
-        {
-            SteamClient.Shutdown();
+            if (!SteamWorks.IsInitSuccess)
+                throw new InvalidOperationException("SteamWorks初始化失败，无法创建SteamWorks下载策略");
         }
 
 

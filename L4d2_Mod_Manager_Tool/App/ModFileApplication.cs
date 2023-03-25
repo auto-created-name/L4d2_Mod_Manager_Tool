@@ -9,13 +9,15 @@ using L4d2_Mod_Manager_Tool.TaskFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ModPreviewInfo = L4d2_Mod_Manager_Tool.Domain.ModPreviewInfo;
+using Domain.Core.SteamWorksModModule;
 
 namespace L4d2_Mod_Manager_Tool.App
 {
-    class ModFileApplication
+    public class ModFileApplication
     {
         public event EventHandler OnModBriefListUpdate;
         private readonly ModFileRepository modFileRepository;
@@ -45,7 +47,7 @@ namespace L4d2_Mod_Manager_Tool.App
             specBuilder.SetTags(tags);
             specBuilder.SetCategories(cats);
         }
-      
+
         /// <summary>
         /// 获取过滤后的所有模组信息
         /// </summary>
@@ -75,7 +77,7 @@ namespace L4d2_Mod_Manager_Tool.App
             return addonListRepository[f].ValueOr(false);
         }
 
-        public void SaveModStatus() 
+        public void SaveModStatus()
             => addonListRepository.Save();
         #endregion
         #region 模组排序
@@ -166,7 +168,7 @@ namespace L4d2_Mod_Manager_Tool.App
                 try
                 {
                     int finishedCount = 0, totalCount = batches.Length;
-                    foreach(var batch in batches)
+                    foreach (var batch in batches)
                     {
                         btask.Status = $"正在解析({finishedCount + 1} / {totalCount})";
                         btask.Progress = (int)(finishedCount / (float)totalCount * 100);
@@ -181,5 +183,45 @@ namespace L4d2_Mod_Manager_Tool.App
                 catch { }
             }).ConfigureAwait(false);
         }
+
+        #region 分享码
+        /// <summary>
+        /// 模组分享码是否合法？
+        /// </summary>
+        /// <param name="code">分享码字符串</param>
+        /// <returns></returns>
+        public bool IsModShareCodeValid(string code)
+            => ShareCodeServer.IsShareCodeValid(code);
+
+        public string GenerateModShareCode(int[] modIds)
+        {
+            var mfs = modIds.Select(modFileRepository.FindById);
+            return new ShareCodeServer(briefList).GenerateShareCode(mfs);
+        }
+
+        public Task<string> SubscriptModByShareCode(string shareCode)
+        {
+            return Task.Run(async () =>
+            {
+                var ids = new ShareCodeServer(briefList).ParseShareCode(shareCode);
+                // TODO: 这个判断是一个隐含知识，需要抽离
+                if (Infrastructure.SteamWorks.IsInitSuccess)
+                {
+                    StringBuilder stringBuilder = new();
+                    foreach(var id in ids)
+                    {
+                        var mod = new SteamWorksMod(id);
+                        var succ = await mod.Subscribe();
+                        stringBuilder.Append(id.Id).Append(":").AppendLine(succ ? "成功" : "失败");
+                    }
+                    return stringBuilder.ToString();
+                }
+                else
+                {
+                    return "";
+                }
+            });
+        }
+        #endregion
     }
 }

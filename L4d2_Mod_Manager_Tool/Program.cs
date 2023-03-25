@@ -14,10 +14,12 @@ namespace L4d2_Mod_Manager_Tool
         [STAThread]
         static void Main()
         {
+            Infrastructure.SteamWorks.Initialize();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+            Infrastructure.SteamWorks.Release();
         }
     }
 }

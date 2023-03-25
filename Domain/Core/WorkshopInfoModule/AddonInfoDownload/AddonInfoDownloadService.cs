@@ -7,6 +7,7 @@ using Domain.Core;
 using Domain.Core.WorkshopInfoModule;
 using Infrastructure.Utility;
 using System.Collections.Immutable;
+using Infrastructure;
 
 namespace Domain.Core.WorkshopInfoModule.AddonInfoDownload
 {
@@ -21,12 +22,8 @@ namespace Domain.Core.WorkshopInfoModule.AddonInfoDownload
 
         public AddonInfoDownloadService()
         {
-            //首先尝试载入steamworks策略，如果失败再载入爬虫策略
-            downloadStrategy = SteamworksAddonInfoDownloadStrategy.CreateStrategy()
-                .Match<IAddonInfoDownloadStrategy>(
-                    FPExtension.Identity,
-                    () => new SpiderAddonInfoDownloadStrategy()
-            );
+            //根据SteamWorks初始化状态选择策略
+            downloadStrategy = SteamWorks.IsInitSuccess ? new SteamworksAddonInfoDownloadStrategy() : new SpiderAddonInfoDownloadStrategy();
         }
         public async Task<WorkshopInfo[]> DownloadAddonInfosAsync(IEnumerable<VpkId> vpks)
         {

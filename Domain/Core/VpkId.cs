@@ -8,9 +8,20 @@ using System.Threading.Tasks;
 
 namespace Domain.Core
 {
-    public record VpkId(long Id)
+    public class VpkId: IComparable<VpkId>
     {
-        public static VpkId Undefined => new(0);
+        public long Id { get; private set; }
+
+        public VpkId(long id)
+            => Id = id;
+
+        public VpkId()
+            => Id = 0;
+
+        public static VpkId Undefined => new();
+
+        public static implicit operator VpkId(long id)
+            => new (id);
 
         /// <summary>
         /// 尝试从文件名中解析vpkid
@@ -23,5 +34,13 @@ namespace Domain.Core
 
         public static bool IsVpkId(string str)
             => Regex.IsMatch(str, @"^[1-9]?[0-9]{9}$");
-    };
+
+        public override string ToString()
+        {
+            return Id.ToString();
+        }
+
+        public int CompareTo(VpkId other)
+            => Id.CompareTo(other.Id);
+    }
 }

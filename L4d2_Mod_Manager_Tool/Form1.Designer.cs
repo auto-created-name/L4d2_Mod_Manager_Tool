@@ -42,6 +42,7 @@ namespace L4d2_Mod_Manager_Tool
             this.toolStripMenuItem_enableMod = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_disableMod = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_showInExplorer = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_shareMod = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_refresh = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,6 +51,8 @@ namespace L4d2_Mod_Manager_Tool
             this.tolStripMenuItem_settings = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_about = new System.Windows.Forms.ToolStripMenuItem();
+            this.模组ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_subscribeByShareCode = new System.Windows.Forms.ToolStripMenuItem();
             this.widget_ModOverview1 = new L4d2_Mod_Manager_Tool.Widget.Widget_ModOverview();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.widget_FilterMod1 = new L4d2_Mod_Manager_Tool.Widget.Widget_FilterMod();
@@ -128,9 +131,10 @@ namespace L4d2_Mod_Manager_Tool
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_enableMod,
             this.toolStripMenuItem_disableMod,
-            this.toolStripMenuItem_showInExplorer});
+            this.toolStripMenuItem_showInExplorer,
+            this.toolStripMenuItem_shareMod});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 92);
             // 
             // toolStripMenuItem_enableMod
             // 
@@ -153,11 +157,20 @@ namespace L4d2_Mod_Manager_Tool
             this.toolStripMenuItem_showInExplorer.Text = "在文件管理器中显示";
             this.toolStripMenuItem_showInExplorer.Click += new System.EventHandler(this.toolStripMenuItem_showInExplorer_Click);
             // 
+            // toolStripMenuItem_shareMod
+            // 
+            this.toolStripMenuItem_shareMod.Enabled = false;
+            this.toolStripMenuItem_shareMod.Name = "toolStripMenuItem_shareMod";
+            this.toolStripMenuItem_shareMod.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem_shareMod.Text = "分享模组(仅订阅)";
+            this.toolStripMenuItem_shareMod.Click += new System.EventHandler(this.toolStripMenuItem_shareMod_Click);
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.工具ToolStripMenuItem,
-            this.帮助ToolStripMenuItem});
+            this.帮助ToolStripMenuItem,
+            this.模组ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1113, 25);
@@ -218,6 +231,22 @@ namespace L4d2_Mod_Manager_Tool
             this.toolStripMenuItem_about.Size = new System.Drawing.Size(140, 22);
             this.toolStripMenuItem_about.Text = "关于软件(&A)";
             this.toolStripMenuItem_about.Click += new System.EventHandler(this.toolStripMenuItem_about_Click);
+            // 
+            // 模组ToolStripMenuItem
+            // 
+            this.模组ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_subscribeByShareCode});
+            this.模组ToolStripMenuItem.Name = "模组ToolStripMenuItem";
+            this.模组ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.模组ToolStripMenuItem.Text = "模组";
+            // 
+            // toolStripMenuItem_subscribeByShareCode
+            // 
+            this.toolStripMenuItem_subscribeByShareCode.Enabled = false;
+            this.toolStripMenuItem_subscribeByShareCode.Name = "toolStripMenuItem_subscribeByShareCode";
+            this.toolStripMenuItem_subscribeByShareCode.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_subscribeByShareCode.Text = "从分享码订阅模组";
+            this.toolStripMenuItem_subscribeByShareCode.Click += new System.EventHandler(this.toolStripMenuItem_subscribeByShareCode_Click);
             // 
             // widget_ModOverview1
             // 
@@ -287,7 +316,7 @@ namespace L4d2_Mod_Manager_Tool
             // spring1
             // 
             this.spring1.Name = "spring1";
-            this.spring1.Size = new System.Drawing.Size(814, 17);
+            this.spring1.Size = new System.Drawing.Size(845, 17);
             this.spring1.Spring = true;
             // 
             // toolStripProgressBar_backgroundworkProgress
@@ -362,6 +391,9 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.ToolStripStatusLabel spring1;
         private System.Windows.Forms.ToolStripDropDownButton button_showBackgroundTaskWnd;
         private Widget.Widget_BackgroundTaskList widget_BackgroundTaskList1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_shareMod;
+        private System.Windows.Forms.ToolStripMenuItem 模组ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_subscribeByShareCode;
     }
 }
 
