@@ -102,6 +102,7 @@ namespace L4d2_Mod_Manager_Tool.App
             };
         }
         #endregion
+        #region 模组文件操作
         /// <summary>
         /// 在文件浏览器里查看模组文件
         /// </summary>
@@ -111,6 +112,10 @@ namespace L4d2_Mod_Manager_Tool.App
             modFileRepository.FindById(modId).ShowFileInExplorer();
         }
 
+        /// <summary>
+        /// 直接打开模组文件
+        /// </summary>
+        /// <param name="modId"></param>
         public void OpenModFile(int modId)
         {
             modFileRepository.FindById(modId).OpenModFile();
@@ -126,6 +131,21 @@ namespace L4d2_Mod_Manager_Tool.App
             modFileRepository.SaveRange(modChanged.New, modChanged.Lost);
         }
 
+        /// <summary>
+        /// 清除所有丢失的模组文件记录
+        /// </summary>
+        /// <returns>清除的丢失模组数量</returns>
+        public int ClearMissingModFile()
+        {
+            //找到丢失的模组
+            var missingMods = modFileRepository.GetAll().Where(mf => !mf.ModExist()).ToList();
+            //删除本地信息
+            localInfoRepository.DeleteById(missingMods.Select(mf => mf.LocalinfoId));
+            //删除模组文件记录
+            modFileRepository.Delete(missingMods);
+            return missingMods.Count;
+        }
+        #endregion
         public ModPreviewInfo? GetModPreview(int modId)
         {
             var mf = modFileRepository.FindById(modId);

@@ -68,7 +68,8 @@ namespace Domain.Core.ModBriefModule
         // 当【丢失模组文件】时，更新相关视图对象
         private void ModFileRepository_OnModFilesLosted(IEnumerable<ModFile.ModFile> mfs)
         {
-            mfs.ToList().ForEach(UpdateModFileInfo);
+            mfs.Select(mf => mf.Id).Where(id => id > 0).ToList()
+                .ForEach(RemoveModFileInfo);
             OnBriefUpdate?.Invoke(this, null);
         }
 
@@ -104,6 +105,11 @@ namespace Domain.Core.ModBriefModule
                 md.Tags = Tag.Concat(wi.Tags);
             }, () => { });
             modDetails[md.Id] = md;
+        }
+
+        private void RemoveModFileInfo(int id)
+        {
+            modDetails.Remove(id);
         }
 
         public ModBrief[] GetSpecified(ModBriefSpecification spec)

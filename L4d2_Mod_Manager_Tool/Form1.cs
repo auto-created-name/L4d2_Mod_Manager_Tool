@@ -340,6 +340,15 @@ namespace L4d2_Mod_Manager_Tool
                 //task.ContinueWith(t => MessageBox.Show(t.Result));
             }
         }
+
+        private void ToolStripMenuItem_clearMissingMod_Click(object sender, EventArgs e)
+        {
+            int clearCount = modFileApplication.ClearMissingModFile();
+            UpdateModList();
+
+            // 通知用户
+            MessageBox.Show($"共清除{clearCount}条记录", "清除丢失模组记录", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
         #endregion
 
 

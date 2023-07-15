@@ -23,6 +23,23 @@ namespace Domain.ModLocalInfo
             return resLi;
         }
 
+        /// <summary>
+        /// 删除本地信息
+        /// </summary>
+        /// <param name="ids"></param>
+        public void DeleteById(IEnumerable<int> ids)
+        {
+            var idList = ids.Where(id => id > 0).ToList();
+            if (idList.Count == 0)
+                return;
+
+            using var trans = DapperHelper.OpenConnection().BeginTransaction();
+            foreach (var id in ids)
+            {
+                trans.Execute($"DELETE FROM mod WHERE id={id}");
+            }
+        }
+
         public LocalInfo FindById(int id)
         {
             var po = dapperHelper.Get<PO_LocalInfo>(id);
