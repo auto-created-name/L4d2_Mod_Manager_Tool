@@ -16,12 +16,17 @@ namespace Domain.ModFile
 
         public event OnModFilesChangedDel OnModFilesAdded;
 
-        public List<ModFile> SaveRange(IEnumerable<ModFile> mfs)
+        /// <summary>
+        /// 当模组文件丢失时
+        /// </summary>
+        public event OnModFilesChangedDel OnModFilesLosted;
+
+        public List<ModFile> SaveRange(IEnumerable<ModFile> added, IEnumerable<ModFile> losted)
         {
             var conn = DapperHelper.OpenConnection();
             var tran = conn.BeginTransaction();
 
-            var savedList = mfs.ToList().Select(mf =>
+            var savedList = added.ToList().Select(mf =>
             {
                 var po = ModFile_DoToPo(mf);
                 var id = tran.Insert(po);
@@ -32,6 +37,7 @@ namespace Domain.ModFile
             conn.Dispose();
 
             OnModFilesAdded?.Invoke(savedList);
+            OnModFilesLosted?.Invoke(losted);
             return savedList;
         }
 

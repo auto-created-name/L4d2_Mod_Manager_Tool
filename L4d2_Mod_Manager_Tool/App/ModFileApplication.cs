@@ -40,6 +40,14 @@ namespace L4d2_Mod_Manager_Tool.App
             briefList.OnBriefUpdate += (sender, e) => OnModBriefListUpdate?.Invoke(this, e);
         }
 
+        /// <summary>
+        /// 更新模组摘要信息，可以更新最新的模组丢失/存在状态
+        /// </summary>
+        public void UpdateModBriefList()
+        {
+            briefList.UpdateAll();
+        }
+
         #region 模组过滤相关
         public void SetModFilter(string name, List<string> tags, List<string> cats)
         {
@@ -115,7 +123,7 @@ namespace L4d2_Mod_Manager_Tool.App
         {
             ModScanner modScanner = new(modFileRepository);
             var modChanged = modScanner.ScanModFileChanged();
-            modFileRepository.SaveRange(modChanged.New);
+            modFileRepository.SaveRange(modChanged.New, modChanged.Lost);
         }
 
         public ModPreviewInfo? GetModPreview(int modId)

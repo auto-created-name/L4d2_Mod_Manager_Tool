@@ -26,5 +26,15 @@ namespace Domain.ModFile
             var file = L4d2Folder.GetAddonFileFullPath(FileLoc);
             FileExplorerUtils.OpenFileInExplorer(file);
         }
+
+        /// <summary>
+        /// 模组文件是否存在
+        /// </summary>
+        /// <returns>文件如果存在返回true，否则返回false</returns>
+        public bool ModExist()
+        {
+            string absFile = L4d2Folder.GetAddonFileFullPath(FileLoc);
+            return System.IO.File.Exists(absFile);
+        }
     };
 }

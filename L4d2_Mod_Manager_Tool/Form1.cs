@@ -57,6 +57,7 @@ namespace L4d2_Mod_Manager_Tool
 
             imageList1.Images.Add(Image.FromFile("Resources/off.png"));
             imageList1.Images.Add(Image.FromFile("Resources/on.png"));
+            imageList1.Images.Add(Image.FromFile("Resources/missing.png"));
             imageList1.Images.Add("ascending", Image.FromFile("Resources/ascending.png"));
             imageList1.Images.Add("descending", Image.FromFile("Resources/descending.png"));
 
@@ -200,6 +201,8 @@ namespace L4d2_Mod_Manager_Tool
             });
 
             item.ImageIndex = detail.Enabled ? 1 : 0;
+            if (!detail.ModExisted)
+                item.ImageIndex = 2;
             e.Item = item;
             item.BackColor = e.ItemIndex % 2 == 0 ? Color.White : SystemColors.Control;
             item.ForeColor = detail.Enabled ? SystemColors.WindowText : SystemColors.GrayText;
@@ -294,6 +297,7 @@ namespace L4d2_Mod_Manager_Tool
         // 刷新只更新列表
         private void toolStripMenuItem_refresh_Click(object sender, EventArgs e)
         {
+            // modFileApplication.UpdateModBriefList();
             UpdateModList();
         }
 
