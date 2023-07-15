@@ -48,7 +48,7 @@ namespace Infrastructure
             => connection.Insert(po, transaction);
 
         public int Execute(string sql, object param = null)
-            => connection.Execute(sql, param);
+            => connection.Execute(sql, param, transaction);
 
         public void Update<T>(T po) where T : class
             => connection.Update(po, transaction);
@@ -128,6 +128,12 @@ namespace Infrastructure
         {
             using var conn = new SQLiteConnection(ConnectString);
             return conn.Query<T1, T2, TOut>(sql, mapper);
+        }
+
+        public int Exec(string sql)
+        {
+            using var conn = new SQLiteConnection(ConnectString);
+            return conn.Execute(sql);
         }
 
         public T Get<T>(int id) where T : class

@@ -33,10 +33,20 @@ namespace Domain.Core.ModBriefModule
             this.alRepo = alRepo;
 
             mfRepo.OnModFilesAdded += ModFileRepository_OnModFilesAdded;
+            mfRepo.OnModFilesLosted += ModFileRepository_OnModFilesLosted;
             // localinfo更新会触发mf更新，不需要单独观察更改（除非考虑li单独更新，但是可以用li删除+重置)
             //liRepo.OnLocalInfosAdded += LocalInfoRepository_OnLocalInfosAdded;
             wiRepo.OnWorkshopInfoAdded += WorkshopInfoRepository_OnWorkshopInfoAdded;
 
+            mfRepo.GetAll().ForEach(UpdateModFileInfo);
+        }
+
+        /// <summary>
+        /// 更新所有的模组摘要信息
+        /// </summary>
+        public void UpdateAll()
+        {
+            modDetails.Clear();
             mfRepo.GetAll().ForEach(UpdateModFileInfo);
         }
 
@@ -54,7 +64,15 @@ namespace Domain.Core.ModBriefModule
             mfs.ToList().ForEach(UpdateModFileInfo);
             OnBriefUpdate?.Invoke(this, null);
         }
-       
+
+        // 当【丢失模组文件】时，更新相关视图对象
+        private void ModFileRepository_OnModFilesLosted(IEnumerable<ModFile.ModFile> mfs)
+        {
+            mfs.Select(mf => mf.Id).Where(id => id > 0).ToList()
+                .ForEach(RemoveModFileInfo);
+            OnBriefUpdate?.Invoke(this, null);
+        }
+
         /// <summary>
         /// 更新指定ModFile视图
         /// </summary>
@@ -62,6 +80,7 @@ namespace Domain.Core.ModBriefModule
         {
             ModBrief md = new(mf.Id)
             {
+                ModExisted = mf.ModExist(),
                 FileName = mf.FileLoc,
                 VpkId = mf.VpkId,
                 Enabled = alRepo[mf.FileLoc].ValueOr(false)
@@ -86,6 +105,11 @@ namespace Domain.Core.ModBriefModule
                 md.Tags = Tag.Concat(wi.Tags);
             }, () => { });
             modDetails[md.Id] = md;
+        }
+
+        private void RemoveModFileInfo(int id)
+        {
+            modDetails.Remove(id);
         }
 
         public ModBrief[] GetSpecified(ModBriefSpecification spec)

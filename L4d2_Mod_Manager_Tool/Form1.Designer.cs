@@ -63,6 +63,7 @@ namespace L4d2_Mod_Manager_Tool
             this.spring1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar_backgroundworkProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.button_showBackgroundTaskWnd = new System.Windows.Forms.ToolStripDropDownButton();
+            this.ToolStripMenuItem_clearMissingMod = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -183,7 +184,8 @@ namespace L4d2_Mod_Manager_Tool
             this.toolStripMenuItem_refresh,
             this.toolStripMenuItem_scanModFile,
             this.toolStripMenuItem_downloadWorkshopInfo,
-            this.tolStripMenuItem_settings});
+            this.tolStripMenuItem_settings,
+            this.ToolStripMenuItem_clearMissingMod});
             this.工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
             this.工具ToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
             this.工具ToolStripMenuItem.Text = "工具(&T)";
@@ -244,7 +246,7 @@ namespace L4d2_Mod_Manager_Tool
             // 
             this.toolStripMenuItem_subscribeByShareCode.Enabled = false;
             this.toolStripMenuItem_subscribeByShareCode.Name = "toolStripMenuItem_subscribeByShareCode";
-            this.toolStripMenuItem_subscribeByShareCode.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_subscribeByShareCode.Size = new System.Drawing.Size(172, 22);
             this.toolStripMenuItem_subscribeByShareCode.Text = "从分享码订阅模组";
             this.toolStripMenuItem_subscribeByShareCode.Click += new System.EventHandler(this.toolStripMenuItem_subscribeByShareCode_Click);
             // 
@@ -336,6 +338,13 @@ namespace L4d2_Mod_Manager_Tool
             this.button_showBackgroundTaskWnd.Text = "toolStripDropDownButton1";
             this.button_showBackgroundTaskWnd.Click += new System.EventHandler(this.button_showBackgroundTaskWnd_Click);
             // 
+            // ToolStripMenuItem_clearMissingMod
+            // 
+            this.ToolStripMenuItem_clearMissingMod.Name = "ToolStripMenuItem_clearMissingMod";
+            this.ToolStripMenuItem_clearMissingMod.Size = new System.Drawing.Size(185, 22);
+            this.ToolStripMenuItem_clearMissingMod.Text = "清除丢失的模组记录";
+            this.ToolStripMenuItem_clearMissingMod.Click += new System.EventHandler(this.ToolStripMenuItem_clearMissingMod_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -394,6 +403,7 @@ namespace L4d2_Mod_Manager_Tool
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_shareMod;
         private System.Windows.Forms.ToolStripMenuItem 模组ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_subscribeByShareCode;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_clearMissingMod;
     }
 }
 

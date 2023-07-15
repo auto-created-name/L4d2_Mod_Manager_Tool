@@ -18,8 +18,8 @@ namespace Domain.ModSorter
         {
             return order switch
             {
-                ModSortOrder.Ascending => mods.OrderBy(m => m.Enabled),
-                ModSortOrder.Descending => mods.OrderByDescending(m => m.Enabled)
+                ModSortOrder.Ascending => mods.OrderBy(m => m.ModStatus),
+                ModSortOrder.Descending => mods.OrderByDescending(m => m.ModStatus)
             };
         }
     }

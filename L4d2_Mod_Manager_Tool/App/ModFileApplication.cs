@@ -40,6 +40,14 @@ namespace L4d2_Mod_Manager_Tool.App
             briefList.OnBriefUpdate += (sender, e) => OnModBriefListUpdate?.Invoke(this, e);
         }
 
+        /// <summary>
+        /// 更新模组摘要信息，可以更新最新的模组丢失/存在状态
+        /// </summary>
+        public void UpdateModBriefList()
+        {
+            briefList.UpdateAll();
+        }
+
         #region 模组过滤相关
         public void SetModFilter(string name, List<string> tags, List<string> cats)
         {
@@ -94,6 +102,7 @@ namespace L4d2_Mod_Manager_Tool.App
             };
         }
         #endregion
+        #region 模组文件操作
         /// <summary>
         /// 在文件浏览器里查看模组文件
         /// </summary>
@@ -103,6 +112,10 @@ namespace L4d2_Mod_Manager_Tool.App
             modFileRepository.FindById(modId).ShowFileInExplorer();
         }
 
+        /// <summary>
+        /// 直接打开模组文件
+        /// </summary>
+        /// <param name="modId"></param>
         public void OpenModFile(int modId)
         {
             modFileRepository.FindById(modId).OpenModFile();
@@ -115,9 +128,24 @@ namespace L4d2_Mod_Manager_Tool.App
         {
             ModScanner modScanner = new(modFileRepository);
             var modChanged = modScanner.ScanModFileChanged();
-            modFileRepository.SaveRange(modChanged.New);
+            modFileRepository.SaveRange(modChanged.New, modChanged.Lost);
         }
 
+        /// <summary>
+        /// 清除所有丢失的模组文件记录
+        /// </summary>
+        /// <returns>清除的丢失模组数量</returns>
+        public int ClearMissingModFile()
+        {
+            //找到丢失的模组
+            var missingMods = modFileRepository.GetAll().Where(mf => !mf.ModExist()).ToList();
+            //删除本地信息
+            localInfoRepository.DeleteById(missingMods.Select(mf => mf.LocalinfoId));
+            //删除模组文件记录
+            modFileRepository.Delete(missingMods);
+            return missingMods.Count;
+        }
+        #endregion
         public ModPreviewInfo? GetModPreview(int modId)
         {
             var mf = modFileRepository.FindById(modId);

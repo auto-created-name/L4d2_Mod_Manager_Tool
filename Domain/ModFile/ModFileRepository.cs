@@ -14,14 +14,22 @@ namespace Domain.ModFile
     {
         private DapperHelper dapperHelper = DapperHelper.Instance;
 
+        /// <summary>
+        /// 当模组文件增加时
+        /// </summary>
         public event OnModFilesChangedDel OnModFilesAdded;
 
-        public List<ModFile> SaveRange(IEnumerable<ModFile> mfs)
+        /// <summary>
+        /// 当模组文件丢失时
+        /// </summary>
+        public event OnModFilesChangedDel OnModFilesLosted;
+
+        public List<ModFile> SaveRange(IEnumerable<ModFile> added, IEnumerable<ModFile> losted)
         {
             var conn = DapperHelper.OpenConnection();
             var tran = conn.BeginTransaction();
 
-            var savedList = mfs.ToList().Select(mf =>
+            var savedList = added.ToList().Select(mf =>
             {
                 var po = ModFile_DoToPo(mf);
                 var id = tran.Insert(po);
@@ -32,7 +40,26 @@ namespace Domain.ModFile
             conn.Dispose();
 
             OnModFilesAdded?.Invoke(savedList);
+            OnModFilesLosted?.Invoke(losted);
             return savedList;
+        }
+
+        /// <summary>
+        /// 删除模组文件记录
+        /// </summary>
+        /// <param name="mfs"></param>
+        public void Delete(IEnumerable<ModFile> mfs)
+        {
+            if (!mfs.Any())
+                return;
+
+            using var trans = DapperHelper.OpenConnection().BeginTransaction();
+            foreach(var mf in mfs)
+            {
+                trans.Execute($"DELETE FROM mod_file WHERE id={mf.Id}");
+            }
+
+            OnModFilesLosted?.Invoke(mfs);
         }
 
         public void Update(ModFile mf)
